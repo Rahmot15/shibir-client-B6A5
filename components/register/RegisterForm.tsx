@@ -2,13 +2,17 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { ArrowRight, Eye, EyeOff, Loader2, Lock, Mail, User } from "lucide-react";
+import { toast } from "sonner";
 import { Divider, Input, SocialBtn, socials } from "@/components/auth/shared";
+import { registerUser } from "@/lib/authService";
 
 const strengthLabels = ["", "দুর্বল", "মোটামুটি", "ভালো", "শক্তিশালী"];
 const strengthColors = ["", "#ef5350", "#c8a227", "#00a844", "#00c853"];
 
 export default function RegisterForm() {
+  const router = useRouter();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -48,12 +52,12 @@ export default function RegisterForm() {
     }
 
     if (!password) {
-      validationErrors.password = "পাসওয়ার্ড দিন";
+      validationErrors.password = "পাসওয়ার্ড দিন";
     } else if (password.length < 8) {
       validationErrors.password = "কমপক্ষে ৮ অক্ষর";
     }
 
-    if (confirm !== password) validationErrors.confirm = "পাসওয়ার্ড মিলছে না";
+    if (confirm !== password) validationErrors.confirm = "পাসওয়ার্ড মিলছে না";
     if (!agreed) validationErrors.agreed = "শর্তাবলী মানতে হবে";
 
     return validationErrors;
@@ -69,8 +73,27 @@ export default function RegisterForm() {
 
     setErrors({});
     setLoading(true);
-    await new Promise((resolve) => setTimeout(resolve, 1800));
-    setLoading(false);
+
+    try {
+      const result = await registerUser({ name, email, password });
+
+      if (result.success) {
+        toast.success("নিবন্ধন সফল হয়েছে!", {
+          description: "এখন লগইন করুন।",
+        });
+        router.push("/login");
+      } else {
+        toast.error("নিবন্ধন ব্যর্থ", {
+          description: result.message,
+        });
+      }
+    } catch {
+      toast.error("সার্ভারে সমস্যা হয়েছে", {
+        description: "পরে আবার চেষ্টা করুন",
+      });
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
@@ -89,9 +112,9 @@ export default function RegisterForm() {
 
       <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
         <Input
-          label="পাসওয়ার্ড"
+          label="পাসওয়ার্ড"
           type={showPass ? "text" : "password"}
-          placeholder="শক্তিশালী পাসওয়ার্ড দিন"
+          placeholder="শক্তিশালী পাসওয়ার্ড দিন"
           icon={Lock}
           value={password}
           onChange={setPassword}
@@ -148,9 +171,9 @@ export default function RegisterForm() {
       </div>
 
       <Input
-        label="পাসওয়ার্ড নিশ্চিত করুন"
+        label="পাসওয়ার্ড নিশ্চিত করুন"
         type="password"
-        placeholder="আবার পাসওয়ার্ড দিন"
+        placeholder="আবার পাসওয়ার্ড দিন"
         icon={Lock}
         value={confirm}
         onChange={setConfirm}
@@ -195,9 +218,9 @@ export default function RegisterForm() {
             </a>{" "}
             ও{" "}
             <a href="#" style={{ color: "#00c853", textDecoration: "underline", textUnderlineOffset: 2 }}>
-              গোপনীয়তা নীতি
+              গোপনীয়তা নীতি
             </a>{" "}
-            পড়েছি এবং সম্মত আছি।
+            পড়েছি এবং সম্মত আছি।
           </span>
         </label>
         {errors.agreed && (

@@ -2,10 +2,16 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { ArrowRight, Eye, EyeOff, Loader2, Lock, Mail } from "lucide-react";
+import { toast } from "sonner";
 import { Divider, Input, SocialBtn, socials } from "@/components/auth/shared";
+import { loginUser } from "@/lib/authService";
+import { useAuth } from "@/components/auth/AuthContext";
 
 export default function LoginForm() {
+  const router = useRouter();
+  const { setUser } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [showPass, setShowPass] = useState(false);
@@ -22,7 +28,7 @@ export default function LoginForm() {
     }
 
     if (!password) {
-      validationErrors.password = "পাসওয়ার্ড দিন";
+      validationErrors.password = "পাসওয়ার্ড দিন";
     }
 
     return validationErrors;
@@ -38,8 +44,28 @@ export default function LoginForm() {
 
     setErrors({});
     setLoading(true);
-    await new Promise((resolve) => setTimeout(resolve, 1500));
-    setLoading(false);
+
+    try {
+      const result = await loginUser({ email, password });
+
+      if (result.success && result.data) {
+        setUser(result.data);
+        toast.success("সফলভাবে লগইন হয়েছে!", {
+          description: `স্বাগতম, ${result.data.name || "ব্যবহারকারী"}!`,
+        });
+        router.push("/");
+      } else {
+        toast.error("লগইন ব্যর্থ", {
+          description: result.message,
+        });
+      }
+    } catch {
+      toast.error("সার্ভারে সমস্যা হয়েছে", {
+        description: "পরে আবার চেষ্টা করুন",
+      });
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
@@ -50,7 +76,7 @@ export default function LoginForm() {
         ))}
       </div>
 
-      <Divider text="অথবা ইমেইল দিয়ে" />
+      <Divider text="অথবা ইমেইল দিয়ে" />
 
       <Input
         label="ইমেইল"
@@ -62,9 +88,9 @@ export default function LoginForm() {
       />
 
       <Input
-        label="পাসওয়ার্ড"
+        label="পাসওয়ার্ড"
         type={showPass ? "text" : "password"}
-        placeholder="পাসওয়ার্ড লিখুন"
+        placeholder="পাসওয়ার্ড লিখুন"
         icon={Lock}
         value={password}
         onChange={setPassword}
@@ -104,7 +130,7 @@ export default function LoginForm() {
           onMouseEnter={(event) => (event.currentTarget.style.color = "#00c853")}
           onMouseLeave={(event) => (event.currentTarget.style.color = "rgba(0,200,83,0.6)")}
         >
-          পাসওয়ার্ড ভুলে গেছেন?
+          পাসওয়ার্ড ভুলে গেছেন?
         </a>
       </div>
 

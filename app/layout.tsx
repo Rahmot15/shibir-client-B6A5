@@ -4,6 +4,9 @@ import "./globals.css"
 import { ThemeProvider } from "@/components/theme-provider"
 import { cn } from "@/lib/utils";
 import Background from "@/components/Background";
+import { Toaster } from "@/components/ui/sonner";
+
+import { AuthProvider } from "@/components/auth/AuthContext";
 
 const inter = Inter({subsets:['latin'],variable:'--font-sans'})
 
@@ -25,7 +28,12 @@ export default function RootLayout({
     >
       <body>
         <Background/>
-        <ThemeProvider>{children}</ThemeProvider>
+        <ThemeProvider>
+          <AuthProvider>
+            {children}
+            <Toaster position="top-center" richColors />
+          </AuthProvider>
+        </ThemeProvider>
       </body>
     </html>
   )
