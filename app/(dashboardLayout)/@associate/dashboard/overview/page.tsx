@@ -1,0 +1,1 @@
+export default function AssociateOverview() { return <div className="p-6 text-xl">Sathi Overview Content</div>; }

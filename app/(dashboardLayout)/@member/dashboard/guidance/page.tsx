@@ -1,0 +1,1 @@
+export default function MemberGuidance() { return <div className="p-6 text-xl">Sodosso Guidance Content</div>; }

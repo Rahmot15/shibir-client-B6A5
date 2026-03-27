@@ -17,6 +17,8 @@ export default function Navbar() {
 	const [scrolled, setScrolled] = useState(false);
 	const { user, logout, loading } = useAuth();
 
+	console.log(user);
+
 	useEffect(() => {
 		const fn = () => setScrolled(window.scrollY > 30);
 		window.addEventListener("scroll", fn);
@@ -181,7 +183,7 @@ export default function Navbar() {
 								</Link>
 							</DropdownMenuItem>
 							<DropdownMenuSeparator className="bg-green-900/30" />
-							<DropdownMenuItem 
+							<DropdownMenuItem
 								onClick={() => logout()}
 								className="cursor-pointer text-red-400 focus:bg-red-950/40 focus:text-red-400"
 							>
@@ -221,11 +223,11 @@ export default function Navbar() {
 					</Link>
 				)}
 			</div>
-			
+
 			<style>{`
-				@keyframes spin { 
-					from { transform: rotate(0deg); } 
-					to { transform: rotate(360deg); } 
+				@keyframes spin {
+					from { transform: rotate(0deg); }
+					to { transform: rotate(360deg); }
 				}
 			`}</style>
 		</nav>

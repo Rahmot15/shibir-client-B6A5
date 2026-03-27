@@ -1,0 +1,1 @@
+export default function WorkerOverview() { return <div className="p-6 text-xl">Kormi Overview Content</div>; }

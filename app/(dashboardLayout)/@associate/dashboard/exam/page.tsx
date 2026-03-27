@@ -1,0 +1,1 @@
+export default function AssociateExam() { return <div className="p-6 text-xl">Sathi Exam Content</div>; }

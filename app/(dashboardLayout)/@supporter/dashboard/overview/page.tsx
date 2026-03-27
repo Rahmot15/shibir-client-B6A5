@@ -1,0 +1,1 @@
+export default function SupporterOverview() { return <div className="p-6 text-xl">Somorthok Overview Content</div>; }

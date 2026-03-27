@@ -1,0 +1,1 @@
+export default function WorkerReport() { return <div className="p-6 text-xl">Kormi Report Content</div>; }

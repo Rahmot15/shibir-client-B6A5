@@ -1,0 +1,1 @@
+export default function WorkerExam() { return <div className="p-6 text-xl">Kormi Exam Content</div>; }

@@ -1,0 +1,1 @@
+export default function SupporterExam() { return <div className="p-6 text-xl">Somorthok Exam Content</div>; }

@@ -1,0 +1,1 @@
+export default function SupporterSyllabus() { return <div className="p-6 text-xl">Somorthok Syllabus Content</div>; }
