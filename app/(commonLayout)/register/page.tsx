@@ -1,5 +1,5 @@
 import AuthPageShell from "@/components/auth/AuthPageShell";
-import RegisterForm from "@/components/register/RegisterForm";
+import RegisterForm from "@/components/pages/register/RegisterForm";
 
 export default function RegisterPage() {
 	return (

@@ -83,11 +83,11 @@ export function AppSidebar({ role, user, ...props }: AppSidebarProps) {
           <SidebarMenuItem>
             <SidebarMenuButton
               asChild
-              className="data-[slot=sidebar-menu-button]:p-1.5!"
+              className="data-[slot=sidebar-menu-button]:rounded-lg data-[slot=sidebar-menu-button]:p-2! data-[slot=sidebar-menu-button]:hover:bg-emerald-500/10"
             >
               <Link href="/dashboard/overview">
-                <LayoutDashboardIcon className="size-5!" />
-                <span className="text-base font-semibold">Dashboard</span>
+                <LayoutDashboardIcon className="size-5! text-emerald-400" />
+                <span className="text-base font-semibold tracking-wide text-emerald-50">Shibir Dashboard</span>
               </Link>
             </SidebarMenuButton>
           </SidebarMenuItem>

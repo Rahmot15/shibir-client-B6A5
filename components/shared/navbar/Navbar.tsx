@@ -96,7 +96,7 @@ export default function Navbar() {
 				{links.map((l) => (
 					<li key={l}>
 						<a
-							href="#"
+							href="/reports"
 							style={{
 								fontSize: 12,
 								letterSpacing: "1.5px",
