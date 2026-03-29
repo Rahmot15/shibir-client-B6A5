@@ -328,7 +328,7 @@ function TabletView({
    MAIN COMPONENT
 ══════════════════════════════════════════ */
 
-export default function ReportPageClient() {
+export default function AdminReportClient() {
   const [numData, setNumData] = useState<NumData>(initNum);
   const [chkData, setChkData] = useState<ChkData>(initChk);
   const [name, setName] = useState("");
@@ -397,10 +397,10 @@ export default function ReportPageClient() {
             <div>
               <div className="flex items-center gap-1.25 text-[9px] tracking-widest text-[rgba(0,200,83,0.55)] uppercase font-mono mb-0.5">
                 <TrendingUp size={10} color="#00c853" />
-                <span>মাসিক প্রতিবেদন</span>
+                <span>অ্যাডমিন মাসিক প্রতিবেদন</span>
               </div>
               <h1 className="text-[clamp(17px,3.2vw,24px)] font-bold text-[#f0fff4] m-0 leading-[1.2]">
-                ব্যক্তিগত আমলনামা
+                অ্যাডমিন আমলনামা
               </h1>
             </div>
           </div>

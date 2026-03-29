@@ -1,0 +1,3 @@
+export default function SupporterReport() {
+	return <div className="p-6 text-xl">Somorthok Report Content</div>;
+}
