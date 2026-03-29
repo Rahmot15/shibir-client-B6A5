@@ -382,7 +382,7 @@ export default function ReportPageClient() {
   }
 
   return (
-    <main className="min-h-screen bg-[#050f08] px-[clamp(10px,3vw,28px)] py-12 font-sans">
+    <main className="min-h-screen  px-[clamp(10px,3vw,28px)]  font-sans md:mt-20 mt-16">
       {/* ══ HEADER ══ */}
       <div className="max-w-[1400px] mx-auto mb-3.5">
         <header className="bg-[rgba(10,26,14,0.92)] border border-[rgba(0,200,83,0.15)] rounded-[12px] overflow-hidden">
