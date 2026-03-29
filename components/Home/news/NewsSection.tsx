@@ -1,193 +1,82 @@
-"use client";
-
-import useInView from "@/hooks/useInView";
+import MotionReveal from "@/components/shared/MotionReveal";
 
 export default function NewsSection() {
-	const { ref, inView } = useInView();
 	const news = [
 		{
 			tag: "ঘোষণা",
-			tagColor: "#00c853",
+			tagClass:
+				"text-[#00c853] bg-[rgba(0,200,83,0.09)] border-[rgba(0,200,83,0.19)]",
 			date: "১৪ মার্চ ২০২৬",
 			title: "জাতীয় ছাত্র সম্মেলন ২০২৬ আয়োজনের ঘোষণা",
 			desc: "আগামী এপ্রিল মাসে ঢাকায় বিশাল জাতীয় সম্মেলন অনুষ্ঠিত হবে। সকল জেলার প্রতিনিধিদের অংশগ্রহণ কাম্য।",
+			delay: 0.15,
 		},
 		{
 			tag: "কার্যক্রম",
-			tagColor: "#c8a227",
+			tagClass:
+				"text-[#c8a227] bg-[rgba(200,162,39,0.09)] border-[rgba(200,162,39,0.19)]",
 			date: "০৮ মার্চ ২০২৬",
 			title: "বিনামূল্যে কম্পিউটার প্রশিক্ষণ কর্মসূচি শুরু",
 			desc: "সুবিধাবঞ্চিত তরুণদের জন্য ৬৪ জেলায় একযোগে ডিজিটাল দক্ষতা উন্নয়ন কর্মসূচি চালু হচ্ছে।",
+			delay: 0.27,
 		},
 		{
 			tag: "সাফল্য",
-			tagColor: "#00c853",
+			tagClass:
+				"text-[#00c853] bg-[rgba(0,200,83,0.09)] border-[rgba(0,200,83,0.19)]",
 			date: "০১ মার্চ ২০২৬",
 			title: "বার্ষিক বৃত্তি প্রদান অনুষ্ঠান সম্পন্ন",
 			desc: "এ বছর সারাদেশের ১২০০ মেধাবী শিক্ষার্থীকে বৃত্তি প্রদান করা হয়েছে। মোট বরাদ্দ ১.২ কোটি টাকা।",
+			delay: 0.39,
 		},
 	];
 
 	return (
-		<section
-			ref={ref}
-			style={{
-				padding: "100px clamp(20px,6vw,80px)",
-				borderTop: "1px solid rgba(0,200,83,0.08)",
-			}}
-		>
-			<div style={{ maxWidth: 1100, margin: "0 auto" }}>
-				<div
-					style={{
-						display: "flex",
-						alignItems: "flex-end",
-						justifyContent: "space-between",
-						flexWrap: "wrap",
-						gap: 20,
-						marginBottom: 48,
-						opacity: inView ? 1 : 0,
-						transform: inView ? "translateY(0)" : "translateY(20px)",
-						transition: "all 0.7s ease",
-					}}
-				>
+		<section className="border-t border-[rgba(0,200,83,0.08)] px-[clamp(20px,6vw,80px)] py-[100px]">
+			<div className="mx-auto max-w-[1100px]">
+				<MotionReveal delay={0.05} className="mb-12 flex flex-wrap items-end justify-between gap-5">
 					<div>
-						<div
-							style={{
-								fontSize: 9,
-								letterSpacing: "4px",
-								color: "rgba(0,200,83,0.6)",
-								textTransform: "uppercase",
-								marginBottom: 10,
-								fontFamily: "var(--font-geist-mono,monospace)",
-							}}
-						>
+						<div className="mb-2.5 font-mono text-[9px] uppercase tracking-[4px] text-[rgba(0,200,83,0.6)]">
 							{"// সর্বশেষ সংবাদ"}
 						</div>
-						<h2
-							style={{
-								fontSize: "clamp(24px,4vw,38px)",
-								fontWeight: 700,
-								color: "#f0fff4",
-								margin: 0,
-							}}
-						>
+						<h2 className="m-0 text-[clamp(24px,4vw,38px)] font-bold text-[#f0fff4]">
 							আপডেট ও সংবাদ
 						</h2>
 					</div>
+
 					<a
 						href="#"
-						style={{
-							fontSize: 11,
-							letterSpacing: "2px",
-							color: "#00c853",
-							textDecoration: "none",
-							textTransform: "uppercase",
-							borderBottom: "1px solid rgba(0,200,83,0.3)",
-							paddingBottom: 2,
-							transition: "all 0.25s",
-							fontFamily: "var(--font-geist-mono,monospace)",
-						}}
-						onMouseEnter={(e) => (e.currentTarget.style.borderColor = "#00c853")}
-						onMouseLeave={(e) =>
-							(e.currentTarget.style.borderColor = "rgba(0,200,83,0.3)")
-						}
+						className="border-b border-[rgba(0,200,83,0.3)] pb-0.5 font-mono text-[11px] uppercase tracking-[2px] text-[#00c853] no-underline transition-all duration-300 hover:border-[#00c853]"
 					>
 						সব দেখুন →
 					</a>
-				</div>
+				</MotionReveal>
 
-				<div
-					style={{
-						display: "grid",
-						gridTemplateColumns: "repeat(auto-fit, minmax(290px,1fr))",
-						gap: 16,
-					}}
-				>
+				<div className="grid grid-cols-[repeat(auto-fit,minmax(290px,1fr))] gap-4">
 					{news.map((n, i) => (
-						<div
+						<MotionReveal
 							key={i}
-							style={{
-								background: "#0a1a0e",
-								border: "1px solid rgba(0,200,83,0.1)",
-								borderRadius: 4,
-								padding: "28px 24px",
-								cursor: "pointer",
-								transition: "all 0.3s",
-								opacity: inView ? 1 : 0,
-								transform: inView ? "translateY(0)" : "translateY(28px)",
-								transitionProperty:
-									"opacity, transform, border-color, background, box-shadow",
-								transitionDuration: "0.7s",
-								transitionDelay: `${0.15 + i * 0.12}s`,
-							}}
-							onMouseEnter={(e) => {
-								e.currentTarget.style.borderColor = "rgba(0,200,83,0.28)";
-								e.currentTarget.style.background = "#0f2214";
-								e.currentTarget.style.boxShadow = "0 8px 32px rgba(0,0,0,0.35)";
-								e.currentTarget.style.transform = "translateY(-3px)";
-							}}
-							onMouseLeave={(e) => {
-								e.currentTarget.style.borderColor = "rgba(0,200,83,0.1)";
-								e.currentTarget.style.background = "#0a1a0e";
-								e.currentTarget.style.boxShadow = "none";
-								e.currentTarget.style.transform = "translateY(0)";
-							}}
+							delay={n.delay}
+							y={28}
+							className="cursor-pointer rounded-[4px] border border-[rgba(0,200,83,0.1)] bg-[#0a1a0e] px-6 py-7 transition-all duration-300 hover:-translate-y-[3px] hover:border-[rgba(0,200,83,0.28)] hover:bg-[#0f2214] hover:shadow-[0_8px_32px_rgba(0,0,0,0.35)]"
 						>
-							<div
-								style={{
-									display: "flex",
-									justifyContent: "space-between",
-									alignItems: "center",
-									marginBottom: 16,
-								}}
-							>
+							<div className="mb-4 flex items-center justify-between">
 								<span
-									style={{
-										fontSize: 9,
-										letterSpacing: "2px",
-										color: n.tagColor,
-										textTransform: "uppercase",
-										background: `${n.tagColor}18`,
-										border: `1px solid ${n.tagColor}30`,
-										padding: "3px 10px",
-										borderRadius: 2,
-										fontFamily: "var(--font-geist-mono,monospace)",
-									}}
+									className={`rounded-[2px] border px-2.5 py-[3px] font-mono text-[9px] uppercase tracking-[2px] ${n.tagClass}`}
 								>
 									{n.tag}
 								</span>
-								<span
-									style={{
-										fontSize: 10,
-										color: "rgba(232,245,233,0.3)",
-										fontFamily: "var(--font-geist-mono,monospace)",
-									}}
-								>
+								<span className="font-mono text-[10px] text-[rgba(232,245,233,0.3)]">
 									{n.date}
 								</span>
 							</div>
-							<h3
-								style={{
-									fontSize: 15,
-									fontWeight: 600,
-									color: "#f0fff4",
-									marginBottom: 10,
-									lineHeight: 1.45,
-								}}
-							>
+							<h3 className="mb-2.5 text-[15px] font-semibold leading-[1.45] text-[#f0fff4]">
 								{n.title}
 							</h3>
-							<p
-								style={{
-									fontSize: 13,
-									color: "rgba(232,245,233,0.42)",
-									lineHeight: 1.8,
-									margin: 0,
-								}}
-							>
+							<p className="m-0 text-[13px] leading-[1.8] text-[rgba(232,245,233,0.42)]">
 								{n.desc}
 							</p>
-						</div>
+						</MotionReveal>
 					))}
 				</div>
 			</div>

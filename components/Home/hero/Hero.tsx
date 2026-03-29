@@ -1,287 +1,93 @@
-"use client";
-
-import { useEffect, useState } from "react";
+import MotionReveal from "@/components/shared/MotionReveal";
 
 export default function Hero() {
-	const [mounted, setMounted] = useState(false);
-
-	useEffect(() => {
-		setTimeout(() => setMounted(true), 100);
-	}, []);
-
 	return (
-		<section
-			style={{
-				minHeight: "100vh",
-				display: "flex",
-				flexDirection: "column",
-				alignItems: "center",
-				justifyContent: "center",
-				textAlign: "center",
-				padding: "100px clamp(20px,6vw,80px) 80px",
-				position: "relative",
-				overflow: "hidden",
-			}}
-		>
-			<div
-				style={{
-					position: "absolute",
-					top: "50%",
-					left: "50%",
-					translate: "-50% -50%",
-					width: "min(520px, 90vw)",
-					height: "min(520px, 90vw)",
-					border: "1px solid rgba(0,200,83,0.07)",
-					borderRadius: "50%",
-					pointerEvents: "none",
-				}}
-			/>
-			<div
-				style={{
-					position: "absolute",
-					top: "50%",
-					left: "50%",
-					translate: "-50% -50%",
-					width: "min(380px, 70vw)",
-					height: "min(380px, 70vw)",
-					border: "1px solid rgba(200,162,39,0.06)",
-					borderRadius: "50%",
-					pointerEvents: "none",
-				}}
-			/>
+		<section className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden px-[clamp(20px,6vw,80px)] pb-20 pt-[100px] text-center">
+			<div className="pointer-events-none absolute left-1/2 top-1/2 h-[min(520px,90vw)] w-[min(520px,90vw)] -translate-x-1/2 -translate-y-1/2 rounded-full border border-[rgba(0,200,83,0.07)]" />
+			<div className="pointer-events-none absolute left-1/2 top-1/2 h-[min(380px,70vw)] w-[min(380px,70vw)] -translate-x-1/2 -translate-y-1/2 rounded-full border border-[rgba(200,162,39,0.06)]" />
 
-			<div
-				style={{
-					display: "inline-flex",
-					alignItems: "center",
-					gap: 8,
-					padding: "6px 18px",
-					borderRadius: 2,
-					border: "1px solid rgba(0,200,83,0.2)",
-					background: "rgba(0,200,83,0.05)",
-					marginBottom: 36,
-					fontFamily: "var(--font-geist-mono, monospace)",
-					fontSize: 9,
-					letterSpacing: "3.5px",
-					color: "rgba(0,200,83,0.7)",
-					textTransform: "uppercase",
-					opacity: mounted ? 1 : 0,
-					transform: mounted ? "translateY(0)" : "translateY(12px)",
-					transition: "all 0.7s ease 0.1s",
-				}}
+			<MotionReveal
+				delay={0.1}
+				y={12}
+				className="mb-9 inline-flex items-center gap-2 rounded-[2px] border border-[rgba(0,200,83,0.2)] bg-[rgba(0,200,83,0.05)] px-[18px] py-[6px] font-mono text-[9px] uppercase tracking-[3.5px] text-[rgba(0,200,83,0.7)]"
 			>
-				<span style={{ color: "#c8a227" }}>◆</span>
+				<span className="text-[#c8a227]">◆</span>
 				প্রতিষ্ঠা ১৯৭৭ · বাংলাদেশ
-				<span style={{ color: "#c8a227" }}>◆</span>
-			</div>
+				<span className="text-[#c8a227]">◆</span>
+			</MotionReveal>
 
-			<h1
-				style={{
-					fontSize: "clamp(38px, 8vw, 88px)",
-					fontWeight: 700,
-					lineHeight: 1.1,
-					letterSpacing: "-0.5px",
-					margin: "0 0 8px",
-					color: "#f0fff4",
-					opacity: mounted ? 1 : 0,
-					transform: mounted ? "translateY(0)" : "translateY(20px)",
-					transition: "all 0.8s ease 0.25s",
-				}}
+			<MotionReveal
+				delay={0.25}
+				duration={0.8}
+				y={20}
+				className="mb-2 text-[clamp(38px,8vw,88px)] font-bold leading-[1.1] tracking-[-0.5px] text-[#f0fff4]"
 			>
 				বাংলাদেশ ইসলামী
-			</h1>
-			<h1
-				style={{
-					fontSize: "clamp(38px, 8vw, 88px)",
-					fontWeight: 700,
-					lineHeight: 1.1,
-					margin: "0 0 28px",
-					background:
-						"linear-gradient(135deg, #00c853 0%, #00e676 50%, #c8a227 100%)",
-					WebkitBackgroundClip: "text",
-					WebkitTextFillColor: "transparent",
-					backgroundClip: "text",
-					opacity: mounted ? 1 : 0,
-					transform: mounted ? "translateY(0)" : "translateY(20px)",
-					transition: "all 0.8s ease 0.4s",
-				}}
+			</MotionReveal>
+
+			<MotionReveal
+				delay={0.4}
+				duration={0.8}
+				y={20}
+				className="mb-7 bg-[linear-gradient(135deg,#00c853_0%,#00e676_50%,#c8a227_100%)] bg-clip-text text-[clamp(38px,8vw,88px)] font-bold leading-[1.1] text-transparent"
 			>
 				ছাত্রশিবির
-			</h1>
+			</MotionReveal>
 
-			<div
-				style={{
-					display: "flex",
-					alignItems: "center",
-					gap: 12,
-					justifyContent: "center",
-					marginBottom: 28,
-					opacity: mounted ? 1 : 0,
-					transition: "opacity 0.8s ease 0.55s",
-				}}
-			>
-				<div
-					style={{
-						width: 80,
-						height: 1,
-						background: "linear-gradient(to right, transparent, rgba(0,200,83,0.5))",
-					}}
-				/>
-				<div
-					style={{
-						width: 6,
-						height: 6,
-						background: "#c8a227",
-						transform: "rotate(45deg)",
-						boxShadow: "0 0 8px rgba(200,162,39,0.6)",
-					}}
-				/>
-				<div
-					style={{
-						width: 80,
-						height: 1,
-						background: "linear-gradient(to left, transparent, rgba(0,200,83,0.5))",
-					}}
-				/>
-			</div>
+			<MotionReveal delay={0.55} duration={0.8} y={0} className="mb-7 flex items-center justify-center gap-3">
+				<div className="h-px w-20 bg-gradient-to-r from-transparent to-[rgba(0,200,83,0.5)]" />
+				<div className="h-1.5 w-1.5 rotate-45 bg-[#c8a227] shadow-[0_0_8px_rgba(200,162,39,0.6)]" />
+				<div className="h-px w-20 bg-gradient-to-l from-transparent to-[rgba(0,200,83,0.5)]" />
+			</MotionReveal>
 
-			<p
-				style={{
-					fontSize: "clamp(13px, 2vw, 16px)",
-					color: "rgba(232,245,233,0.55)",
-					maxWidth: 480,
-					lineHeight: 1.9,
-					marginBottom: 14,
-					letterSpacing: "0.3px",
-					opacity: mounted ? 1 : 0,
-					transform: mounted ? "translateY(0)" : "translateY(14px)",
-					transition: "all 0.8s ease 0.65s",
-				}}
+			<MotionReveal
+				delay={0.65}
+				duration={0.8}
+				y={14}
+				className="mb-3.5 max-w-[480px] text-[clamp(13px,2vw,16px)] leading-[1.9] tracking-[0.3px] text-[rgba(232,245,233,0.55)]"
 			>
 				সত্য, ন্যায় ও মানবতার আদর্শে গড়ে ওঠা একটি ইসলামী ছাত্র সংগঠন — যা
 				আলোকিত ভবিষ্যতের পথ দেখায়
-			</p>
-			<p
-				style={{
-					fontSize: 12,
-					letterSpacing: "4px",
-					color: "rgba(200,162,39,0.6)",
-					marginBottom: 48,
-					opacity: mounted ? 1 : 0,
-					transition: "opacity 0.8s ease 0.75s",
-					fontFamily: "var(--font-geist-mono, monospace)",
-				}}
+			</MotionReveal>
+
+			<MotionReveal
+				delay={0.75}
+				duration={0.8}
+				y={0}
+				className="mb-12 font-mono text-xs tracking-[4px] text-[rgba(200,162,39,0.6)]"
 			>
 				TRUTH · JUSTICE · LIBERATION
-			</p>
+			</MotionReveal>
 
-			<div
-				style={{
-					display: "flex",
-					gap: 14,
-					flexWrap: "wrap",
-					justifyContent: "center",
-					opacity: mounted ? 1 : 0,
-					transform: mounted ? "translateY(0)" : "translateY(14px)",
-					transition: "all 0.8s ease 0.85s",
-				}}
-			>
+			<MotionReveal delay={0.85} duration={0.8} y={14} className="flex flex-wrap justify-center gap-3.5">
 				<a
 					href="#"
-					style={{
-						padding: "13px 36px",
-						borderRadius: 4,
-						background: "#00c853",
-						color: "#050f08",
-						fontSize: 12,
-						fontWeight: 700,
-						letterSpacing: "2px",
-						textDecoration: "none",
-						textTransform: "uppercase",
-						transition: "all 0.25s",
-						boxShadow: "0 0 30px rgba(0,200,83,0.3)",
-						fontFamily: "var(--font-geist-mono, monospace)",
-					}}
-					onMouseEnter={(e) => {
-						e.currentTarget.style.background = "#00e676";
-						e.currentTarget.style.boxShadow = "0 0 45px rgba(0,200,83,0.45)";
-						e.currentTarget.style.transform = "translateY(-2px)";
-					}}
-					onMouseLeave={(e) => {
-						e.currentTarget.style.background = "#00c853";
-						e.currentTarget.style.boxShadow = "0 0 30px rgba(0,200,83,0.3)";
-						e.currentTarget.style.transform = "translateY(0)";
-					}}
+					className="rounded-[4px] bg-[#00c853] px-9 py-[13px] font-mono text-xs font-bold uppercase tracking-[2px] text-[#050f08] no-underline shadow-[0_0_30px_rgba(0,200,83,0.3)] transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#00e676] hover:shadow-[0_0_45px_rgba(0,200,83,0.45)]"
 				>
 					সদস্য হোন
 				</a>
 
 				<a
 					href="#"
-					style={{
-						padding: "13px 36px",
-						borderRadius: 4,
-						background: "transparent",
-						border: "1px solid rgba(0,200,83,0.3)",
-						color: "#f0fff4",
-						fontSize: 12,
-						letterSpacing: "2px",
-						textDecoration: "none",
-						textTransform: "uppercase",
-						transition: "all 0.25s",
-						fontFamily: "var(--font-geist-mono, monospace)",
-					}}
-					onMouseEnter={(e) => {
-						e.currentTarget.style.borderColor = "rgba(0,200,83,0.65)";
-						e.currentTarget.style.background = "rgba(0,200,83,0.08)";
-						e.currentTarget.style.transform = "translateY(-2px)";
-					}}
-					onMouseLeave={(e) => {
-						e.currentTarget.style.borderColor = "rgba(0,200,83,0.3)";
-						e.currentTarget.style.background = "transparent";
-						e.currentTarget.style.transform = "translateY(0)";
-					}}
+					className="rounded-[4px] border border-[rgba(0,200,83,0.3)] bg-transparent px-9 py-[13px] font-mono text-xs uppercase tracking-[2px] text-[#f0fff4] no-underline transition-all duration-300 hover:-translate-y-0.5 hover:border-[rgba(0,200,83,0.65)] hover:bg-[rgba(0,200,83,0.08)]"
 				>
 					আরও জানুন
 				</a>
-			</div>
+			</MotionReveal>
 
-			<div
-				style={{
-					position: "absolute",
-					bottom: 36,
-					left: "50%",
-					translate: "-50% 0",
-					display: "flex",
-					flexDirection: "column",
-					alignItems: "center",
-					gap: 6,
-					opacity: mounted ? 0.45 : 0,
-					transition: "opacity 1s ease 1.2s",
-					animation: "bounce 2.5s ease-in-out infinite",
-				}}
+			<MotionReveal
+				delay={1.2}
+				duration={1}
+				y={0}
+				className="absolute bottom-9 left-1/2 flex -translate-x-1/2 animate-[hero-bounce_2.5s_ease-in-out_infinite] flex-col items-center gap-1.5 opacity-45"
 			>
-				<div
-					style={{
-						width: 1,
-						height: 40,
-						background: "linear-gradient(to bottom, transparent, rgba(0,200,83,0.6))",
-					}}
-				/>
-				<div
-					style={{
-						fontSize: 9,
-						letterSpacing: "3px",
-						color: "rgba(0,200,83,0.6)",
-						textTransform: "uppercase",
-						fontFamily: "var(--font-geist-mono, monospace)",
-					}}
-				>
+				<div className="h-10 w-px bg-gradient-to-b from-transparent to-[rgba(0,200,83,0.6)]" />
+				<div className="font-mono text-[9px] uppercase tracking-[3px] text-[rgba(0,200,83,0.6)]">
 					scroll
 				</div>
-			</div>
+			</MotionReveal>
 
-			<style>{`@keyframes bounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(6px)} }`}</style>
+			<style>{`@keyframes hero-bounce { 0%,100%{transform:translateY(0)} 50%{transform:translateY(6px)} }`}</style>
 		</section>
 	);
 }
