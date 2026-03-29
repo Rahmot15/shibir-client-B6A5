@@ -19,52 +19,45 @@ export default async function DashboardLayout({
   member: React.ReactNode
   admin: React.ReactNode
 }) {
-  // `cookies()` is async in Next 15+
   const cookieStore = await cookies()
 
   const res = await fetch(`http://localhost:5000/api/v1/auth/me`, {
-    headers: {
-      Cookie: cookieStore.toString(),
-    },
+    headers: { Cookie: cookieStore.toString() },
     cache: "no-store",
   })
 
   const result = await res.json()
   const role = result?.data?.role as Role
 
-  if (!role) {
-    redirect("/login")
-  }
+  if (!role) redirect("/login")
 
   const roleUI: Record<Role, React.ReactNode> = {
     SUPPORTER: supporter,
-    WORKER: worker,
+    WORKER:    worker,
     ASSOCIATE: associate,
-    MEMBER: member,
-    ADMIN: admin,
+    MEMBER:    member,
+    ADMIN:     admin,
   }
 
   return (
     <SidebarProvider
-      style={
-        {
-          "--sidebar-width": "calc(var(--spacing) * 72)",
-          "--header-height": "calc(var(--spacing) * 12)",
-        } as React.CSSProperties
-      }
+      style={{
+        "--sidebar-width": "calc(var(--spacing) * 68)",
+        "--header-height": "calc(var(--spacing) * 12)",
+      } as React.CSSProperties}
     >
       <AppSidebar
         variant="inset"
         role={role}
         user={result?.data ? {
-          name: result.data.name,
-          email: result.data.email,
-          avatar: result.data.image || ""
+          name:   result.data.name,
+          email:  result.data.email,
+          avatar: result.data.image || "",
         } : undefined}
       />
-      <SidebarInset>
+      <SidebarInset className="bg-[#050f08]">
         <SiteHeader />
-        <div className="flex flex-1 flex-col">
+        <div className="flex flex-1 flex-col p-4 lg:p-6">
           {roleUI[role]}
         </div>
       </SidebarInset>
