@@ -290,7 +290,7 @@ export default function SupporterSyllabus() {
       {/* ══════════════════════════════════════
           HERO HEADER
       ══════════════════════════════════════ */}
-      <div className="relative overflow-hidden border-b border-emerald-500/10 bg-[#071310] px-6 py-8">
+      <div className="relative overflow-hidden border-b rounded-lg border-emerald-500/10 bg-[#071310] px-6 py-8">
         {/* bg glow */}
         <div className="pointer-events-none absolute -top-20 left-1/2 h-48 w-96 -translate-x-1/2 rounded-full bg-emerald-500/6 blur-3xl" />
 

@@ -42,25 +42,25 @@ const navByRole: Record<Role, { title: string; url: string; icon: React.ReactNod
   ],
   ASSOCIATE: [
     { title: "Overview", url: "/dashboard/overview", icon: <LayoutDashboardIcon /> },
-    { title: "Exam",     url: "/dashboard/exam",     icon: <ClipboardListIcon /> },
     { title: "Report",   url: "/dashboard/report",   icon: <FileTextIcon /> },
+    { title: "Exam",     url: "/dashboard/exam",     icon: <ClipboardListIcon /> },
   ],
   MEMBER: [
     { title: "Overview",  url: "/dashboard/overview",  icon: <LayoutDashboardIcon /> },
-    { title: "Guidance",  url: "/dashboard/guidance",  icon: <BookOpenIcon /> },
     { title: "Report",    url: "/dashboard/report",    icon: <FileTextIcon /> },
+    { title: "Guidance",  url: "/dashboard/guidance",  icon: <BookOpenIcon /> },
   ],
   SUPPORTER: [
     { title: "Overview", url: "/dashboard/overview", icon: <LayoutDashboardIcon /> },
-    { title: "Exam",     url: "/dashboard/exam",     icon: <ClipboardListIcon /> },
-    { title: "Syllabus", url: "/dashboard/syllabus", icon: <BookOpenIcon /> },
     { title: "Report",   url: "/dashboard/report",   icon: <FileTextIcon /> },
+    { title: "Syllabus", url: "/dashboard/syllabus", icon: <BookOpenIcon /> },
+    { title: "Exam",     url: "/dashboard/exam",     icon: <ClipboardListIcon /> },
   ],
   WORKER: [
     { title: "Overview",          url: "/dashboard/overview",          icon: <LayoutDashboardIcon /> },
-    { title: "Exam",              url: "/dashboard/exam",              icon: <ClipboardListIcon /> },
-    { title: "Responsibilities",  url: "/dashboard/responsibilities",  icon: <ShieldCheckIcon /> },
     { title: "Report",            url: "/dashboard/report",            icon: <FileTextIcon /> },
+    { title: "Responsibilities",  url: "/dashboard/responsibilities",  icon: <ShieldCheckIcon /> },
+    { title: "Exam",              url: "/dashboard/exam",              icon: <ClipboardListIcon /> },
   ],
 }
 
