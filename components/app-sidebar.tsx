@@ -20,6 +20,7 @@ import {
   FileTextIcon,
   LayoutDashboardIcon,
   ShieldCheckIcon,
+  StickyNoteIcon,
   UsersIcon,
   MoonIcon,
 } from "lucide-react"
@@ -59,6 +60,8 @@ const navByRole: Record<Role, { title: string; url: string; icon: React.ReactNod
   WORKER: [
     { title: "Overview",          url: "/dashboard/overview",          icon: <LayoutDashboardIcon /> },
     { title: "Report",            url: "/dashboard/report",            icon: <FileTextIcon /> },
+    { title: "Note",              url: "/dashboard/note",              icon: <StickyNoteIcon /> },
+    { title: "Syllabus",          url: "/dashboard/syllabus",          icon: <BookOpenIcon /> },
     { title: "Responsibilities",  url: "/dashboard/responsibilities",  icon: <ShieldCheckIcon /> },
     { title: "Exam",              url: "/dashboard/exam",              icon: <ClipboardListIcon /> },
   ],
