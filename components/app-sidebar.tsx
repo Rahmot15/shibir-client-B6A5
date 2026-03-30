@@ -19,7 +19,6 @@ import {
   ClipboardListIcon,
   FileTextIcon,
   LayoutDashboardIcon,
-  ShieldCheckIcon,
   StickyNoteIcon,
   UsersIcon,
   MoonIcon,
@@ -62,7 +61,6 @@ const navByRole: Record<Role, { title: string; url: string; icon: React.ReactNod
     { title: "Report",            url: "/dashboard/report",            icon: <FileTextIcon /> },
     { title: "Note",              url: "/dashboard/note",              icon: <StickyNoteIcon /> },
     { title: "Syllabus",          url: "/dashboard/syllabus",          icon: <BookOpenIcon /> },
-    { title: "Responsibilities",  url: "/dashboard/responsibilities",  icon: <ShieldCheckIcon /> },
     { title: "Exam",              url: "/dashboard/exam",              icon: <ClipboardListIcon /> },
   ],
 }

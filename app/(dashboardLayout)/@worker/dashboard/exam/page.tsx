@@ -1,1 +1,5 @@
-export default function WorkerExam() { return <div className="p-6 text-xl">Kormi Exam Content</div>; }
+import WorkerExamClient from "@/components/dashboard/Worker/WorkerExamClient"
+
+export default function WorkerExam() {
+	return <WorkerExamClient />
+}

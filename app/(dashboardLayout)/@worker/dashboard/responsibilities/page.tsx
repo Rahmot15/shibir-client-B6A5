@@ -1,1 +1,0 @@
-export default function WorkerResponsibilities() { return <div className="p-6 text-xl">Kormi Responsibilities Content</div>; }

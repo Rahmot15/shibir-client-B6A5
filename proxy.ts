@@ -7,7 +7,7 @@ const allowedRoutesByRole: Record<Role, string[]> = {
   ASSOCIATE: ["/dashboard/overview", "/dashboard/exam", "/dashboard/report"],
   MEMBER: ["/dashboard/overview", "/dashboard/guidance", "/dashboard/report"],
   SUPPORTER: ["/dashboard/overview", "/dashboard/exam", "/dashboard/syllabus", "/dashboard/report"],
-  WORKER: ["/dashboard/overview", "/dashboard/exam", "/dashboard/syllabus", "/dashboard/responsibilities", "/dashboard/report"],
+  WORKER: ["/dashboard/overview", "/dashboard/exam", "/dashboard/syllabus", "/dashboard/report"],
 }
 
 function matchesRoute(pathname: string, route: string) {
