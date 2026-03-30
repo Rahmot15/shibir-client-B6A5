@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import {
   Award,
   BookMarked,
@@ -30,6 +30,20 @@ import {
   X,
   Zap,
 } from "lucide-react";
+import { toast } from "sonner";
+import {
+  addAdvice,
+  deleteMyReport as deleteMyReportApi,
+  getAdviceList,
+  getMyReportById,
+  getMyReportByMonth,
+  getMyReportHistory,
+  saveOrUpdateMyReport,
+  type CheckboxMetric,
+  type NumericMetric,
+  type SupporterReportDetails,
+  type SupporterReportHistoryItem,
+} from "@/lib/supporterReportService";
 
 const TOTAL_DAYS = 31;
 
@@ -171,7 +185,7 @@ type ChkKey = (typeof CHK_ROWS)[number]["key"];
 type NumData = Record<NumKey, Record<number, string>>;
 type ChkData = Record<ChkKey, Record<number, boolean>>;
 type ReportRecord = {
-  id: number;
+  id: string;
   month: string;
   name: string;
   school: string;
@@ -179,7 +193,42 @@ type ReportRecord = {
   numData: NumData;
   chkData: ChkData;
 };
-type AdviceEntry = { id: number; text: string; createdAt: string };
+type ReportHistoryItem = {
+  id: string;
+  month: string;
+  name: string;
+  school: string;
+  submittedAt: string;
+  numericCount: number;
+  checkboxCount: number;
+};
+type AdviceEntry = { id: string; text: string; createdAt: string };
+
+const NUMERIC_METRIC_MAP: Record<NumKey, NumericMetric> = {
+  quran: "QURAN",
+  hadith: "HADITH",
+  islamic: "ISLAMIC_BOOK",
+  textbook: "TEXTBOOK_HOURS",
+  friends: "FRIENDS_CONTACT",
+  goodwork: "GOODWORK_HOURS",
+  namazJamaat: "NAMAZ_JAMAAT",
+  namazQaza: "NAMAZ_QAZA",
+};
+
+const CHECKBOX_METRIC_MAP: Record<ChkKey, CheckboxMetric> = {
+  class: "CLASS",
+  selfcrit: "SELFCRIT",
+  sports: "SPORTS",
+  newspaper: "NEWSPAPER",
+};
+
+const NUMERIC_METRIC_REVERSE_MAP = Object.fromEntries(
+  Object.entries(NUMERIC_METRIC_MAP).map(([k, v]) => [v, k])
+) as Record<NumericMetric, NumKey>;
+
+const CHECKBOX_METRIC_REVERSE_MAP = Object.fromEntries(
+  Object.entries(CHECKBOX_METRIC_MAP).map(([k, v]) => [v, k])
+) as Record<CheckboxMetric, ChkKey>;
 
 const BN_D = ["০", "১", "২", "৩", "৪", "৫", "৬", "৭", "৮", "৯"];
 const toBn = (n: number | string) => String(n).replace(/\d/g, (d) => BN_D[+d]);
@@ -217,45 +266,51 @@ function initChk(): ChkData {
   return o;
 }
 
-function cloneNum(d: NumData): NumData {
-  const o = {} as NumData;
-  NUM_ROWS.forEach((r) => {
-    o[r.key] = { ...d[r.key] };
-  });
-  return o;
-}
-
-function cloneChk(d: ChkData): ChkData {
-  const o = {} as ChkData;
-  CHK_ROWS.forEach((r) => {
-    o[r.key] = { ...d[r.key] };
-  });
-  return o;
-}
-
 function todayISO() {
   return new Date().toISOString().slice(0, 10);
 }
 
-function buildMockHistory(): ReportRecord[] {
-  const feb = initNum();
-  feb.quran[0] = "12";
-  feb.hadith[0] = "2";
-  const febC = initChk();
-  febC.class[0] = true;
-  febC.selfcrit[1] = true;
+function reportFromApi(report: SupporterReportDetails): ReportRecord {
+  const numData = initNum();
+  const chkData = initChk();
 
-  const jan = initNum();
-  jan.quran[2] = "10";
-  jan.goodwork[2] = "1.5";
-  const janC = initChk();
-  janC.class[2] = true;
-  janC.newspaper[3] = true;
+  report.numericEntries.forEach((entry) => {
+    const key = NUMERIC_METRIC_REVERSE_MAP[entry.metric];
+    if (!key) return;
+    const dayIndex = entry.day - 1;
+    if (dayIndex < 0 || dayIndex >= TOTAL_DAYS) return;
+    numData[key][dayIndex] = String(entry.value);
+  });
 
-  return [
-    { id: 1, month: "2026-02", name: "সমর্থক-১", school: "ঢাকা কলেজ", submittedAt: "2026-03-02", numData: feb, chkData: febC },
-    { id: 2, month: "2026-01", name: "সমর্থক-১", school: "ঢাকা কলেজ", submittedAt: "2026-02-01", numData: jan, chkData: janC },
-  ];
+  report.checkboxEntries.forEach((entry) => {
+    const key = CHECKBOX_METRIC_REVERSE_MAP[entry.metric];
+    if (!key) return;
+    const dayIndex = entry.day - 1;
+    if (dayIndex < 0 || dayIndex >= TOTAL_DAYS) return;
+    chkData[key][dayIndex] = entry.checked;
+  });
+
+  return {
+    id: report.id,
+    month: report.month.slice(0, 7),
+    name: report.name ?? "",
+    school: report.school ?? "",
+    submittedAt: report.submittedAt.slice(0, 10),
+    numData,
+    chkData,
+  };
+}
+
+function historyFromApi(item: SupporterReportHistoryItem): ReportHistoryItem {
+  return {
+    id: item.id,
+    month: item.month.slice(0, 7),
+    name: item.name ?? "",
+    school: item.school ?? "",
+    submittedAt: item.submittedAt.slice(0, 10),
+    numericCount: item._count.numericEntries,
+    checkboxCount: item._count.checkboxEntries,
+  };
 }
 
 function Chk({
@@ -473,18 +528,15 @@ export default function SupporterReportClient() {
   const [chkData, setChkData] = useState<ChkData>(initChk);
   const [name, setName] = useState("");
   const [school, setSchool] = useState("");
-  const [month, setMonth] = useState("");
+  const [month, setMonth] = useState(todayISO().slice(0, 7));
   const [advice, setAdvice] = useState("");
   const [activeDay, setActiveDay] = useState(0);
   const [reportSaved, setReportSaved] = useState(false);
   const [adviceSaved, setAdviceSaved] = useState(false);
   const [showHistory, setShowHistory] = useState(false);
-  const [editingId, setEditingId] = useState<number | null>(null);
-  const [reports, setReports] = useState<ReportRecord[]>(buildMockHistory);
-  const [adviceList, setAdviceList] = useState<AdviceEntry[]>([
-    { id: 1, text: "এই মাসে বন্ধু যোগাযোগ আরও নিয়মিত করুন।", createdAt: "2026-03-10" },
-    { id: 2, text: "সকালের রুটিন ধরে রাখতে প্রতি রাতে প্ল্যান লিখে রাখুন।", createdAt: "2026-03-18" },
-  ]);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [reports, setReports] = useState<ReportHistoryItem[]>([]);
+  const [adviceList, setAdviceList] = useState<AdviceEntry[]>([]);
 
   const setNum = useCallback((row: NumKey, day: number, val: string) => {
     if (val !== "" && (isNaN(Number(val)) || Number(val) < 0)) return;
@@ -521,63 +573,191 @@ export default function SupporterReportClient() {
     return Math.round((filled / total) * 100);
   }, [numData, chkData]);
 
+  const hydrateReportState = useCallback((report: SupporterReportDetails) => {
+    const localReport = reportFromApi(report);
+    setEditingId(localReport.id);
+    setMonth(localReport.month);
+    setName(localReport.name);
+    setSchool(localReport.school);
+    setNumData(localReport.numData);
+    setChkData(localReport.chkData);
+    setAdviceList(
+      (report.advices ?? []).map((entry) => ({
+        id: entry.id,
+        text: entry.text,
+        createdAt: entry.createdAt.slice(0, 10),
+      }))
+    );
+    setAdvice("");
+    setActiveDay(0);
+  }, []);
+
+  const clearFormForMonth = useCallback((targetMonth: string) => {
+    setEditingId(null);
+    setName("");
+    setSchool("");
+    setMonth(targetMonth);
+    setNumData(initNum());
+    setChkData(initChk());
+    setAdvice("");
+    setAdviceList([]);
+    setActiveDay(0);
+    setReportSaved(false);
+    setAdviceSaved(false);
+  }, []);
+
+  const loadHistory = useCallback(async () => {
+    const result = await getMyReportHistory();
+    if (!result.success || !result.data) {
+      toast.error(result.message || "রিপোর্ট হিস্ট্রি লোড করা যায়নি");
+      return;
+    }
+
+    setReports(result.data.map(historyFromApi));
+  }, []);
+
+  const loadReportByMonth = useCallback(
+    async (targetMonth: string) => {
+      if (!targetMonth) return;
+
+      const result = await getMyReportByMonth(targetMonth);
+      if (!result.success || !result.data) {
+        clearFormForMonth(targetMonth);
+        return;
+      }
+
+      hydrateReportState(result.data);
+    },
+    [clearFormForMonth, hydrateReportState]
+  );
+
+  useEffect(() => {
+    void loadHistory();
+  }, [loadHistory]);
+
+  useEffect(() => {
+    void loadReportByMonth(month);
+  }, [month, loadReportByMonth]);
+
   function reset() {
     setNumData(initNum());
     setChkData(initChk());
     setName("");
     setSchool("");
-    setMonth("");
+    setMonth(todayISO().slice(0, 7));
     setAdvice("");
     setActiveDay(0);
     setReportSaved(false);
     setAdviceSaved(false);
     setEditingId(null);
+    setAdviceList([]);
   }
 
-  function handleReportSave() {
-    const payload: ReportRecord = {
-      id: editingId ?? Date.now(),
+  async function handleReportSave() {
+    if (!month) {
+      toast.error("মাস ও বছর নির্বাচন করুন");
+      return;
+    }
+
+    const payload = {
       month,
       name,
       school,
-      submittedAt: todayISO(),
-      numData: cloneNum(numData),
-      chkData: cloneChk(chkData),
+      numericEntries: NUM_ROWS.flatMap((row) =>
+        Array.from({ length: TOTAL_DAYS }, (_, day) => {
+          const rawValue = numData[row.key][day];
+          if (rawValue === "") return null;
+          return {
+            metric: NUMERIC_METRIC_MAP[row.key],
+            day: day + 1,
+            value: Number(rawValue),
+          };
+        }).filter((entry): entry is { metric: NumericMetric; day: number; value: number } => entry !== null)
+      ),
+      checkboxEntries: CHK_ROWS.flatMap((row) =>
+        Array.from({ length: TOTAL_DAYS }, (_, day) => {
+          if (!chkData[row.key][day]) return null;
+          return {
+            metric: CHECKBOX_METRIC_MAP[row.key],
+            day: day + 1,
+            checked: true,
+          };
+        }).filter((entry): entry is { metric: CheckboxMetric; day: number; checked: boolean } => entry !== null)
+      ),
     };
 
-    if (editingId) setReports((p) => p.map((x) => (x.id === editingId ? payload : x)));
-    else {
-      setReports((p) => [payload, ...p]);
-      setEditingId(payload.id);
+    const result = await saveOrUpdateMyReport(payload);
+
+    if (!result.success || !result.data) {
+      toast.error(result.message || "রিপোর্ট সেভ করা যায়নি");
+      return;
     }
+
+    hydrateReportState(result.data);
 
     setReportSaved(true);
     setTimeout(() => setReportSaved(false), 3000);
+
+    void loadHistory();
   }
 
-  function handleAdviceSave() {
+  async function handleAdviceSave() {
+    if (!editingId) {
+      toast.error("পরামর্শ দেওয়ার আগে রিপোর্ট সেভ করুন");
+      return;
+    }
+
     if (!advice.trim()) return;
-    setAdviceList((p) => [{ id: Date.now(), text: advice.trim(), createdAt: todayISO() }, ...p]);
+
+    const result = await addAdvice(editingId, advice.trim());
+    if (!result.success) {
+      toast.error(result.message || "পরামর্শ সেভ করা যায়নি");
+      return;
+    }
+
+    const adviceResult = await getAdviceList(editingId);
+    if (adviceResult.success && adviceResult.data) {
+      setAdviceList(
+        adviceResult.data.map((entry) => ({
+          id: entry.id,
+          text: entry.text,
+          createdAt: entry.createdAt.slice(0, 10),
+        }))
+      );
+    }
+
     setAdvice("");
     setAdviceSaved(true);
     setTimeout(() => setAdviceSaved(false), 3000);
   }
 
-  function openRecord(r: ReportRecord) {
-    setEditingId(r.id);
-    setName(r.name);
-    setSchool(r.school);
-    setMonth(r.month);
-    setNumData(cloneNum(r.numData));
-    setChkData(cloneChk(r.chkData));
+  async function openRecord(r: ReportHistoryItem) {
+    const result = await getMyReportById(r.id);
+
+    if (!result.success || !result.data) {
+      toast.error(result.message || "রিপোর্ট লোড করা যায়নি");
+      return;
+    }
+
+    const localReport = reportFromApi(result.data);
+    hydrateReportState(result.data);
+    setMonth(localReport.month);
     setActiveDay(0);
     setShowHistory(false);
   }
 
-  function deleteReport() {
+  async function deleteReport() {
     if (!editingId) return;
-    setReports((p) => p.filter((x) => x.id !== editingId));
+
+    const result = await deleteMyReportApi(editingId);
+    if (!result.success) {
+      toast.error(result.message || "রিপোর্ট ডিলিট করা যায়নি");
+      return;
+    }
+
+    toast.success("রিপোর্ট ডিলিট হয়েছে");
     reset();
+    void loadHistory();
   }
 
   const prevDay = () => setActiveDay((d) => Math.max(0, d - 1));
@@ -1016,8 +1196,8 @@ export default function SupporterReportClient() {
               {reports.length === 0 && <p className="p-2 font-mono text-[12px] text-[rgba(232,245,233,0.35)]">কোনো রিপোর্ট হিস্ট্রি নেই</p>}
 
               {reports.map((item) => {
-                const hasData = NUM_ROWS.some((r) => Object.values(item.numData[r.key]).some((v) => v !== ""));
-                const chkTotal = CHK_ROWS.reduce((acc, r) => acc + Object.values(item.chkData[r.key]).filter(Boolean).length, 0);
+                const hasData = item.numericCount > 0;
+                const chkTotal = item.checkboxCount;
                 const active = editingId === item.id;
 
                 return (
