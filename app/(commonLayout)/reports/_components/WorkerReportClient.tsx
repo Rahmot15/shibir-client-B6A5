@@ -1,7 +1,20 @@
 "use client"
 
-import { useState, useMemo, useCallback } from "react"
+import { useState, useMemo, useCallback, useEffect } from "react"
 import { toast } from "sonner"
+import {
+  addWorkerAdvice,
+  getMyWorkerReportById,
+  getMyWorkerReportByMonth,
+  getMyWorkerReportHistory,
+  getWorkerAdviceList,
+  saveOrUpdateMyWorkerPlan,
+  saveOrUpdateMyWorkerReport,
+  type WorkerCheckboxMetric,
+  type WorkerNumericMetric,
+  type WorkerReportDetails,
+  type WorkerReportHistoryItem,
+} from "@/lib/workerReportService"
 import {
   BookOpenIcon, BookMarkedIcon, LibraryIcon, GraduationCapIcon,
   UsersIcon, MoonIcon, DumbbellIcon, NewspaperIcon,
@@ -9,7 +22,8 @@ import {
   TrendingUpIcon, SchoolIcon, SaveIcon,
   ChevronRightIcon, ChevronLeftIcon, FileTextIcon,
   TargetIcon, ActivityIcon, StarIcon, SendIcon,
-  UserCheckIcon,
+  HistoryIcon, XIcon,
+  Clock3Icon, CheckCircle2Icon,
 } from "lucide-react"
 
 /* ═══════════════════════════════════════════════
@@ -19,6 +33,7 @@ const TOTAL_DAYS = 31
 const DAYS = Array.from({ length: TOTAL_DAYS }, (_, i) => i + 1)
 const BN = ["০","১","২","৩","৪","৫","৬","৭","৮","৯"]
 const toBn = (n: number | string) => String(n).replace(/\d/g, d => BN[+d])
+const currentMonthISO = () => new Date().toISOString().slice(0, 7)
 
 /* Daily report numeric rows — image-matched simplified structure */
 const NUM_ROWS = [
@@ -55,6 +70,12 @@ type NumKey = (typeof NUM_ROWS)[number]["key"]
 type ChkKey = (typeof CHK_ROWS)[number]["key"]
 type NumData = Record<NumKey, Record<number, string>>
 type ChkData = Record<ChkKey, Record<number, boolean>>
+
+type AdviceEntry = {
+  id: string
+  text: string
+  createdAt: string
+}
 
 /* ── Plan fields (Step 1) ── */
 type PlanData = {
@@ -93,7 +114,7 @@ type PlanData = {
 }
 
 function initPlan(): PlanData {
-  return Object.fromEntries([
+  const plan = Object.fromEntries([
     "planQuranDays","planQuranAvgAyah","planQuranSurah","planQuranMukh",
     "planHadithDays","planHadithAvg","planHadithBk","planHadithMukh",
     "planSahityaPages","planSahityaIslamiName","planSahityaOtherName","planBookNote",
@@ -111,6 +132,9 @@ function initPlan(): PlanData {
     "planBaitulChhatroKonna","planBaitulTableBanko","planBaitulKolsiHari",
     "planMisc","planAdvice","name","institution","month","thana","zila","phone",
   ].map(k => [k, ""])) as PlanData
+
+  plan.month = currentMonthISO()
+  return plan
 }
 
 function initNum(): NumData {
@@ -139,6 +163,70 @@ function calcTotal(vals: Record<number, string>): string {
 function calcChkDays(vals: Record<number, boolean>): string {
   const c = DAYS.filter(d => vals[d]).length
   return c === 0 ? "—" : toBn(c)
+}
+
+function toDayText(isoString: string): string {
+  return new Date(isoString).toLocaleDateString("en-CA")
+}
+
+const NUMERIC_METRIC_MAP: Record<NumKey, WorkerNumericMetric> = {
+  quranAyah: "QURAN_AYAH",
+  hadithCount: "HADITH_COUNT",
+  sahityaPage: "SAHITYA_PAGE",
+  textbookHours: "TEXTBOOK_HOURS",
+  namazJamaat: "NAMAZ_JAMAAT",
+  namazQaza: "NAMAZ_QAZA",
+  contactMember: "CONTACT_MEMBER",
+  contactSathi: "CONTACT_SATHI",
+  contactKormi: "CONTACT_KORMI",
+  contactSomorthok: "CONTACT_SOMORTHOK",
+  contactBondhu: "CONTACT_BONDHU",
+  contactMedhabi: "CONTACT_MEDHABI",
+  contactVortakangkhi: "CONTACT_VORTAKANGKHI",
+  contactMuharrama: "CONTACT_MUHARRAMA",
+  distSahitya: "DIST_SAHITYA",
+  distMagazine: "DIST_MAGAZINE",
+  distStickerCard: "DIST_STICKER_CARD",
+  distUpohar: "DIST_UPOHAR",
+  orgDawati: "ORG_DAWATI",
+  orgSangothonik: "ORG_SANGOTHONIK",
+}
+
+const CHECKBOX_METRIC_MAP: Record<ChkKey, WorkerCheckboxMetric> = {
+  class: "CLASS",
+  sports: "SPORTS",
+  newspaper: "NEWSPAPER",
+  selfcrit: "SELFCRIT",
+}
+
+const NUMERIC_KEY_FROM_METRIC: Record<WorkerNumericMetric, NumKey> = {
+  QURAN_AYAH: "quranAyah",
+  HADITH_COUNT: "hadithCount",
+  SAHITYA_PAGE: "sahityaPage",
+  TEXTBOOK_HOURS: "textbookHours",
+  NAMAZ_JAMAAT: "namazJamaat",
+  NAMAZ_QAZA: "namazQaza",
+  CONTACT_MEMBER: "contactMember",
+  CONTACT_SATHI: "contactSathi",
+  CONTACT_KORMI: "contactKormi",
+  CONTACT_SOMORTHOK: "contactSomorthok",
+  CONTACT_BONDHU: "contactBondhu",
+  CONTACT_MEDHABI: "contactMedhabi",
+  CONTACT_VORTAKANGKHI: "contactVortakangkhi",
+  CONTACT_MUHARRAMA: "contactMuharrama",
+  DIST_SAHITYA: "distSahitya",
+  DIST_MAGAZINE: "distMagazine",
+  DIST_STICKER_CARD: "distStickerCard",
+  DIST_UPOHAR: "distUpohar",
+  ORG_DAWATI: "orgDawati",
+  ORG_SANGOTHONIK: "orgSangothonik",
+}
+
+const CHECKBOX_KEY_FROM_METRIC: Record<WorkerCheckboxMetric, ChkKey> = {
+  CLASS: "class",
+  SPORTS: "sports",
+  NEWSPAPER: "newspaper",
+  SELFCRIT: "selfcrit",
 }
 
 /* ═══════════════════════════════════════════════
@@ -205,37 +293,19 @@ function Chk({ checked, onChange, color = "#00c853", size = 20 }: {
 /* ═══════════════════════════════════════════════
    STEP 1 — MONTHLY PLAN
 ═══════════════════════════════════════════════ */
-function Step1Plan({ plan, setPlan }: {
+function Step1Plan({ plan, setPlan, onSavePlan }: {
   plan: PlanData
   setPlan: (p: PlanData) => void
+  onSavePlan: () => void
 }) {
   const set = (k: keyof PlanData) => (v: string) => setPlan({ ...plan, [k]: v })
 
   function savePlan() {
-    toast.success("মাসিক পরিকল্পনা সংরক্ষিত হয়েছে!", {
-      description: "আপনি যেকোনো সময় রিপোর্ট ফর্মে যেতে পারবেন।",
-      duration: 4000,
-    })
+    onSavePlan()
   }
 
   return (
     <div className="space-y-5">
-
-      {/* Meta */}
-      <div className="rounded-2xl border border-emerald-500/14 bg-[#071310] overflow-hidden">
-        <div className="h-0.5 bg-linear-to-r from-transparent via-emerald-500 to-transparent" />
-        <div className="p-5">
-          <SectionTitle icon={UserCheckIcon} color="emerald">পরিচিতি</SectionTitle>
-          <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-            <PlanInput label="নামঃ"              value={plan.name}        onChange={set("name")}        placeholder="আপনার নাম" />
-            <PlanInput label="শিক্ষাপ্রতিষ্ঠানঃ" value={plan.institution} onChange={set("institution")} placeholder="প্রতিষ্ঠানের নাম" />
-            <PlanInput label="মাসঃ"              value={plan.month}       onChange={set("month")}       placeholder="মাস/বছর" type="month" />
-            <PlanInput label="থানাঃ"             value={plan.thana}       onChange={set("thana")}       placeholder="থানা" />
-            <PlanInput label="জেলাঃ"             value={plan.zila}        onChange={set("zila")}        placeholder="জেলা" />
-            <PlanInput label="মোবাইলঃ"           value={plan.phone}       onChange={set("phone")}       placeholder="০১৭..." type="tel" />
-          </div>
-        </div>
-      </div>
 
       {/* কুরআন */}
       <div className="rounded-2xl border border-emerald-500/14 bg-[#071310] overflow-hidden">
@@ -442,10 +512,11 @@ function Step1Plan({ plan, setPlan }: {
 /* ═══════════════════════════════════════════════
    STEP 2 — DAILY REPORT TABLE
 ═══════════════════════════════════════════════ */
-function Step2Report({ numData, chkData, setNum, toggleChk }: {
+function Step2Report({ numData, chkData, setNum, toggleChk, onSubmit }: {
   numData: NumData; chkData: ChkData
   setNum: (k: NumKey, d: number, v: string) => void
   toggleChk: (k: ChkKey, d: number) => void
+  onSubmit: () => void
 }) {
   const [activeDay, setActiveDay] = useState(1)
 
@@ -462,10 +533,7 @@ function Step2Report({ numData, chkData, setNum, toggleChk }: {
   }
 
   function submitReport() {
-    toast.success("মাসিক রিপোর্ট সংরক্ষিত হয়েছে!", {
-      description: "এক নজরে রিপোর্ট ট্যাব থেকে সারাংশ দেখুন।",
-      duration: 3500,
-    })
+    onSubmit()
   }
 
   const dayFilled = (d: number) =>
@@ -1028,6 +1096,12 @@ export default function WorkerReport() {
   const [plan, setPlan]       = useState<PlanData>(initPlan)
   const [numData, setNumData] = useState<NumData>(initNum)
   const [chkData, setChkData] = useState<ChkData>(initChk)
+  const [savedReports, setSavedReports] = useState<WorkerReportHistoryItem[]>([])
+  const [showHistory, setShowHistory] = useState(false)
+  const [editingId, setEditingId] = useState<string | null>(null)
+  const [advice, setAdvice] = useState("")
+  const [adviceSaved, setAdviceSaved] = useState(false)
+  const [adviceList, setAdviceList] = useState<AdviceEntry[]>([])
   const isReportTab = activeTab === "report"
 
   const setNum = useCallback((key: NumKey, day: number, val: string) => {
@@ -1039,15 +1113,251 @@ export default function WorkerReport() {
     setChkData(p => ({ ...p, [key]: { ...p[key], [day]: !p[key][day] } }))
   }, [])
 
+  const hydrateFromApi = useCallback((report: WorkerReportDetails) => {
+    const nextPlan = initPlan()
+    nextPlan.month = report.month.slice(0, 7)
+    nextPlan.name = report.name ?? ""
+    nextPlan.institution = report.institution ?? ""
+    nextPlan.thana = report.thana ?? ""
+    nextPlan.zila = report.zila ?? ""
+    nextPlan.phone = report.phone ?? ""
+
+    if (report.planSnapshot && typeof report.planSnapshot === "object") {
+      const snapshot = report.planSnapshot as Record<string, unknown>
+      Object.keys(nextPlan).forEach((key) => {
+        const v = snapshot[key]
+        if (typeof v === "string") {
+          nextPlan[key as keyof PlanData] = v
+        }
+      })
+    }
+
+    const nextNum = initNum()
+    report.numericEntries.forEach((entry) => {
+      const key = NUMERIC_KEY_FROM_METRIC[entry.metric]
+      if (!key) return
+      const day = Number(entry.day)
+      if (day < 1 || day > TOTAL_DAYS) return
+      nextNum[key][day] = String(entry.value)
+    })
+
+    const nextChk = initChk()
+    report.checkboxEntries.forEach((entry) => {
+      const key = CHECKBOX_KEY_FROM_METRIC[entry.metric]
+      if (!key) return
+      const day = Number(entry.day)
+      if (day < 1 || day > TOTAL_DAYS) return
+      nextChk[key][day] = !!entry.checked
+    })
+
+    setPlan(nextPlan)
+    setNumData(nextNum)
+    setChkData(nextChk)
+    setAdviceList((report.advices ?? []).map(item => ({
+      id: item.id,
+      text: item.text,
+      createdAt: item.createdAt,
+    })))
+    setAdvice("")
+    setEditingId(report.id)
+  }, [])
+
+  const clearReportForMonth = useCallback((month: string) => {
+    setPlan(prev => {
+      const next = initPlan()
+      next.month = month
+      next.name = prev.name
+      next.institution = prev.institution
+      next.thana = prev.thana
+      next.zila = prev.zila
+      next.phone = prev.phone
+      return next
+    })
+    setNumData(initNum())
+    setChkData(initChk())
+    setAdviceList([])
+    setAdvice("")
+    setEditingId(null)
+  }, [])
+
+  const loadHistory = useCallback(async () => {
+    const result = await getMyWorkerReportHistory()
+    if (!result.success || !result.data) {
+      toast.error(result.message || "রিপোর্ট হিস্ট্রি পাওয়া যায়নি")
+      return
+    }
+    setSavedReports(result.data)
+  }, [])
+
+  const loadReportByMonth = useCallback(async (month: string) => {
+    if (!month) {
+      setEditingId(null)
+      return
+    }
+
+    const result = await getMyWorkerReportByMonth(month)
+    if (!result.success || !result.data) {
+      clearReportForMonth(month)
+      return
+    }
+
+    hydrateFromApi(result.data)
+  }, [clearReportForMonth, hydrateFromApi])
+
+  useEffect(() => {
+    const timer = window.setTimeout(() => {
+      void loadHistory()
+    }, 0)
+
+    return () => window.clearTimeout(timer)
+  }, [loadHistory])
+
+  useEffect(() => {
+    const timer = window.setTimeout(() => {
+      void loadReportByMonth(plan.month)
+    }, 0)
+
+    return () => window.clearTimeout(timer)
+  }, [plan.month, loadReportByMonth])
+
+  const saveMonthlyReport = useCallback(async () => {
+    if (!plan.month) {
+      toast.error("মাস নির্বাচন করুন")
+      return
+    }
+
+    const payload = {
+      month: plan.month,
+      name: plan.name || undefined,
+      institution: plan.institution || undefined,
+      thana: plan.thana || undefined,
+      zila: plan.zila || undefined,
+      phone: plan.phone || undefined,
+      planSnapshot: plan,
+      numericEntries: NUM_ROWS.flatMap((row) =>
+        DAYS.map((day) => {
+          const value = numData[row.key][day]
+          if (value === "") return null
+          return {
+            metric: NUMERIC_METRIC_MAP[row.key],
+            day,
+            value: Number(value),
+          }
+        }).filter((entry): entry is { metric: WorkerNumericMetric; day: number; value: number } => entry !== null)
+      ),
+      checkboxEntries: CHK_ROWS.flatMap((row) =>
+        DAYS.map((day) => {
+          if (!chkData[row.key][day]) return null
+          return {
+            metric: CHECKBOX_METRIC_MAP[row.key],
+            day,
+            checked: true,
+          }
+        }).filter((entry): entry is { metric: WorkerCheckboxMetric; day: number; checked: boolean } => entry !== null)
+      ),
+    }
+
+    const result = await saveOrUpdateMyWorkerReport(payload)
+    if (!result.success || !result.data) {
+      toast.error(result.message || "মাসিক রিপোর্ট সংরক্ষণ করা যায়নি")
+      return
+    }
+
+    hydrateFromApi(result.data)
+    void loadHistory()
+
+    toast.success("মাসিক রিপোর্ট সংরক্ষিত হয়েছে!", {
+      description: "হিস্ট্রি বাটন থেকে আগের রিপোর্ট খুলতে পারবেন।",
+      duration: 3500,
+    })
+  }, [plan, numData, chkData, hydrateFromApi, loadHistory])
+
+  const savePlanOnly = useCallback(async () => {
+    if (!plan.month) {
+      toast.error("মাস ও বছর নির্বাচন করুন")
+      return
+    }
+
+    const result = await saveOrUpdateMyWorkerPlan({
+      month: plan.month,
+      name: plan.name || undefined,
+      institution: plan.institution || undefined,
+      thana: plan.thana || undefined,
+      zila: plan.zila || undefined,
+      phone: plan.phone || undefined,
+      planSnapshot: plan,
+    })
+
+    if (!result.success || !result.data) {
+      toast.error(result.message || "মাসিক পরিকল্পনা সংরক্ষণ করা যায়নি")
+      return
+    }
+
+    setEditingId(result.data.id)
+    void loadHistory()
+
+    toast.success("মাসিক পরিকল্পনা সংরক্ষিত হয়েছে!", {
+      description: "রিপোর্ট ফর্ম না সেভ করলেও পরিকল্পনা আলাদাভাবে সংরক্ষিত থাকবে।",
+      duration: 4000,
+    })
+  }, [plan, loadHistory])
+
+  const openSavedReport = useCallback(async (report: WorkerReportHistoryItem) => {
+    const result = await getMyWorkerReportById(report.id)
+    if (!result.success || !result.data) {
+      toast.error(result.message || "রিপোর্ট লোড করা যায়নি")
+      return
+    }
+
+    hydrateFromApi(result.data)
+    setShowHistory(false)
+    setActiveTab("report")
+    toast.success("সেভ করা রিপোর্ট লোড হয়েছে")
+  }, [hydrateFromApi])
+
+  const saveAdvice = useCallback(async () => {
+    if (!editingId) {
+      toast.error("পরামর্শ দেওয়ার আগে রিপোর্ট সেভ করুন")
+      return
+    }
+
+    const trimmedAdvice = advice.trim()
+    if (!trimmedAdvice) return
+
+    const result = await addWorkerAdvice(editingId, trimmedAdvice)
+    if (!result.success) {
+      toast.error(result.message || "পরামর্শ সেভ করা যায়নি")
+      return
+    }
+
+    const adviceResult = await getWorkerAdviceList(editingId)
+    if (adviceResult.success && adviceResult.data) {
+      setAdviceList(adviceResult.data.map(item => ({
+        id: item.id,
+        text: item.text,
+        createdAt: item.createdAt,
+      })))
+      void loadHistory()
+    }
+
+    setAdvice("")
+    setAdviceSaved(true)
+    setTimeout(() => setAdviceSaved(false), 2500)
+  }, [editingId, advice, loadHistory])
+
   function resetAll() {
     setPlan(initPlan())
     setNumData(initNum())
     setChkData(initChk())
+    setEditingId(null)
+    setAdvice("")
+    setAdviceList([])
+    setShowHistory(false)
     setActiveTab("plan")
   }
 
   return (
-    <div className="min-h-screen bg-[#050f08] pt-16">
+    <div className="min-h-screen bg-[#050f08] pt-16 pb-6 md:pb-10 md:px-10">
 
       {/* Page header */}
       <div className="sticky top-16 z-10 border-b border-emerald-500/10 bg-[#050f08]/95 backdrop-blur-md px-4 py-3 md:px-8">
@@ -1062,11 +1372,42 @@ export default function WorkerReport() {
                 <div className="font-mono text-[9px] text-white/25">বাংলাদেশ ইসলামী ছাত্রশিবির</div>
               </div>
             </div>
-            {plan.month && (
-              <span className="rounded-full border border-amber-500/20 bg-amber-500/8 px-3 py-1 font-mono text-[10px] text-amber-400/70">
-                {plan.month}
-              </span>
-            )}
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => setShowHistory(true)}
+                className="flex items-center gap-1.5 rounded-lg border border-amber-500/25 bg-amber-500/8 px-3 py-1.5 font-mono text-[10px] text-amber-400/80 hover:bg-amber-500/15 transition-all"
+              >
+                <HistoryIcon className="h-3.5 w-3.5" strokeWidth={1.8} />
+                হিস্ট্রি
+              </button>
+              {plan.month && (
+                <span className="rounded-full border border-amber-500/20 bg-amber-500/8 px-3 py-1 font-mono text-[10px] text-amber-400/70">
+                  {plan.month}
+                </span>
+              )}
+            </div>
+          </div>
+          <div className="mb-3 grid grid-cols-1 gap-2 sm:grid-cols-2">
+            <div className="rounded-lg border border-emerald-500/18 bg-emerald-500/6 p-2.5">
+              <label className="mb-1 block font-mono text-[10px] text-emerald-300/70">নাম</label>
+              <input
+                type="text"
+                value={plan.name}
+                onChange={e => setPlan({ ...plan, name: e.target.value })}
+                placeholder="আপনার নাম"
+                className="h-8 w-full rounded-md border border-emerald-500/25 bg-[#050f08] px-2.5 text-[12px] text-emerald-50 outline-none focus:border-emerald-400/45"
+              />
+            </div>
+            <div className="rounded-lg border border-amber-500/18 bg-amber-500/6 p-2.5">
+              <label className="mb-1 block font-mono text-[10px] text-amber-300/70">তারিখ (মাস)</label>
+              <input
+                type="month"
+                value={plan.month}
+                onChange={e => setPlan({ ...plan, month: e.target.value })}
+                className="h-8 w-full rounded-md border border-amber-500/25 bg-[#050f08] px-2.5 text-[12px] text-amber-100 outline-none focus:border-amber-400/45"
+              />
+            </div>
           </div>
           <div className="grid grid-cols-3 gap-2">
             <button
@@ -1108,8 +1449,62 @@ export default function WorkerReport() {
 
       {/* Content */}
       <div className={isReportTab ? "mx-auto w-full max-w-none px-4 py-5 md:px-8" : "mx-auto max-w-4xl px-4 py-5 md:px-8"}>
-        {activeTab === "plan" && <Step1Plan plan={plan} setPlan={setPlan} />}
-        {activeTab === "report" && <Step2Report numData={numData} chkData={chkData} setNum={setNum} toggleChk={toggleChk} />}
+        {activeTab === "plan" && <Step1Plan plan={plan} setPlan={setPlan} onSavePlan={savePlanOnly} />}
+        {activeTab === "report" && (
+          <div className="space-y-4">
+            <Step2Report numData={numData} chkData={chkData} setNum={setNum} toggleChk={toggleChk} onSubmit={saveMonthlyReport} />
+
+            <div className="overflow-hidden rounded-2xl border border-amber-500/15 bg-[#071310]">
+              <div className="h-0.5 bg-linear-to-r from-transparent via-amber-500/60 to-transparent" />
+              <div className="p-5">
+                <div className="mb-3 flex items-center gap-2">
+                  <MessageSquareIcon className="h-4 w-4 text-amber-400/70" strokeWidth={1.8} />
+                  <span className="font-mono text-[10px] uppercase tracking-[2.5px] text-amber-400/70">পরামর্শ</span>
+                </div>
+
+                <textarea
+                  value={advice}
+                  onChange={e => setAdvice(e.target.value)}
+                  rows={4}
+                  placeholder="দায়িত্বশীল হিসেবে এখানে পরামর্শ লিখুন..."
+                  className="w-full resize-y rounded-xl border border-amber-500/20 bg-[#050f08] px-3 py-2.5 text-[12px] text-white/75 placeholder-white/20 outline-none focus:border-amber-500/45 transition-all leading-relaxed"
+                />
+
+                <div className="mt-3 flex justify-end">
+                  <button
+                    type="button"
+                    onClick={saveAdvice}
+                    className={`flex items-center gap-1.5 rounded-lg px-4 py-2 text-[11px] font-semibold transition-all ${
+                      adviceSaved
+                        ? "border border-amber-400 bg-amber-500/20 text-amber-300"
+                        : "border border-amber-500/30 bg-amber-500/10 text-amber-300 hover:bg-amber-500/18"
+                    }`}
+                  >
+                    {adviceSaved ? <CheckCircle2Icon className="h-3.5 w-3.5" strokeWidth={2} /> : <SaveIcon className="h-3.5 w-3.5" strokeWidth={2} />}
+                    {adviceSaved ? "পরামর্শ সেভ হয়েছে" : "পরামর্শ সেভ করুন"}
+                  </button>
+                </div>
+
+                {adviceList.length > 0 && (
+                  <div className="mt-4 rounded-xl border border-amber-500/18 bg-[#050f08]/70 p-3">
+                    <div className="mb-2.5 font-mono text-[9px] uppercase tracking-[2px] text-amber-400/60">সেভ করা পরামর্শসমূহ</div>
+                    <div className="space-y-2 max-h-52 overflow-y-auto pr-1">
+                      {adviceList.map(item => (
+                        <div key={item.id} className="rounded-lg border border-emerald-500/15 bg-emerald-500/6 px-3 py-2">
+                          <div className="mb-1 flex items-center gap-1 text-[10px] font-mono text-amber-400/65">
+                            <Clock3Icon className="h-3 w-3" strokeWidth={1.8} />
+                            {toDayText(item.createdAt)}
+                          </div>
+                          <p className="text-[12px] leading-relaxed text-white/75">{item.text}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
         {activeTab === "overview" && (
           <Step3Summary
             plan={plan}
@@ -1120,6 +1515,66 @@ export default function WorkerReport() {
           />
         )}
       </div>
+
+      {showHistory && (
+        <div className="fixed inset-x-0 bottom-0 top-16 z-40">
+          <button
+            type="button"
+            aria-label="Close history"
+            onClick={() => setShowHistory(false)}
+            className="absolute inset-0 bg-black/60"
+          />
+
+          <aside className="absolute right-0 top-0 flex h-full w-full max-w-105 flex-col border-l border-amber-500/25 bg-[#06160f] shadow-[-8px_0_30px_rgba(0,0,0,0.45)]">
+            <div className="flex items-center gap-2 border-b border-amber-500/20 px-4 py-3">
+              <HistoryIcon className="h-4 w-4 text-amber-400" strokeWidth={1.8} />
+              <span className="font-mono text-[11px] tracking-[2px] uppercase text-amber-400/90">রিপোর্ট হিস্ট্রি</span>
+              <button
+                type="button"
+                onClick={() => setShowHistory(false)}
+                className="ml-auto flex h-7 w-7 items-center justify-center rounded-md border border-white/20 bg-white/5 text-white/70"
+              >
+                <XIcon className="h-3.5 w-3.5" />
+              </button>
+            </div>
+
+            <div className="flex-1 space-y-2 overflow-y-auto p-3">
+              {savedReports.length === 0 && (
+                <p className="rounded-lg border border-emerald-500/10 bg-emerald-500/5 p-3 text-[12px] text-white/45">কোনো সেভ করা রিপোর্ট নেই</p>
+              )}
+
+              {savedReports.map(item => {
+                const active = item.id === editingId
+                const hasData = item._count.numericEntries > 0 || item._count.checkboxEntries > 0
+
+                return (
+                  <button
+                    key={item.id}
+                    type="button"
+                    onClick={() => openSavedReport(item)}
+                    className={`w-full rounded-xl p-3 text-left transition-all ${
+                      active
+                        ? "border border-emerald-500/45 bg-emerald-500/10"
+                        : "border border-emerald-500/20 bg-emerald-500/5 hover:border-emerald-500/35"
+                    }`}
+                  >
+                    <div className="mb-1 flex items-center justify-between gap-2">
+                      <span className="text-[13px] font-semibold text-white/85">{item.month || "মাস নির্ধারণ হয়নি"}</span>
+                      <span className="text-[10px] font-mono text-amber-400/70">{toDayText(item.submittedAt)}</span>
+                    </div>
+                    <p className="text-[12px] text-white/70">{item.name || "নাম নেই"}</p>
+                    <p className="mb-2 text-[11px] text-white/45">{item.institution || "প্রতিষ্ঠান নেই"}</p>
+                    <div className="flex gap-2">
+                      <span className="rounded px-2 py-0.5 text-[10px] font-mono text-emerald-300/80 bg-emerald-500/10">ডাটা: {hasData ? "আছে" : "নেই"}</span>
+                      <span className="rounded px-2 py-0.5 text-[10px] font-mono text-amber-300/80 bg-amber-500/10">পরামর্শ: {toBn(item._count.advices)}</span>
+                    </div>
+                  </button>
+                )
+              })}
+            </div>
+          </aside>
+        </div>
+      )}
     </div>
   )
 }
