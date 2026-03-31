@@ -1,68 +1,71 @@
 import { JSONContent } from "@tiptap/react";
 
+const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000";
+const BASE_URL = `${BACKEND_URL}/api/v1/notes`;
+
 export interface Note {
   id: string;
   title: string;
-  content: JSONContent; // TipTap JSON
+  content: JSONContent;
+  userId: string;
   createdAt: string;
   updatedAt: string;
 }
 
+const getAllNotes = async (): Promise<Note[]> => {
+  const response = await fetch(BASE_URL, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    credentials: 'include',
+    cache: 'no-store'
+  });
+  const data = await response.json();
+  if (!data.success) throw new Error(data.message);
+  return data.data;
+};
+
+const createNote = async (payload: { title: string; content: JSONContent }): Promise<Note> => {
+  const response = await fetch(BASE_URL, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    credentials: 'include',
+    body: JSON.stringify(payload),
+  });
+  const data = await response.json();
+  if (!data.success) throw new Error(data.message);
+  return data.data;
+};
+
+const updateNote = async (id: string, payload: { title?: string; content?: JSONContent }): Promise<Note> => {
+  const response = await fetch(`${BASE_URL}/${id}`, {
+    method: "PATCH",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    credentials: 'include',
+    body: JSON.stringify(payload),
+  });
+  const data = await response.json();
+  if (!data.success) throw new Error(data.message);
+  return data.data;
+};
+
+const deleteNote = async (id: string): Promise<void> => {
+  const response = await fetch(`${BASE_URL}/${id}`, {
+    method: "DELETE",
+    credentials: 'include',
+  });
+  const data = await response.json();
+  if (!data.success) throw new Error(data.message);
+};
+
 export const noteService = {
-  async getAllNotes(): Promise<Note[]> {
-    if (typeof window === "undefined") return [];
-    const saved = localStorage.getItem("shibir_notes");
-    return saved ? JSON.parse(saved) : [];
-  },
-
-  async saveNote(note: Partial<Note>): Promise<Note> {
-    const notes = await this.getAllNotes();
-    const now = new Date().toISOString();
-
-    let updatedNote: Note;
-
-    if (note.id) {
-      const index = notes.findIndex(n => n.id === note.id);
-      if (index !== -1) {
-        updatedNote = {
-          ...notes[index],
-          ...note,
-          updatedAt: now
-        } as Note;
-        notes[index] = updatedNote;
-      } else {
-        // Fallback if ID doesn't exist for some reason
-        updatedNote = {
-          id: note.id,
-          title: note.title || "শিরোনামহীন নোট",
-          content: note.content || {},
-          createdAt: now,
-          updatedAt: now,
-        } as Note;
-        notes.unshift(updatedNote);
-      }
-    } else {
-      updatedNote = {
-        id: Math.random().toString(36).substr(2, 9),
-        title: note.title || "শিরোনামহীন নোট",
-        content: note.content || {},
-        createdAt: now,
-        updatedAt: now,
-      };
-      notes.unshift(updatedNote);
-    }
-
-    if (typeof window !== "undefined") {
-      localStorage.setItem("shibir_notes", JSON.stringify(notes));
-    }
-    return updatedNote;
-  },
-
-  async deleteNote(id: string): Promise<void> {
-    const notes = await this.getAllNotes();
-    const filtered = notes.filter(n => n.id !== id);
-    if (typeof window !== "undefined") {
-      localStorage.setItem("shibir_notes", JSON.stringify(filtered));
-    }
-  }
+  getAllNotes,
+  createNote,
+  updateNote,
+  deleteNote,
 };

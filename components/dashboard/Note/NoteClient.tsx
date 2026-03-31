@@ -22,33 +22,24 @@ import {
   History,
   ArrowLeft,
   Search,
-  MoreVertical,
   Trash2,
-  Calendar,
-  ChevronRight
+  Calendar
 } from "lucide-react"
 import { toast } from "sonner"
 import "./editor-styles.css"
 import { format } from "date-fns"
 import { bn } from "date-fns/locale"
-
-// Mock Note Type
-interface Note {
-  id: string
-  title: string
-  content: JSONContent
-  updatedAt: string
-}
+import { noteService, Note } from "@/lib/noteService"
 
 export function NoteClient() {
-  const [view, setView] = useState<"list" | "edit">("list")
+  const [view, setView] = useState<"list" | "edit" | "loading">("list")
   const [notes, setNotes] = useState<Note[]>([])
   const [currentNote, setCurrentNote] = useState<Note | null>(null)
   const [isSaving, setIsSaving] = useState(false)
+  const [isLoading, setIsLoading] = useState(false)
   const [title, setTitle] = useState("")
   const [searchQuery, setSearchQuery] = useState("")
 
-  // Ref for auto-save prevention (if needed) and tracking current state
   const lastSavedContent = useRef<string>("")
   const lastSavedTitle = useRef<string>("")
 
@@ -74,34 +65,29 @@ export function NoteClient() {
     },
   })
 
-  // Load notes from local storage on mount
   useEffect(() => {
-    const loadNotes = () => {
-      const saved = localStorage.getItem("shibir_notes")
-      if (saved) {
-        setNotes(JSON.parse(saved))
+    const loadNotes = async () => {
+      setIsLoading(true)
+      try {
+        const data = await noteService.getAllNotes()
+        setNotes(data)
+      } catch (error) {
+        toast.error("নোট লোড করতে সমস্যা হয়েছে")
+      } finally {
+        setIsLoading(false)
       }
     }
     loadNotes()
   }, [])
 
-  // Smart Sync: Re-sync editor when currentNote changes
   useEffect(() => {
     if (currentNote && editor) {
-      const syncEditor = () => {
-        editor.commands.setContent(currentNote.content)
-        setTitle(currentNote.title)
-        lastSavedContent.current = JSON.stringify(currentNote.content)
-        lastSavedTitle.current = currentNote.title
-      }
-      syncEditor()
+      editor.commands.setContent(currentNote.content)
+      setTitle(currentNote.title)
+      lastSavedContent.current = JSON.stringify(currentNote.content)
+      lastSavedTitle.current = currentNote.title
     }
   }, [currentNote, editor])
-
-  const saveToStorage = (updatedNotes: Note[]) => {
-    localStorage.setItem("shibir_notes", JSON.stringify(updatedNotes))
-    setNotes(updatedNotes)
-  }
 
   const handleSave = useCallback(async (isAutoSave = false) => {
     if (!editor) return null
@@ -109,7 +95,6 @@ export function NoteClient() {
     const content = editor.getJSON()
     const currentTitle = title.trim() || "শিরোনামহীন নোট"
 
-    // Skip if nothing changed
     if (isAutoSave &&
         JSON.stringify(content) === lastSavedContent.current &&
         currentTitle === lastSavedTitle.current) {
@@ -118,46 +103,40 @@ export function NoteClient() {
 
     if (!isAutoSave) setIsSaving(true)
 
-    const now = new Date().toISOString()
-    let updatedNotes: Note[] = []
-
-    if (currentNote) {
-      // Update existing
-      updatedNotes = notes.map(n =>
-        n.id === currentNote.id ? { ...n, title: currentTitle, content, updatedAt: now } : n
-      )
-      // Sort to top
-      updatedNotes.sort((a, b) => new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime())
-    } else {
-      // Create new
-      const newNote: Note = {
-        id: Math.random().toString(36).substr(2, 9),
-        title: currentTitle,
-        content,
-        updatedAt: now
+    try {
+      if (currentNote) {
+        const updated = await noteService.updateNote(currentNote.id, {
+          title: currentTitle,
+          content
+        })
+        setNotes(prev => prev.map(n => n.id === updated.id ? updated : n))
+        setCurrentNote(updated)
+      } else {
+        const created = await noteService.createNote({
+          title: currentTitle,
+          content
+        })
+        setNotes(prev => [created, ...prev])
+        setCurrentNote(created)
       }
-      updatedNotes = [newNote, ...notes]
-      setCurrentNote(newNote)
+
+      lastSavedContent.current = JSON.stringify(content)
+      lastSavedTitle.current = currentTitle
+
+      if (!isAutoSave) toast.success("নোটটি সেভ করা হয়েছে")
+    } catch (error) {
+      if (!isAutoSave) toast.error("সেভ করতে সমস্যা হয়েছে")
+    } finally {
+      if (!isAutoSave) setIsSaving(false)
     }
 
-    saveToStorage(updatedNotes)
-    lastSavedContent.current = JSON.stringify(content)
-    lastSavedTitle.current = currentTitle
-
-    if (!isAutoSave) {
-      toast.success("নোটটি সেভ করা হয়েছে")
-      setIsSaving(false)
-    }
-
-    return updatedNotes
-  }, [editor, title, currentNote, notes])
+    return null
+  }, [editor, title, currentNote])
 
   const handleNewNote = async () => {
-    // Smart Handle: Auto save current work before switching
     if (editor && !editor.isEmpty) {
       await handleSave(true)
     }
-
     setCurrentNote(null)
     setTitle("")
     editor?.commands.clearContent()
@@ -178,11 +157,15 @@ export function NoteClient() {
     setView("edit")
   }
 
-  const deleteNote = (e: React.MouseEvent, id: string) => {
+  const deleteNote = async (e: React.MouseEvent, id: string) => {
     e.stopPropagation()
-    const updated = notes.filter(n => n.id !== id)
-    saveToStorage(updated)
-    toast.error("নোট ডিলিট করা হয়েছে")
+    try {
+      await noteService.deleteNote(id)
+      setNotes(prev => prev.filter(n => n.id !== id))
+      toast.error("নোট ডিলিট করা হয়েছে")
+    } catch (error) {
+      toast.error("ডিলিট করতে সমস্যা হয়েছে")
+    }
   }
 
   const filteredNotes = notes.filter(n =>
@@ -192,7 +175,6 @@ export function NoteClient() {
   return (
     <div className="flex flex-col min-h-[calc(100vh-120px)] w-full">
       {view === "list" ? (
-        /* --- LIST VIEW --- */
         <div className="flex flex-col w-full max-w-7xl mx-auto px-4 md:px-6 py-4 animate-in fade-in duration-500">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-8">
             <div className="flex items-center gap-3">
@@ -225,13 +207,18 @@ export function NoteClient() {
             />
           </div>
 
-          {filteredNotes.length > 0 ? (
+          {isLoading ? (
+            <div className="flex flex-col items-center justify-center py-20">
+              <Loader2 className="h-10 w-10 animate-spin text-emerald-500/50" />
+              <p className="mt-4 text-white/20 animate-pulse">নোট লোড হচ্ছে...</p>
+            </div>
+          ) : filteredNotes.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {filteredNotes.map((note) => (
                 <div
                   key={note.id}
                   onClick={() => openNote(note)}
-                  className="group relative flex flex-col p-5 rounded-3xl border border-white/5 bg-[#071310]/50 hover:bg-[#071310] hover:border-emerald-500/20 transition-all cursor-pointer overflow-hidden min-h-[160px]"
+                  className="group relative flex flex-col p-5 rounded-3xl border border-white/5 bg-[#071310]/50 hover:bg-[#071310] hover:border-emerald-500/20 transition-all cursor-pointer overflow-hidden min-h-40"
                 >
                   <div className="flex justify-between items-start mb-3">
                     <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-white/5 text-white/30 group-hover:bg-emerald-500/20 group-hover:text-emerald-400 transition-all">
@@ -259,7 +246,7 @@ export function NoteClient() {
               ))}
             </div>
           ) : (
-            <div className="flex flex-col items-center justify-center py-20 border-2 border-dashed border-white/5 rounded-[40px] bg-white/[0.01]">
+            <div className="flex flex-col items-center justify-center py-20 border-2 border-dashed border-white/5 rounded-[40px] bg-white/1">
                <div className="h-20 w-20 rounded-full bg-white/5 flex items-center justify-center mb-4">
                   <StickyNote className="text-white/10" size={40} />
                </div>
@@ -269,7 +256,6 @@ export function NoteClient() {
           )}
         </div>
       ) : (
-        /* --- EDIT VIEW --- */
         <div className="flex flex-col w-full min-h-[calc(100vh-120px)] animate-in slide-in-from-right duration-500 ease-out overflow-x-hidden">
           <div className="sticky top-0 z-20 flex items-center justify-between gap-2 px-3 md:px-8 py-3 bg-[#030a08]/80 backdrop-blur-xl border-b border-white/5">
             <div className="flex items-center gap-2 md:gap-4 overflow-hidden">
@@ -279,12 +265,11 @@ export function NoteClient() {
                 onClick={handleBackToList}
                 className="h-9 w-9 md:h-10 md:w-10 rounded-xl hover:bg-white/5 text-white/40 shrink-0"
               >
-                <ArrowLeft size={18} className="md:hidden" />
-                <ArrowLeft size={20} className="hidden md:block" />
+                <ArrowLeft size={20} />
               </Button>
-              <div className="w-[1px] h-6 bg-white/10 hidden sm:block shrink-0" />
+              <div className="w-px h-6 bg-white/10 hidden sm:block shrink-0" />
               <div className="flex flex-col overflow-hidden">
-                 <span className="text-[9px] md:text-[10px] uppercase tracking-widest text-emerald-500/50 font-bold mb-0.5 truncate">Editing Note</span>
+                 <span className="text-[10px] uppercase tracking-widest text-emerald-500/50 font-bold mb-0.5 truncate">Editing Note</span>
                  <input
                     type="text"
                     value={title}
@@ -299,9 +284,9 @@ export function NoteClient() {
               <Button
                 onClick={() => handleSave()}
                 disabled={isSaving}
-                className="bg-emerald-600 hover:bg-emerald-500 text-white font-bold h-9 md:h-10 px-4 md:px-6 rounded-xl shadow-[0_0_20px_rgba(5,150,105,0.2)]"
+                className="bg-emerald-600 hover:bg-emerald-500 text-white font-bold h-10 px-6 rounded-xl shadow-[0_0_20px_rgba(5,150,105,0.2)]"
               >
-                {isSaving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4 md:mr-2" />}
+                {isSaving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Save className="h-4 w-4 mr-2" />}
                 <span className="hidden sm:inline">সেভ করুন</span>
               </Button>
             </div>
@@ -316,12 +301,12 @@ export function NoteClient() {
                 </div>
               </div>
 
-              <div className="mt-4 md:mt-6 flex flex-col sm:flex-row items-center justify-between gap-4 px-2 md:px-4">
-                 <div className="flex items-center gap-2 text-white/20 text-[10px] md:text-xs">
+              <div className="mt-6 flex flex-col sm:flex-row items-center justify-between gap-4 px-4">
+                 <div className="flex items-center gap-2 text-white/20 text-xs">
                     <History size={14} />
                     <span>শেষ আপডেট: {currentNote ? format(new Date(currentNote.updatedAt), "p, dd MMM", { locale: bn }) : "এখনই"}</span>
                  </div>
-                 <p className="text-[9px] md:text-[10px] text-white/10 uppercase tracking-tighter hidden sm:block">Powered by TipTap Writing Core v2.0</p>
+                 <p className="text-[10px] text-white/10 uppercase tracking-tighter hidden sm:block">Powered by TipTap Writing Core v2.0</p>
               </div>
             </div>
           </div>
@@ -330,4 +315,3 @@ export function NoteClient() {
     </div>
   )
 }
-
