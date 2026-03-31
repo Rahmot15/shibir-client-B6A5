@@ -1,1 +1,5 @@
-export default function AssociateOverview() { return <div className="p-6 text-xl">Sathi Overview Content</div>; }
+import { AssociateOverviewContent } from "@/components/dashboard/Associate/AssociateOverview";
+
+export default function AssociateOverview() {
+  return <AssociateOverviewContent />;
+}
