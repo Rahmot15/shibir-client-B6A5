@@ -34,6 +34,32 @@ const REPORT_STATS = {
   totalReports: 3,
 }
 
+const NOTE_STATS = {
+  totalNotes: 6,
+  pinned: 2,
+}
+
+const RECENT_NOTES = [
+  {
+    id: 1,
+    title: "আজকের হালাকায় শেখা বিষয়",
+    preview: "তাওহীদের দাওয়াতের পদ্ধতি এবং ব্যক্তিগত আমলের ধারাবাহিকতা।",
+    time: "আজ",
+  },
+  {
+    id: 2,
+    title: "মাসিক রিপোর্ট প্রস্তুতি",
+    preview: "কুরআন, হাদিস ও ক্লাস উপস্থিতির দৈনিক হিসাবগুলো আলাদা করে রাখব।",
+    time: "গতকাল",
+  },
+  {
+    id: 3,
+    title: "পরীক্ষা প্রস্তুতি নোট",
+    preview: "সিলেবাসের তাহারাত ও সালাত অধ্যায়টা এই সপ্তাহে শেষ করতে হবে।",
+    time: "৩ দিন আগে",
+  },
+]
+
 const EXAM = {
   mcqDone:     false,
   mcqScore:    null as number | null,
@@ -72,6 +98,7 @@ const QUICK_LINKS = [
   { href: "/dashboard/syllabus", label: "সিলেবাস",     Icon: BookOpenIcon,    color: "emerald", desc: `${SYLLABUS_PROGRESS}% সম্পন্ন` },
   { href: "/dashboard/exam",     label: "পরীক্ষা",     Icon: ClipboardListIcon,color: "amber",  desc: "MCQ + ভাইভা" },
   { href: "/dashboard/report",   label: "রিপোর্ট",     Icon: FileTextIcon,    color: "blue",    desc: `${REPORT_STATS.totalReports} মাসের রিপোর্ট` },
+  { href: "/dashboard/note",     label: "নোট",        Icon: BookMarkedIcon,  color: "purple",  desc: `${NOTE_STATS.totalNotes} টি নোট` },
 ]
 
 /* ═══════════════════════════════════════════════════
@@ -207,12 +234,13 @@ export default function SupporterOverview() {
           <div className="space-y-4">
 
             {/* Quick links */}
-            <div className="grid grid-cols-3 gap-3">
+            <div className="grid grid-cols-2 gap-3 md:grid-cols-4">
               {QUICK_LINKS.map(l => {
                 const map: Record<string, { card: string; icon: string; badge: string }> = {
                   emerald: { card: "border-emerald-500/14 hover:border-emerald-500/28 hover:bg-emerald-500/5", icon: "bg-emerald-500/10 border-emerald-500/20 text-emerald-400", badge: "text-emerald-400/60" },
                   amber:   { card: "border-amber-500/14 hover:border-amber-500/28 hover:bg-amber-500/5",       icon: "bg-amber-500/10 border-amber-500/20 text-amber-400",     badge: "text-amber-400/60" },
                   blue:    { card: "border-blue-500/14 hover:border-blue-500/28 hover:bg-blue-500/5",          icon: "bg-blue-500/10 border-blue-500/20 text-blue-400",        badge: "text-blue-400/60" },
+                  purple:  { card: "border-purple-500/14 hover:border-purple-500/28 hover:bg-purple-500/5",    icon: "bg-purple-500/10 border-purple-500/20 text-purple-400",  badge: "text-purple-400/60" },
                 }
                 const c = map[l.color]
                 return (
@@ -392,6 +420,53 @@ export default function SupporterOverview() {
                     </div>
                   ))}
                 </div>
+              </div>
+            </div>
+
+            {/* Notes snapshot */}
+            <div className="rounded-2xl border border-purple-500/12 bg-[#0e0a14] overflow-hidden">
+              <div className="h-0.5 bg-gradient-to-r from-transparent via-purple-500/60 to-transparent" />
+              <div className="p-5">
+                <div className="mb-4 flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <BookMarkedIcon className="h-4 w-4 text-purple-300" strokeWidth={1.8} />
+                    <span className="text-[13px] font-semibold text-purple-100">নোটস কর্নার</span>
+                  </div>
+                  <Link href="/dashboard/note" className="font-mono text-[10px] text-purple-300/70 hover:text-purple-200 transition-colors">
+                    সব দেখুন
+                  </Link>
+                </div>
+
+                <div className="mb-3 grid gap-2 sm:grid-cols-2">
+                  <div className="rounded-xl border border-purple-500/15 bg-purple-500/10 px-3 py-2">
+                    <div className="font-mono text-[18px] font-bold text-purple-200">{NOTE_STATS.totalNotes}</div>
+                    <div className="text-[11px] text-purple-200/60">মোট নোট</div>
+                  </div>
+                  <div className="rounded-xl border border-emerald-500/15 bg-emerald-500/10 px-3 py-2">
+                    <div className="font-mono text-[18px] font-bold text-emerald-300">{NOTE_STATS.pinned}</div>
+                    <div className="text-[11px] text-emerald-300/60">পিন করা নোট</div>
+                  </div>
+                </div>
+
+                <div className="space-y-2.5">
+                  {RECENT_NOTES.map((note) => (
+                    <div key={note.id} className="rounded-xl border border-white/8 bg-white/5 px-3 py-2.5">
+                      <div className="flex items-center justify-between gap-2">
+                        <p className="truncate text-[12px] font-semibold text-white/80">{note.title}</p>
+                        <span className="flex-shrink-0 font-mono text-[9px] text-white/35">{note.time}</span>
+                      </div>
+                      <p className="mt-1 text-[11px] leading-relaxed text-white/45">{note.preview}</p>
+                    </div>
+                  ))}
+                </div>
+
+                <Link
+                  href="/dashboard/note"
+                  className="mt-3 flex w-full items-center justify-center gap-2 rounded-xl border border-purple-500/30 bg-purple-500/10 py-2.5 text-[12px] font-semibold text-purple-200 hover:bg-purple-500/15 transition-all"
+                >
+                  নোট লিখুন বা আপডেট করুন
+                  <ArrowRightIcon className="h-3.5 w-3.5" />
+                </Link>
               </div>
             </div>
 

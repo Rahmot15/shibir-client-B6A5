@@ -73,7 +73,7 @@ export type SupporterReportHistoryItem = {
 export async function saveOrUpdateMyReport(
   payload: SaveSupporterReportPayload
 ): Promise<ApiResponse<SupporterReportDetails>> {
-  const res = await fetch(`${API_BASE}/supporter-reports/my`, {
+  const res = await fetch(`${API_BASE}/supporter-report/my`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     credentials: "include",
@@ -95,7 +95,7 @@ export async function saveOrUpdateMyReport(
 export async function getMyReportHistory(): Promise<
   ApiResponse<SupporterReportHistoryItem[]>
 > {
-  const res = await fetch(`${API_BASE}/supporter-reports/my/history`, {
+  const res = await fetch(`${API_BASE}/supporter-report/my/history`, {
     method: "GET",
     headers: { "Content-Type": "application/json" },
     credentials: "include",
@@ -116,7 +116,7 @@ export async function getMyReportHistory(): Promise<
 export async function getMyReportById(
   reportId: string
 ): Promise<ApiResponse<SupporterReportDetails>> {
-  const res = await fetch(`${API_BASE}/supporter-reports/my/${reportId}`, {
+  const res = await fetch(`${API_BASE}/supporter-report/my/${reportId}`, {
     method: "GET",
     headers: { "Content-Type": "application/json" },
     credentials: "include",
@@ -138,7 +138,7 @@ export async function getMyReportByMonth(
   month: string
 ): Promise<ApiResponse<SupporterReportDetails>> {
   const res = await fetch(
-    `${API_BASE}/supporter-reports/my/by-month?month=${encodeURIComponent(month)}`,
+    `${API_BASE}/supporter-report/my/by-month?month=${encodeURIComponent(month)}`,
     {
       method: "GET",
       headers: { "Content-Type": "application/json" },
@@ -161,7 +161,7 @@ export async function getMyReportByMonth(
 export async function deleteMyReport(
   reportId: string
 ): Promise<ApiResponse<null>> {
-  const res = await fetch(`${API_BASE}/supporter-reports/my/${reportId}`, {
+  const res = await fetch(`${API_BASE}/supporter-report/my/${reportId}`, {
     method: "DELETE",
     headers: { "Content-Type": "application/json" },
     credentials: "include",
@@ -183,7 +183,7 @@ export async function addAdvice(
   reportId: string,
   text: string
 ): Promise<ApiResponse<{ id: string; text: string; createdAt: string }>> {
-  const res = await fetch(`${API_BASE}/supporter-reports/${reportId}/advice`, {
+  const res = await fetch(`${API_BASE}/supporter-report/${reportId}/advice`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     credentials: "include",
@@ -205,7 +205,7 @@ export async function addAdvice(
 export async function getAdviceList(
   reportId: string
 ): Promise<ApiResponse<{ id: string; text: string; createdAt: string }[]>> {
-  const res = await fetch(`${API_BASE}/supporter-reports/${reportId}/advice`, {
+  const res = await fetch(`${API_BASE}/supporter-report/${reportId}/advice`, {
     method: "GET",
     headers: { "Content-Type": "application/json" },
     credentials: "include",

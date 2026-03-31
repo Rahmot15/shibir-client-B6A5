@@ -37,6 +37,7 @@ const data = {
 const navByRole: Record<Role, { title: string; url: string; icon: React.ReactNode }[]> = {
   ADMIN: [
     { title: "Overview",      url: "/dashboard/overview",      icon: <LayoutDashboardIcon /> },
+    { title: "Note",          url: "/dashboard/note",          icon: <StickyNoteIcon /> },
     { title: "Manage Users",  url: "/dashboard/manage-users",  icon: <UsersIcon /> },
     { title: "Approve Viva",  url: "/dashboard/approve-viva",  icon: <CheckCircleIcon /> },
   ],
@@ -48,11 +49,13 @@ const navByRole: Record<Role, { title: string; url: string; icon: React.ReactNod
   ],
   MEMBER: [
     { title: "Overview",  url: "/dashboard/overview",  icon: <LayoutDashboardIcon /> },
+    { title: "Note",      url: "/dashboard/note",      icon: <StickyNoteIcon /> },
     { title: "Guidance",  url: "/dashboard/guidance",  icon: <BookOpenIcon /> },
   ],
   SUPPORTER: [
     { title: "Overview", url: "/dashboard/overview", icon: <LayoutDashboardIcon /> },
     { title: "Report",   url: "/dashboard/report",   icon: <FileTextIcon /> },
+    { title: "Note",     url: "/dashboard/note",     icon: <StickyNoteIcon /> },
     { title: "Syllabus", url: "/dashboard/syllabus", icon: <BookOpenIcon /> },
     { title: "Exam",     url: "/dashboard/exam",     icon: <ClipboardListIcon /> },
   ],
