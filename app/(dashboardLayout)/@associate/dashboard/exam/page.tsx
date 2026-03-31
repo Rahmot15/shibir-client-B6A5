@@ -1,1 +1,5 @@
-export default function AssociateExam() { return <div className="p-6 text-xl">Sathi Exam Content</div>; }
+import AssociateExamClient from "@/components/dashboard/Associate/AssociateExamClient"
+
+export default function AssociateExam() {
+	return <AssociateExamClient />
+}

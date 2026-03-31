@@ -223,7 +223,7 @@ function Step1Plan({ plan, setPlan }: {
 
       {/* Meta */}
       <div className="rounded-2xl border border-emerald-500/14 bg-[#071310] overflow-hidden">
-        <div className="h-0.5 bg-gradient-to-r from-transparent via-emerald-500 to-transparent" />
+        <div className="h-0.5 bg-linear-to-r from-transparent via-emerald-500 to-transparent" />
         <div className="p-5">
           <SectionTitle icon={UserCheckIcon} color="emerald">পরিচিতি</SectionTitle>
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
@@ -239,7 +239,7 @@ function Step1Plan({ plan, setPlan }: {
 
       {/* কুরআন */}
       <div className="rounded-2xl border border-emerald-500/14 bg-[#071310] overflow-hidden">
-        <div className="h-0.5 bg-gradient-to-r from-transparent via-[#4ade80] to-transparent" />
+        <div className="h-0.5 bg-linear-to-r from-transparent via-[#4ade80] to-transparent" />
         <div className="p-5">
           <SectionTitle icon={BookOpenIcon} color="emerald">কুরআন অধ্যয়ন পরিকল্পনা</SectionTitle>
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
@@ -253,7 +253,7 @@ function Step1Plan({ plan, setPlan }: {
 
       {/* হাদিস */}
       <div className="rounded-2xl border border-blue-500/12 bg-[#071310] overflow-hidden">
-        <div className="h-0.5 bg-gradient-to-r from-transparent via-blue-400/60 to-transparent" />
+        <div className="h-0.5 bg-linear-to-r from-transparent via-blue-400/60 to-transparent" />
         <div className="p-5">
           <SectionTitle icon={BookMarkedIcon} color="blue">হাদিস অধ্যয়ন পরিকল্পনা</SectionTitle>
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
@@ -267,7 +267,7 @@ function Step1Plan({ plan, setPlan }: {
 
       {/* সাহিত্য */}
       <div className="rounded-2xl border border-purple-500/12 bg-[#071310] overflow-hidden">
-        <div className="h-0.5 bg-gradient-to-r from-transparent via-purple-400/60 to-transparent" />
+        <div className="h-0.5 bg-linear-to-r from-transparent via-purple-400/60 to-transparent" />
         <div className="p-5">
           <SectionTitle icon={LibraryIcon} color="purple">সাহিত্য অধ্যয়ন পরিকল্পনা</SectionTitle>
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
@@ -281,7 +281,7 @@ function Step1Plan({ plan, setPlan }: {
 
       {/* পাঠ্যপুস্তক ও ক্লাস */}
       <div className="rounded-2xl border border-amber-500/12 bg-[#071310] overflow-hidden">
-        <div className="h-0.5 bg-gradient-to-r from-transparent via-amber-400/60 to-transparent" />
+        <div className="h-0.5 bg-linear-to-r from-transparent via-amber-400/60 to-transparent" />
         <div className="p-5">
           <SectionTitle icon={GraduationCapIcon} color="amber">পাঠ্যপুস্তক ও ক্লাস</SectionTitle>
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
@@ -295,7 +295,7 @@ function Step1Plan({ plan, setPlan }: {
 
       {/* নামাজ */}
       <div className="rounded-2xl border border-indigo-500/12 bg-[#071310] overflow-hidden">
-        <div className="h-0.5 bg-gradient-to-r from-transparent via-indigo-400/60 to-transparent" />
+        <div className="h-0.5 bg-linear-to-r from-transparent via-indigo-400/60 to-transparent" />
         <div className="p-5">
           <SectionTitle icon={MoonIcon} color="purple">নামাজ পরিকল্পনা</SectionTitle>
           <div className="grid grid-cols-2 gap-3">
@@ -307,7 +307,7 @@ function Step1Plan({ plan, setPlan }: {
 
       {/* সাংগঠনিক দায়িত্ব */}
       <div className="rounded-2xl border border-rose-500/12 bg-[#071310] overflow-hidden">
-        <div className="h-0.5 bg-gradient-to-r from-transparent via-rose-400/60 to-transparent" />
+        <div className="h-0.5 bg-linear-to-r from-transparent via-rose-400/60 to-transparent" />
         <div className="p-5">
           <SectionTitle icon={TargetIcon} color="rose">সাংগঠনিক দায়িত্ব পালন</SectionTitle>
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
@@ -323,7 +323,7 @@ function Step1Plan({ plan, setPlan }: {
 
       {/* যোগাযোগ */}
       <div className="rounded-2xl border border-emerald-500/12 bg-[#071310] overflow-hidden">
-        <div className="h-0.5 bg-gradient-to-r from-transparent via-emerald-400/40 to-transparent" />
+        <div className="h-0.5 bg-linear-to-r from-transparent via-emerald-400/40 to-transparent" />
         <div className="p-5">
           <SectionTitle icon={UsersIcon} color="emerald">যোগাযোগ পরিকল্পনা</SectionTitle>
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-5">
@@ -347,7 +347,7 @@ function Step1Plan({ plan, setPlan }: {
 
       {/* বিতরণ */}
       <div className="rounded-2xl border border-amber-500/12 bg-[#071310] overflow-hidden">
-        <div className="h-0.5 bg-gradient-to-r from-transparent via-amber-400/40 to-transparent" />
+        <div className="h-0.5 bg-linear-to-r from-transparent via-amber-400/40 to-transparent" />
         <div className="p-5">
           <SectionTitle icon={SendIcon} color="amber">বিতরণ পরিকল্পনা</SectionTitle>
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
@@ -370,7 +370,7 @@ function Step1Plan({ plan, setPlan }: {
 
       {/* বৃদ্ধি */}
       <div className="rounded-2xl border border-teal-500/12 bg-[#071310] overflow-hidden">
-        <div className="h-0.5 bg-gradient-to-r from-transparent via-teal-400/40 to-transparent" />
+        <div className="h-0.5 bg-linear-to-r from-transparent via-teal-400/40 to-transparent" />
         <div className="p-5">
           <SectionTitle icon={TrendingUpIcon} color="emerald">বৃদ্ধির পরিকল্পনা</SectionTitle>
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
@@ -392,7 +392,7 @@ function Step1Plan({ plan, setPlan }: {
 
       {/* বায়তুলমাল */}
       <div className="rounded-2xl border border-yellow-500/12 bg-[#071310] overflow-hidden">
-        <div className="h-0.5 bg-gradient-to-r from-transparent via-yellow-400/40 to-transparent" />
+        <div className="h-0.5 bg-linear-to-r from-transparent via-yellow-400/40 to-transparent" />
         <div className="p-5">
           <SectionTitle icon={StarIcon} color="amber">বায়তুলমাল</SectionTitle>
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
@@ -524,14 +524,14 @@ function Step2Report({ numData, chkData, setNum, toggleChk }: {
 
         {/* Core numeric rows */}
         <div className="rounded-2xl border border-emerald-500/12 bg-[#071310] overflow-hidden">
-          <div className="h-0.5 bg-gradient-to-r from-transparent via-emerald-500 to-transparent" />
+          <div className="h-0.5 bg-linear-to-r from-transparent via-emerald-500 to-transparent" />
           <div className="p-4 space-y-2">
             <div className="mb-3 text-[9px] tracking-[2.5px] text-emerald-500/40 uppercase font-mono">মূল রিপোর্ট ফরম</div>
             {BASIC_ROWS.map(key => {
               const r = pick(key)
               return (
               <div key={r.key} className="flex items-center gap-3 rounded-xl px-3 py-2.5" style={{ background: r.bg, border: `1px solid ${r.border}` }}>
-                <div className="flex h-8 w-8 items-center justify-center rounded-lg flex-shrink-0" style={{ background: `${r.color}18`, border: `1px solid ${r.color}44` }}>
+                <div className="flex h-8 w-8 items-center justify-center rounded-lg shrink-0" style={{ background: `${r.color}18`, border: `1px solid ${r.color}44` }}>
                   <r.Icon className="h-3.5 w-3.5" style={{ color: r.color }} strokeWidth={1.8} />
                 </div>
                 <div className="flex-1 min-w-0">
@@ -559,7 +559,7 @@ function Step2Report({ numData, chkData, setNum, toggleChk }: {
 
         {/* নামাজ */}
         <div className="rounded-2xl border border-indigo-500/14 bg-[#071310] overflow-hidden">
-          <div className="h-0.5 bg-gradient-to-r from-transparent via-indigo-400/60 to-transparent" />
+          <div className="h-0.5 bg-linear-to-r from-transparent via-indigo-400/60 to-transparent" />
           <div className="p-4">
             <SectionTitle icon={MoonIcon} color="purple">নামাজ (১ সারি × ২ ঘর)</SectionTitle>
             <div className="grid grid-cols-2 gap-2">
@@ -586,7 +586,7 @@ function Step2Report({ numData, chkData, setNum, toggleChk }: {
 
         {/* যোগাযোগ */}
         <div className="rounded-2xl border border-sky-500/14 bg-[#071310] overflow-hidden">
-          <div className="h-0.5 bg-gradient-to-r from-transparent via-sky-400/60 to-transparent" />
+          <div className="h-0.5 bg-linear-to-r from-transparent via-sky-400/60 to-transparent" />
           <div className="p-4">
             <SectionTitle icon={UsersIcon} color="blue">যোগাযোগ (২ সারি × ৪ ঘর)</SectionTitle>
             <div className="space-y-2">
@@ -634,7 +634,7 @@ function Step2Report({ numData, chkData, setNum, toggleChk }: {
 
         {/* বিতরণ */}
         <div className="rounded-2xl border border-amber-500/14 bg-[#071310] overflow-hidden">
-          <div className="h-0.5 bg-gradient-to-r from-transparent via-amber-400/60 to-transparent" />
+          <div className="h-0.5 bg-linear-to-r from-transparent via-amber-400/60 to-transparent" />
           <div className="p-4">
             <SectionTitle icon={SendIcon} color="amber">বিতরণ (১ সারি × ৪ ঘর)</SectionTitle>
             <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
@@ -661,7 +661,7 @@ function Step2Report({ numData, chkData, setNum, toggleChk }: {
 
         {/* সাংগঠনিক */}
         <div className="rounded-2xl border border-rose-500/14 bg-[#071310] overflow-hidden">
-          <div className="h-0.5 bg-gradient-to-r from-transparent via-rose-400/60 to-transparent" />
+          <div className="h-0.5 bg-linear-to-r from-transparent via-rose-400/60 to-transparent" />
           <div className="p-4">
             <SectionTitle icon={TargetIcon} color="rose">সাংগঠনিক দায়িত্ব পালন</SectionTitle>
             <div className="grid grid-cols-2 gap-2">
@@ -688,7 +688,7 @@ function Step2Report({ numData, chkData, setNum, toggleChk }: {
 
         {/* Checkbox rows — card style */}
         <div className="rounded-2xl border border-amber-500/10 bg-[#071310] overflow-hidden">
-          <div className="h-0.5 bg-gradient-to-r from-transparent via-amber-500/50 to-transparent" />
+          <div className="h-0.5 bg-linear-to-r from-transparent via-amber-500/50 to-transparent" />
           <div className="p-4">
             <div className="mb-3 text-[9px] tracking-[2.5px] text-amber-500/40 uppercase font-mono">দৈনিক কার্যক্রম</div>
             <div className="grid grid-cols-2 gap-2">
@@ -729,7 +729,7 @@ function Step2Report({ numData, chkData, setNum, toggleChk }: {
       {/* ── DESKTOP: full table ── */}
       <div className="hidden lg:block space-y-3">
         <div className="rounded-2xl border border-emerald-500/14 bg-[#071310] overflow-hidden">
-          <div className="h-0.5 bg-gradient-to-r from-transparent via-emerald-500 to-transparent" />
+          <div className="h-0.5 bg-linear-to-r from-transparent via-emerald-500 to-transparent" />
           <div className="overflow-x-auto">
             <table className="w-full border-collapse" style={{ minWidth: 1560 }}>
               <thead>
@@ -841,7 +841,7 @@ function Step3Summary({ plan, numData, chkData, onPrev, onReset }: {
 
       {/* Hero */}
       <div className="relative rounded-2xl border border-emerald-500/18 bg-[#071310] overflow-hidden p-6">
-        <div className="absolute inset-x-0 top-0 h-0.5 bg-gradient-to-r from-transparent via-emerald-500 to-transparent" />
+        <div className="absolute inset-x-0 top-0 h-0.5 bg-linear-to-r from-transparent via-emerald-500 to-transparent" />
         <div className="absolute -right-12 -top-12 h-40 w-40 rounded-full bg-emerald-500/5 blur-3xl pointer-events-none" />
 
         <div className="relative flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
@@ -875,7 +875,7 @@ function Step3Summary({ plan, numData, chkData, onPrev, onReset }: {
 
       {/* Auto averages grid */}
       <div className="rounded-2xl border border-emerald-500/12 bg-[#071310] overflow-hidden">
-        <div className="h-0.5 bg-gradient-to-r from-transparent via-emerald-500 to-transparent" />
+        <div className="h-0.5 bg-linear-to-r from-transparent via-emerald-500 to-transparent" />
         <div className="p-5">
           <div className="mb-4 flex items-center gap-2">
             <TrendingUpIcon className="h-4 w-4 text-emerald-400" strokeWidth={1.8} />
@@ -910,7 +910,7 @@ function Step3Summary({ plan, numData, chkData, onPrev, onReset }: {
 
       {/* Checkbox summary */}
       <div className="rounded-2xl border border-amber-500/12 bg-[#071310] overflow-hidden">
-        <div className="h-0.5 bg-gradient-to-r from-transparent via-amber-500/50 to-transparent" />
+        <div className="h-0.5 bg-linear-to-r from-transparent via-amber-500/50 to-transparent" />
         <div className="p-5">
           <div className="mb-3 font-mono text-[9px] tracking-[3px] text-amber-500/40 uppercase">দৈনিক কার্যক্রম সারসংক্ষেপ</div>
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-4">
@@ -928,7 +928,7 @@ function Step3Summary({ plan, numData, chkData, onPrev, onReset }: {
 
       {/* Plan vs actual comparison */}
       <div className="rounded-2xl border border-blue-500/12 bg-[#071310] overflow-hidden">
-        <div className="h-0.5 bg-gradient-to-r from-transparent via-blue-400/50 to-transparent" />
+        <div className="h-0.5 bg-linear-to-r from-transparent via-blue-400/50 to-transparent" />
         <div className="p-5">
           <div className="mb-3 flex items-center gap-2">
             <ActivityIcon className="h-4 w-4 text-blue-400" strokeWidth={1.8} />
@@ -969,7 +969,7 @@ function Step3Summary({ plan, numData, chkData, onPrev, onReset }: {
                             <div className="flex-1 h-1.5 rounded-full bg-white/6 overflow-hidden">
                               <div className="h-full rounded-full transition-all" style={{ width: `${pct}%`, background: pct >= 80 ? "#4ade80" : pct >= 50 ? "#fbbf24" : "#f87171" }} />
                             </div>
-                            <span className="font-mono text-[10px] text-white/30 min-w-[28px] text-right">{pct}%</span>
+                            <span className="font-mono text-[10px] text-white/30 min-w-7 text-right">{pct}%</span>
                           </div>
                         ) : <span className="text-[10px] text-white/15 font-mono">—</span>}
                       </td>
@@ -984,7 +984,7 @@ function Step3Summary({ plan, numData, chkData, onPrev, onReset }: {
 
       {/* Advice box */}
       <div className="rounded-2xl border border-white/6 bg-[#071310] overflow-hidden">
-        <div className="h-0.5 bg-gradient-to-r from-transparent via-amber-500/40 to-transparent" />
+        <div className="h-0.5 bg-linear-to-r from-transparent via-amber-500/40 to-transparent" />
         <div className="p-5">
           <div className="mb-2 flex items-center gap-2">
             <MessageSquareIcon className="h-4 w-4 text-amber-400/60" strokeWidth={1.8} />
@@ -1047,10 +1047,10 @@ export default function WorkerReport() {
   }
 
   return (
-    <div className="min-h-screen bg-[#050f08]">
+    <div className="min-h-screen bg-[#050f08] pt-16">
 
       {/* Page header */}
-      <div className="sticky top-0 z-10 border-b border-emerald-500/10 bg-[#050f08]/95 backdrop-blur-md px-4 py-3 md:px-8">
+      <div className="sticky top-16 z-10 border-b border-emerald-500/10 bg-[#050f08]/95 backdrop-blur-md px-4 py-3 md:px-8">
         <div className={`mx-auto ${isReportTab ? "max-w-none" : "max-w-4xl"}`}>
           <div className="flex items-center justify-between gap-4 mb-3">
             <div className="flex items-center gap-2.5">

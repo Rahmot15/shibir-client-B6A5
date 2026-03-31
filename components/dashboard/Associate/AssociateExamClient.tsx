@@ -35,168 +35,163 @@ type Question = {
 const QUESTIONS: Question[] = [
   {
     id: 1,
-    category: "কুরআন পরিচিতি",
-    question: "পবিত্র কুরআনে মোট কতটি সূরা আছে?",
+    category: "আল কুরআন অধ্যয়ন",
+    question: "পবিত্র কুরআনে মোট কতটি সূরা রয়েছে?",
     options: ["১১২ টি", "১১৩ টি", "১১৪ টি", "১১৫ টি"],
     correct: 2,
     explanation: "পবিত্র কুরআনে মোট ১১৪ টি সূরা রয়েছে।",
   },
   {
     id: 2,
-    category: "কুরআন পরিচিতি",
-    question: "কুরআনে মোট কতটি পারা আছে?",
-    options: ["২৮ টি", "২৯ টি", "৩০ টি", "৩২ টি"],
+    category: "আল কুরআন অধ্যয়ন",
+    question: "কুরআনে মোট পারা কতটি?",
+    options: ["২৮ টি", "২৯ টি", "৩০ টি", "৩১ টি"],
     correct: 2,
-    explanation: "পবিত্র কুরআনে মোট ৩০ টি পারা রয়েছে।",
+    explanation: "পবিত্র কুরআনে ৩০ টি পারা রয়েছে।",
   },
   {
     id: 3,
-    category: "কুরআন পরিচিতি",
+    category: "আল কুরআন অধ্যয়ন",
     question: "কুরআনের প্রথম সূরার নাম কী?",
-    options: ["সূরা নাস", "সূরা ফাতিহা", "সূরা বাকারা", "সূরা আলাক"],
+    options: ["সূরা বাকারা", "সূরা ফাতিহা", "সূরা নাস", "সূরা আলাক"],
     correct: 1,
     explanation: "কুরআনের প্রথম সূরা হলো সূরা আল-ফাতিহা।",
   },
   {
     id: 4,
-    category: "কুরআন পরিচিতি",
-    question: "কুরআনের প্রথম নাযিলকৃত আয়াত কোন সূরার?",
-    options: ["সূরা মুদ্দাসসির", "সূরা বাকারা", "সূরা ফাতিহা", "সূরা আলাক"],
-    correct: 3,
-    explanation: "সূরা আলাকের ১-৫ আয়াত সর্বপ্রথম নাযিল হয়।",
-  },
-  {
-    id: 5,
-    category: "কুরআন পরিচিতি",
+    category: "আল কুরআন অধ্যয়ন",
     question: "কুরআনে মোট রুকু কতটি?",
-    options: ["৫২০ টি", "৫৩০ টি", "৫৪০ টি", "৫৫০ টি"],
-    correct: 2,
+    options: ["৫৩০ টি", "৫৪০ টি", "৫৫০ টি", "৫৬০ টি"],
+    correct: 1,
     explanation: "কুরআনে মোট ৫৪০ টি রুকু রয়েছে।",
   },
   {
-    id: 6,
-    category: "হাদিস পরিচিতি",
-    question: "হাদিস কুদসী বলতে কী বোঝায়?",
-    options: [
-      "রাসূলের নিজস্ব বক্তব্য",
-      "সাহাবীদের বর্ণনা",
-      "মূল বক্তব্য আল্লাহর, রাসূল নিজ ভাষায় বর্ণনা করেছেন",
-      "ইমামদের মতামত",
-    ],
-    correct: 2,
-    explanation: "যে হাদিসের মূল বক্তব্য আল্লাহর, কিন্তু ভাষা রাসূলের (সা.) - সেটি হাদিস কুদসী।",
-  },
-  {
-    id: 7,
-    category: "হাদিস পরিচিতি",
-    question: "কওলী হাদিস কাকে বলে?",
-    options: ["রাসূলের কাজ", "রাসূলের কথা", "রাসূলের মৌন সম্মতি", "সাহাবীদের কাজ"],
-    correct: 1,
-    explanation: "রাসূল (সা.) এর কথাকে কওলী হাদিস বলে।",
-  },
-  {
-    id: 8,
-    category: "হাদিস পরিচিতি",
-    question: "তাকরীরী হাদিস কী?",
-    options: ["রাসূলের কথা", "রাসূলের কাজ", "রাসূলের মৌন সম্মতি", "তাবেঈনের বর্ণনা"],
-    correct: 2,
-    explanation: "রাসূল (সা.) এর মৌন সম্মতিকেই তাকরীরী হাদিস বলা হয়।",
-  },
-  {
-    id: 9,
-    category: "তাহারাত",
-    question: "অযুর ফরজ কয়টি?",
-    options: ["৩টি", "৪টি", "৫টি", "৬টি"],
-    correct: 1,
-    explanation: "অযুর ফরজ ৪টি।",
-  },
-  {
-    id: 10,
-    category: "তাহারাত",
-    question: "তায়াম্মুমের ফরজ কয়টি?",
-    options: ["২টি", "৩টি", "৪টি", "৫টি"],
-    correct: 1,
-    explanation: "তায়াম্মুমের ফরজ ৩টি।",
-  },
-  {
-    id: 11,
-    category: "তাহারাত",
-    question: "গোসলের ফরজ কয়টি?",
-    options: ["২টি", "৩টি", "৪টি", "৫টি"],
-    correct: 1,
-    explanation: "গোসলের ফরজ ৩টি।",
-  },
-  {
-    id: 12,
-    category: "সংগঠন",
-    question: "সাংগঠনিক স্তর কয়টি?",
-    options: ["৩টি", "৪টি", "৫টি", "৬টি"],
-    correct: 1,
-    explanation: "সাংগঠনিক স্তর ৪টি: সমর্থক, কর্মী, সাথী, সদস্য।",
-  },
-  {
-    id: 13,
-    category: "সংগঠন",
-    question: "কর্মী হওয়ার শর্ত কয়টি?",
-    options: ["২টি", "৩টি", "৪টি", "৫টি"],
-    correct: 2,
-    explanation: "কর্মী হওয়ার শর্ত ৪টি।",
-  },
-  {
-    id: 14,
-    category: "সংগঠন",
-    question: "সক্রিয় কর্মীর গুণাবলী কয়টি?",
-    options: ["৬টি", "৭টি", "৮টি", "৯টি"],
-    correct: 2,
-    explanation: "সক্রিয় কর্মীর গুণাবলী ৮টি।",
-  },
-  {
-    id: 15,
-    category: "সংগঠন",
-    question: "কর্মীর কাজ কয়টি?",
-    options: ["৬টি", "৭টি", "৮টি", "৯টি"],
-    correct: 2,
-    explanation: "সিলেবাস অনুযায়ী কর্মীর কাজ ৮টি।",
-  },
-  {
-    id: 16,
-    category: "গুরুত্বপূর্ণ দিবস",
-    question: "প্রতিষ্ঠাবার্ষিকী কবে পালিত হয়?",
-    options: ["৬ ফেব্রুয়ারী", "১১ মার্চ", "৬ মে", "২৩ জুন"],
-    correct: 0,
-    explanation: "প্রতিষ্ঠাবার্ষিকী ৬ ফেব্রুয়ারী পালিত হয়।",
-  },
-  {
-    id: 17,
-    category: "গুরুত্বপূর্ণ দিবস",
-    question: "শহীদ দিবস কবে?",
-    options: ["১১ মার্চ", "৬ মে", "২৫ আগস্ট", "৬ ডিসেম্বর"],
-    correct: 0,
-    explanation: "শহীদ দিবস ১১ মার্চ।",
-  },
-  {
-    id: 18,
-    category: "পাঁচ দফা",
-    question: "পাঁচ দফার প্রথম দফা কোনটি?",
-    options: ["সংগঠন", "প্রশিক্ষণ", "দাওয়াত", "ইসলামী সমাজবিনির্মাণ"],
-    correct: 2,
-    explanation: "পাঁচ দফার প্রথম দফা হলো দাওয়াত।",
-  },
-  {
-    id: 19,
-    category: "মুখস্থকরণ",
-    question: "সূরা ফাতিহায় মোট কয়টি আয়াত আছে?",
+    id: 5,
+    category: "কুরআন মুখস্থ নির্দেশনা",
+    question: "সূরা ফাতিহায় মোট কতটি আয়াত আছে?",
     options: ["৫টি", "৬টি", "৭টি", "৮টি"],
     correct: 2,
     explanation: "সূরা ফাতিহায় ৭টি আয়াত রয়েছে।",
   },
   {
-    id: 20,
-    category: "মুখস্থকরণ",
-    question: "আয়াত ও হাদিস মুখস্থকরণের ন্যূনতম বিষয় সংখ্যা কত?",
-    options: ["৬টি", "৮টি", "১০টি", "১২টি"],
+    id: 6,
+    category: "কুরআন মুখস্থ নির্দেশনা",
+    question: "সূরা বাকারা ১-৩০ আয়াত কোন অংশে অন্তর্ভুক্ত?",
+    options: ["তাফসির অংশ", "মুখস্থ নির্দেশনা", "হাদিস অংশ", "সংগঠন অংশ"],
     correct: 1,
-    explanation: "সিলেবাসে মুখস্থকরণের জন্য ৮টি মূল বিষয় উল্লেখ আছে।",
+    explanation: "সিলেবাসে এটি কুরআন মুখস্থ নির্দেশনার অংশ হিসেবে উল্লেখ আছে।",
+  },
+  {
+    id: 7,
+    category: "আল হাদিস অধ্যয়ন",
+    question: "রিয়াজুস সালেহীন গ্রন্থের সংকলক কে?",
+    options: ["ইমাম মালিক", "ইমাম আবু হানিফা", "ইমাম নববী", "ইমাম বুখারী"],
+    correct: 2,
+    explanation: "রিয়াজুস সালেহীন সংকলন করেছেন ইমাম নববী (রহ.)।",
+  },
+  {
+    id: 8,
+    category: "আল হাদিস অধ্যয়ন",
+    question: "সহীহ বুখারী সাধারণত কীসের গ্রন্থ?",
+    options: ["ফিকহ", "হাদিস", "তাফসির", "আকাইদ"],
+    correct: 1,
+    explanation: "সহীহ আল বুখারী হাদিসের অন্যতম প্রধান গ্রন্থ।",
+  },
+  {
+    id: 9,
+    category: "আল হাদিস অধ্যয়ন",
+    question: "কওলী হাদিস বলতে কী বোঝায়?",
+    options: ["রাসূলের কথা", "রাসূলের কাজ", "রাসূলের মৌন সম্মতি", "সাহাবীর বক্তব্য"],
+    correct: 0,
+    explanation: "রাসূল (সা.)-এর বাণী বা কথাকে কওলী হাদিস বলা হয়।",
+  },
+  {
+    id: 10,
+    category: "আল হাদিস অধ্যয়ন",
+    question: "তাকরীরী হাদিস কোনটিকে বলা হয়?",
+    options: ["রাসূলের বক্তব্য", "রাসূলের লিখিত দলিল", "রাসূলের মৌন সম্মতি", "তাবেঈনের বর্ণনা"],
+    correct: 2,
+    explanation: "রাসূল (সা.) এর মৌন সম্মতিকে তাকরীরী হাদিস বলা হয়।",
+  },
+  {
+    id: 11,
+    category: "ইসলামী সাহিত্য",
+    question: "সিলেবাসে পাঠ্যবই মোট কতটি উল্লেখ করা হয়েছে?",
+    options: ["২০টি", "২৫টি", "৩০টি", "৩৫টি"],
+    correct: 2,
+    explanation: "Associate syllabus-এ মোট ৩০টি পাঠ্যবই উল্লেখ আছে।",
+  },
+  {
+    id: 12,
+    category: "ইসলামী সাহিত্য",
+    question: "সিলেবাসে পাঠ্যবই কতটি ভাগে সাজানো হয়েছে?",
+    options: ["১ ভাগ", "২ ভাগ", "৩ ভাগ", "৪ ভাগ"],
+    correct: 1,
+    explanation: "পাঠ্যবই ১ম অংশ (১-১৫) এবং ২য় অংশ (১৬-৩০) - দুই ভাগে সাজানো হয়েছে।",
+  },
+  {
+    id: 13,
+    category: "ইসলামী সাহিত্য",
+    question: "তাওহীদ, রিসালাত এবং আখিরাত কোন অংশে আছে?",
+    options: ["মুখস্থ নির্দেশনা", "১ম অংশের পাঠ্যবই", "২য় অংশের পাঠ্যবই", "হাদিস অধ্যয়ন"],
+    correct: 1,
+    explanation: "এটি ১ম অংশের পাঠ্যবই তালিকায় উল্লেখ করা হয়েছে।",
+  },
+  {
+    id: 14,
+    category: "ইসলামী সাহিত্য",
+    question: "ইসলামী রাষ্ট্র প্রতিষ্ঠার কৌশল কোন অংশে রয়েছে?",
+    options: ["১ম অংশ", "২য় অংশ", "হাদিস অংশ", "দিবস অংশ"],
+    correct: 1,
+    explanation: "এটি ২য় অংশের বইগুলোর মধ্যে রয়েছে।",
+  },
+  {
+    id: 15,
+    category: "মূল বিষয়সূচী",
+    question: "মূল বিষয়সূচীতে মোট কয়টি বিষয় রয়েছে?",
+    options: ["৬টি", "৭টি", "৮টি", "৯টি"],
+    correct: 2,
+    explanation: "মূল বিষয়সূচীতে মোট ৮টি বিষয় রয়েছে।",
+  },
+  {
+    id: 16,
+    category: "মূল বিষয়সূচী",
+    question: "নিচের কোনটি মূল বিষয়সূচীর অন্তর্ভুক্ত?",
+    options: ["কুরআন তাজবীদ", "গণিত", "ইংরেজি ব্যাকরণ", "কম্পিউটার প্রোগ্রামিং"],
+    correct: 0,
+    explanation: "কুরআন তাজবীদ মূল বিষয়সূচীর অন্তর্ভুক্ত।",
+  },
+  {
+    id: 17,
+    category: "মূল বিষয়সূচী",
+    question: "সংগঠন নীতিমালা কোন ক্যাটাগরির অংশ?",
+    options: ["হাদিস", "মূল বিষয়সূচী", "দিবস", "মুখস্থ নির্দেশনা"],
+    correct: 1,
+    explanation: "সংগঠন নীতিমালা মূল বিষয়সূচীর একটি নির্ধারিত বিষয়।",
+  },
+  {
+    id: 18,
+    category: "গুরুত্বপূর্ণ দিবস",
+    question: "প্রতিষ্ঠাবার্ষিকী কোন তারিখে পালিত হয়?",
+    options: ["১১ মার্চ", "৬ মে", "৬ ফেব্রুয়ারী", "২৩ জুন"],
+    correct: 2,
+    explanation: "প্রতিষ্ঠাবার্ষিকী ৬ ফেব্রুয়ারী পালিত হয়।",
+  },
+  {
+    id: 19,
+    category: "গুরুত্বপূর্ণ দিবস",
+    question: "শহীদ দিবস কোন তারিখে?",
+    options: ["১১ মার্চ", "৬ ফেব্রুয়ারী", "২৫ আগস্ট", "১লা শাওয়াল"],
+    correct: 0,
+    explanation: "শহীদ দিবস ১১ মার্চ পালিত হয়।",
+  },
+  {
+    id: 20,
+    category: "গুরুত্বপূর্ণ দিবস",
+    question: "পলাশী দিবস কোন তারিখে পালিত হয়?",
+    options: ["৬ মে", "২৩ জুন", "১১ মে", "১০ জিলহজ্জ"],
+    correct: 1,
+    explanation: "পলাশী দিবস ২৩ জুন পালিত হয়।",
   },
 ]
 
@@ -211,20 +206,20 @@ const INITIAL_MSGS: Msg[] = [
   {
     id: 1,
     from: "examiner",
-    text: "আস্সালামু আলাইকুম। আপনি কর্মী সিলেবাসের লিখিত পরীক্ষায় ভালো করেছেন। সংক্ষিপ্ত ভাইভা দেওয়ার জন্য প্রস্তুত আছেন?",
-    time: "10:15",
+    text: "আস্সালামু আলাইকুম। আপনি Associate সিলেবাসের লিখিত পরীক্ষায় ভালো করেছেন। সংক্ষিপ্ত ভাইভার জন্য প্রস্তুত তো?",
+    time: "10:20",
   },
   {
     id: 2,
     from: "user",
-    text: "জি, আলহামদুলিল্লাহ। প্রস্তুত আছি।",
-    time: "10:16",
+    text: "ওয়া আলাইকুম আস্সালাম। জি, আলহামদুলিল্লাহ প্রস্তুত আছি।",
+    time: "10:21",
   },
   {
     id: 3,
     from: "examiner",
-    text: "চমৎকার। নিচের লিঙ্কে যোগ দিন, ইনশাআল্লাহ ভাইভা শুরু করব।",
-    time: "10:17",
+    text: "চমৎকার। নিচের Google Meet লিংকে যোগ দিন, ইনশাআল্লাহ মৌখিক মূল্যায়ন শুরু করব।",
+    time: "10:22",
     meetLink: "https://meet.google.com/abc-defg-hij",
   },
 ]
@@ -262,7 +257,7 @@ function useTimer(initial: number, active: boolean, onEnd: () => void) {
   return seconds
 }
 
-export default function WorkerExamClient() {
+export default function AssociateExamClient() {
   const [phase, setPhase] = useState<ExamPhase>("landing")
   const [current, setCurrent] = useState(0)
   const [answers, setAnswers] = useState<(number | null)[]>(Array(QUESTIONS.length).fill(null))
@@ -354,7 +349,7 @@ export default function WorkerExamClient() {
               <div className="flex h-8 w-8 items-center justify-center rounded-lg border border-emerald-500/20 bg-emerald-500/10">
                 <ClipboardListIcon className="h-4 w-4 text-emerald-400" strokeWidth={1.8} />
               </div>
-              <span className="text-[13px] font-semibold text-emerald-50">কর্মী সিলেবাস পরীক্ষা</span>
+              <span className="text-[13px] font-semibold text-emerald-50">Associate সিলেবাস পরীক্ষা</span>
             </div>
 
             <div
@@ -745,12 +740,12 @@ function LandingPage({ onStartMCQ, onGoChat }: { onStartMCQ: () => void; onGoCha
               </div>
               <div>
                 <div className="font-mono text-[10px] tracking-[3px] text-emerald-500/40 uppercase">বাংলাদেশ ইসলামী ছাত্রশিবির</div>
-                <h1 className="text-[22px] font-bold text-emerald-50">কর্মী সিলেবাস মূল্যায়ন পরীক্ষা</h1>
+                <h1 className="text-[22px] font-bold text-emerald-50">Associate সিলেবাস মূল্যায়ন পরীক্ষা</h1>
               </div>
             </div>
 
             <p className="mb-6 max-w-lg text-[13px] leading-relaxed text-white/45">
-              সাথী সিলেবাসভিত্তিক এই পরীক্ষায় প্রথমে লিখিত MCQ ধাপ সম্পন্ন করতে হবে। উত্তীর্ণ হলে মৌখিক ধাপে অংশ নেওয়া যাবে।
+              Associate syllabus-ভিত্তিক এই পরীক্ষায় প্রথমে লিখিত MCQ ধাপ সম্পন্ন করতে হবে। উত্তীর্ণ হলে মৌখিক ধাপে অংশ নেওয়া যাবে।
             </p>
 
             <div className="flex items-center gap-2">
@@ -803,7 +798,7 @@ function LandingPage({ onStartMCQ, onGoChat }: { onStartMCQ: () => void; onGoCha
                   { icon: BookOpenIcon, label: "সিলেবাসভিত্তিক MCQ", val: `${QUESTIONS.length} টি প্রশ্ন` },
                   { icon: TimerIcon, label: "সময়সীমা", val: "২০ মিনিট" },
                   { icon: StarIcon, label: "পাস মার্ক", val: `${PASS_MARK}%` },
-                  { icon: ShieldCheckIcon, label: "বিষয়", val: "কুরআন, হাদিস, তাহারাত, সংগঠন" },
+                  { icon: ShieldCheckIcon, label: "বিষয়", val: "কুরআন, হাদিস, বই, দিবস" },
                 ].map((row) => (
                   <div
                     key={row.label}
@@ -890,7 +885,7 @@ function LandingPage({ onStartMCQ, onGoChat }: { onStartMCQ: () => void; onGoCha
           </div>
           <div className="grid gap-2 sm:grid-cols-3">
             {[
-              { step: "০১", title: "লিখিত পরীক্ষা", desc: "কর্মী সিলেবাসভিত্তিক MCQ" },
+              { step: "০১", title: "লিখিত পরীক্ষা", desc: "Associate syllabus MCQ" },
               { step: "০২", title: "মৌখিক ধাপ", desc: "প্রশ্নোত্তর ও যাচাই" },
               { step: "০৩", title: "ফাইনাল সিদ্ধান্ত", desc: "সার্বিক মূল্যায়ন সম্পন্ন" },
             ].map((item) => (

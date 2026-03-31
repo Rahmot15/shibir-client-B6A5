@@ -1,1 +1,0 @@
-export default function AssociateReport() { return <div className="p-6 text-xl">Sathi Report Content</div>; }

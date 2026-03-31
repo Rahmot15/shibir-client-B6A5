@@ -4,11 +4,13 @@ type Role = "SUPPORTER" | "WORKER" | "ASSOCIATE" | "MEMBER" | "ADMIN"
 
 const allowedRoutesByRole: Record<Role, string[]> = {
   ADMIN: ["/dashboard/overview", "/dashboard/manage-users", "/dashboard/approve-viva"],
-  ASSOCIATE: ["/dashboard/overview", "/dashboard/exam", "/dashboard/report"],
-  MEMBER: ["/dashboard/overview", "/dashboard/guidance", "/dashboard/report"],
+  ASSOCIATE: ["/dashboard/overview", "/dashboard/note", "/dashboard/exam", "/dashboard/syllabus"],
+  MEMBER: ["/dashboard/overview", "/dashboard/guidance"],
   SUPPORTER: ["/dashboard/overview", "/dashboard/exam", "/dashboard/syllabus", "/dashboard/report"],
-  WORKER: ["/dashboard/overview", "/dashboard/exam", "/dashboard/syllabus", "/dashboard/report"],
+  WORKER: ["/dashboard/overview", "/dashboard/exam", "/dashboard/syllabus"],
 }
+
+const reportPageAllowedRoles: Role[] = ["WORKER", "MEMBER", "ASSOCIATE"]
 
 function matchesRoute(pathname: string, route: string) {
   return pathname === route || pathname.startsWith(`${route}/`)
@@ -25,7 +27,10 @@ function isAllowedForRole(pathname: string, role: Role) {
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl
 
-  if (!pathname.startsWith("/dashboard")) {
+  const isDashboardRoute = pathname.startsWith("/dashboard")
+  const isReportsRoute = pathname === "/reports" || pathname.startsWith("/reports/")
+
+  if (!isDashboardRoute && !isReportsRoute) {
     return NextResponse.next()
   }
 
@@ -49,11 +54,19 @@ export async function proxy(request: NextRequest) {
     return NextResponse.redirect(new URL("/login", request.url))
   }
 
-  if (pathname === "/dashboard") {
+  if (isDashboardRoute && pathname === "/dashboard") {
     return NextResponse.redirect(new URL("/dashboard/overview", request.url))
   }
 
-  if (!isAllowedForRole(pathname, role)) {
+  if (isDashboardRoute && !isAllowedForRole(pathname, role)) {
+    return NextResponse.redirect(new URL("/dashboard/overview", request.url))
+  }
+
+  if (isReportsRoute && !reportPageAllowedRoles.includes(role)) {
+    if (role === "SUPPORTER") {
+      return NextResponse.redirect(new URL("/dashboard/report", request.url))
+    }
+
     return NextResponse.redirect(new URL("/dashboard/overview", request.url))
   }
 
@@ -61,5 +74,5 @@ export async function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/dashboard/:path*"],
+  matcher: ["/dashboard/:path*", "/reports/:path*"],
 }

@@ -42,12 +42,12 @@ const navByRole: Record<Role, { title: string; url: string; icon: React.ReactNod
   ],
   ASSOCIATE: [
     { title: "Overview", url: "/dashboard/overview", icon: <LayoutDashboardIcon /> },
-    { title: "Report",   url: "/dashboard/report",   icon: <FileTextIcon /> },
+    { title: "Note",     url: "/dashboard/note",     icon: <StickyNoteIcon /> },
+    { title: "Syllabus", url: "/dashboard/syllabus", icon: <BookOpenIcon /> },
     { title: "Exam",     url: "/dashboard/exam",     icon: <ClipboardListIcon /> },
   ],
   MEMBER: [
     { title: "Overview",  url: "/dashboard/overview",  icon: <LayoutDashboardIcon /> },
-    { title: "Report",    url: "/dashboard/report",    icon: <FileTextIcon /> },
     { title: "Guidance",  url: "/dashboard/guidance",  icon: <BookOpenIcon /> },
   ],
   SUPPORTER: [
@@ -58,7 +58,6 @@ const navByRole: Record<Role, { title: string; url: string; icon: React.ReactNod
   ],
   WORKER: [
     { title: "Overview",          url: "/dashboard/overview",          icon: <LayoutDashboardIcon /> },
-    { title: "Report",            url: "/dashboard/report",            icon: <FileTextIcon /> },
     { title: "Note",              url: "/dashboard/note",              icon: <StickyNoteIcon /> },
     { title: "Syllabus",          url: "/dashboard/syllabus",          icon: <BookOpenIcon /> },
     { title: "Exam",              url: "/dashboard/exam",              icon: <ClipboardListIcon /> },
@@ -86,8 +85,8 @@ export function AppSidebar({ role, user, ...props }: AppSidebarProps) {
             >
               <Link href="/" className="flex items-center gap-3">
                 {/* Logo mark */}
-                <div className="flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-xl border border-emerald-500/25 bg-emerald-500/10 shadow-[0_0_16px_rgba(0,200,83,0.15)]">
-                  <MoonIcon className="h-[18px] w-[18px] text-emerald-400" strokeWidth={1.6} />
+                <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-xl border border-emerald-500/25 bg-emerald-500/10 shadow-[0_0_16px_rgba(0,200,83,0.15)]">
+                  <MoonIcon className="h-4.5 w-4.5 text-emerald-400" strokeWidth={1.6} />
                 </div>
 
                 {/* Brand text */}

@@ -183,7 +183,7 @@ function SectionCard({
         className="flex items-center gap-3 px-5 py-4 cursor-pointer select-none hover:bg-white/2 transition-colors"
         onClick={() => setOpen(o => !o)}
       >
-        <div className={`flex h-9 w-9 flex-shrink-0 items-center justify-center rounded-xl ${c.bg} border ${c.border}`}>
+        <div className={`flex h-9 w-9 shrink-0 items-center justify-center rounded-xl ${c.bg} border ${c.border}`}>
           <Icon className={`h-4 w-4 ${c.icon}`} strokeWidth={1.8} />
         </div>
         <div className="flex-1">
@@ -228,7 +228,7 @@ function ItemList({ items, color = "emerald" }: { items: string[]; color?: strin
     <ul className="space-y-2 mt-1">
       {items.map((item, i) => (
         <li key={i} className="flex items-start gap-2.5">
-          <span className={`mt-1.5 h-1.5 w-1.5 flex-shrink-0 rounded-full ${dotColor[color] ?? "bg-emerald-400"}`} />
+          <span className={`mt-1.5 h-1.5 w-1.5 shrink-0 rounded-full ${dotColor[color] ?? "bg-emerald-400"}`} />
           <span className="text-[13px] leading-relaxed text-emerald-100/60">{item}</span>
         </li>
       ))}
@@ -321,7 +321,7 @@ export default function SupporterSyllabus() {
             </div>
 
             {/* Right — progress ring */}
-            <div className="flex flex-shrink-0 flex-col items-center gap-4 rounded-2xl border border-emerald-500/15 bg-[#050f08] px-8 py-6">
+            <div className="flex shrink-0 flex-col items-center gap-4 rounded-2xl border border-emerald-500/15 bg-[#050f08] px-8 py-6">
               <div className="relative flex items-center justify-center">
                 <ProgressRing pct={pct} />
                 <div className="absolute text-center">
@@ -357,7 +357,7 @@ export default function SupporterSyllabus() {
             </div>
             <div className="h-1.5 overflow-hidden rounded-full bg-emerald-500/8">
               <div
-                className="h-full rounded-full bg-gradient-to-r from-emerald-500 to-emerald-400 transition-all duration-700"
+                className="h-full rounded-full bg-linear-to-r from-emerald-500 to-emerald-400 transition-all duration-700"
                 style={{ width: `${pct}%` }}
               />
             </div>
@@ -417,7 +417,7 @@ export default function SupporterSyllabus() {
                     "হযরত দাহিয়াতুল কালবী (রা)",
                   ].map((m, i) => (
                     <li key={i} className="flex items-start gap-2 text-[12px] text-blue-100/55">
-                      <span className="mt-0.5 flex h-4 w-4 flex-shrink-0 items-center justify-center rounded-full bg-blue-500/15 font-mono text-[9px] text-blue-400">{i+1}</span>
+                      <span className="mt-0.5 flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-blue-500/15 font-mono text-[9px] text-blue-400">{i+1}</span>
                       {m}
                     </li>
                   ))}
@@ -469,7 +469,7 @@ export default function SupporterSyllabus() {
                 <div className="space-y-2.5">
                   {SURAH_FATIHA_MEANINGS.map((m, i) => (
                     <div key={i} className="flex items-start gap-3">
-                      <span className="flex h-5 w-5 flex-shrink-0 items-center justify-center rounded-full bg-purple-500/15 font-mono text-[10px] text-purple-400">{i+1}</span>
+                      <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-purple-500/15 font-mono text-[10px] text-purple-400">{i+1}</span>
                       <span className="text-[13px] leading-relaxed text-purple-100/65">{m}</span>
                     </div>
                   ))}
@@ -522,10 +522,10 @@ export default function SupporterSyllabus() {
                 {IMPORTANT_DATES.map((d, i) => (
                   <div key={i} className="flex items-center justify-between gap-2 rounded-lg border border-amber-500/8 bg-amber-500/4 px-3 py-2">
                     <div className="flex items-center gap-2 min-w-0">
-                      <div className="h-1.5 w-1.5 flex-shrink-0 rounded-full bg-amber-400 shadow-[0_0_6px_rgba(251,191,36,0.6)]" />
+                      <div className="h-1.5 w-1.5 shrink-0 rounded-full bg-amber-400 shadow-[0_0_6px_rgba(251,191,36,0.6)]" />
                       <span className="truncate text-[12px] text-amber-100/70">{d.name}</span>
                     </div>
-                    <span className="flex-shrink-0 font-mono text-[10px] text-amber-400/60">{d.date}</span>
+                    <span className="shrink-0 font-mono text-[10px] text-amber-400/60">{d.date}</span>
                   </div>
                 ))}
               </div>
@@ -539,7 +539,7 @@ export default function SupporterSyllabus() {
                   <div className="mb-2 font-mono text-[9px] tracking-[3px] text-blue-400/50 uppercase">কেন্দ্রীয় দায়িত্বশীল</div>
                   {LEADERSHIP.map((l, i) => (
                     <div key={i} className="flex items-center gap-2.5 mb-2 last:mb-0">
-                      <div className="flex h-8 w-8 flex-shrink-0 items-center justify-center rounded-lg bg-blue-500/15 font-bold text-[12px] text-blue-400">
+                      <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-blue-500/15 font-bold text-[12px] text-blue-400">
                         {l.name[0]}
                       </div>
                       <div>
@@ -592,7 +592,7 @@ export default function SupporterSyllabus() {
                       onClick={() => toggle(k)}
                       className="flex w-full items-center gap-2.5 rounded-lg px-2.5 py-1.5 text-left hover:bg-white/3 transition-colors"
                     >
-                      <div className={`flex h-4.5 w-4.5 flex-shrink-0 items-center justify-center rounded border transition-all ${
+                      <div className={`flex h-4.5 w-4.5 shrink-0 items-center justify-center rounded border transition-all ${
                         tracked[k]
                           ? "border-emerald-500 bg-emerald-500/20"
                           : "border-white/15 bg-white/3"
@@ -623,7 +623,7 @@ export default function SupporterSyllabus() {
                   "৫ দফা কর্মসূচি",
                 ].map((t, i) => (
                   <li key={i} className="flex items-start gap-2 text-[11px] text-rose-100/55">
-                    <span className="mt-0.5 h-1.5 w-1.5 flex-shrink-0 rounded-full bg-rose-400/60" />
+                    <span className="mt-0.5 h-1.5 w-1.5 shrink-0 rounded-full bg-rose-400/60" />
                     {t}
                   </li>
                 ))}

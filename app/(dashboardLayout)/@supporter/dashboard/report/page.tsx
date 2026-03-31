@@ -346,7 +346,7 @@ function DayProgress({ numData, chkData, day }: { numData: NumData; chkData: Chk
 
   return (
     <div className="flex items-center gap-2">
-      <div className="h-[3px] flex-1 rounded bg-white/10 overflow-hidden">
+      <div className="h-0.75 flex-1 rounded bg-white/10 overflow-hidden">
         <div className="h-full rounded bg-linear-to-r from-[#00c853] to-[#4ade80] transition-all" style={{ width: `${pct}%` }} />
       </div>
       <span className="min-w-7 text-[10px] font-mono text-[#e8f5e955]">{toBn(pct)}%</span>
@@ -397,11 +397,11 @@ function THead({ days }: { days: number[] }) {
       <tr>
         <th className="min-w-40 border-b border-r border-[rgba(0,200,83,0.08)] bg-[rgba(0,200,83,0.04)] px-3.5 py-2.5 text-left font-mono text-[9px] uppercase tracking-[2px] text-[rgba(0,200,83,0.55)]">বিষয়</th>
         {days.map((d) => (
-          <th key={d} className="min-w-[34px] border-b border-r border-[rgba(0,200,83,0.06)] bg-[rgba(0,200,83,0.04)] px-0.5 py-2.5 text-center font-mono text-[11px] text-[rgba(232,245,233,0.45)]">
+          <th key={d} className="min-w-8.5 border-b border-r border-[rgba(0,200,83,0.06)] bg-[rgba(0,200,83,0.04)] px-0.5 py-2.5 text-center font-mono text-[11px] text-[rgba(232,245,233,0.45)]">
             {toBn(d + 1)}
           </th>
         ))}
-        <th className="min-w-[50px] border-b border-l border-[rgba(200,162,39,0.15)] bg-[rgba(200,162,39,0.04)] px-1.5 py-2 text-center font-mono text-[9px] text-[#c8a227]">
+        <th className="min-w-12.5 border-b border-l border-[rgba(200,162,39,0.15)] bg-[rgba(200,162,39,0.04)] px-1.5 py-2 text-center font-mono text-[9px] text-[#c8a227]">
           গড়/মোট
         </th>
       </tr>
@@ -449,14 +449,14 @@ function TabletView({
       <div className="overflow-hidden rounded-[10px] border border-[rgba(0,200,83,0.15)] bg-[rgba(8,20,12,0.9)]">
         <div className="h-0.5 bg-linear-to-r from-transparent via-[#00c853] via-50% to-transparent" />
         <div className="overflow-x-auto">
-          <table className="min-w-[480px] w-full border-collapse">
+          <table className="min-w-120 w-full border-collapse">
             <THead days={days} />
             <tbody>
               {NUM_ROWS.map((r, ri) => (
                 <tr key={r.key} className={ri % 2 === 0 ? "bg-transparent" : "bg-black/15"}>
                   <td className="border-b border-r border-[rgba(0,200,83,0.08)] px-3.5 py-1.5">
                     <div className="flex items-center gap-2">
-                      <div className={`h-[26px] w-[26px] shrink-0 rounded-md border flex items-center justify-center ${r.borderClass} ${r.bgClass}`}>
+                      <div className={`h-6.5 w-6.5 shrink-0 rounded-md border flex items-center justify-center ${r.borderClass} ${r.bgClass}`}>
                         <r.Icon size={12} className={r.colorClass} strokeWidth={1.8} />
                       </div>
                       <div>
@@ -494,7 +494,7 @@ function TabletView({
                 <tr key={r.key} className={ri % 2 === 0 ? "bg-[rgba(200,162,39,0.02)]" : "bg-transparent"}>
                   <td className="border-b border-r border-[rgba(0,200,83,0.08)] px-3.5 py-1.5">
                     <div className="flex items-center gap-2">
-                      <div className={`h-[26px] w-[26px] shrink-0 rounded-md border flex items-center justify-center ${r.borderClass} ${r.bgClass}`}>
+                      <div className={`h-6.5 w-6.5 shrink-0 rounded-md border flex items-center justify-center ${r.borderClass} ${r.bgClass}`}>
                         <r.Icon size={12} className={r.colorClass} strokeWidth={1.8} />
                       </div>
                       <div className="text-[12px] text-[#f0fff4]">{r.label}</div>
@@ -826,7 +826,7 @@ export default function SupporterReportClient() {
             </div>
           </div>
 
-          <div className="meta-grid grid grid-cols-1 gap-2.5 px-5 pb-[18px] sm:grid-cols-[1fr_1.4fr_160px]">
+          <div className="meta-grid grid grid-cols-1 gap-2.5 px-5 pb-4.5 sm:grid-cols-[1fr_1.4fr_160px]">
             <div className="flex flex-col gap-1">
               <label className="font-mono text-[10px] tracking-wide text-[rgba(200,162,39,0.65)]">নামঃ</label>
               <input
@@ -853,7 +853,7 @@ export default function SupporterReportClient() {
                 type="month"
                 value={month}
                 onChange={(e) => setMonth(e.target.value)}
-                className="[color-scheme:dark] w-full rounded-[7px] border border-[rgba(200,162,39,0.18)] bg-[rgba(5,15,8,0.8)] px-3 py-2 text-[13px] text-[#f0fff4] outline-none transition-colors focus:border-[rgba(200,162,39,0.5)]"
+                className="scheme-dark w-full rounded-[7px] border border-[rgba(200,162,39,0.18)] bg-[rgba(5,15,8,0.8)] px-3 py-2 text-[13px] text-[#f0fff4] outline-none transition-colors focus:border-[rgba(200,162,39,0.5)]"
               />
             </div>
           </div>
@@ -880,7 +880,7 @@ export default function SupporterReportClient() {
                     }`}
                   >
                     {toBn(i + 1)}
-                    {hasData && !active && <span className="absolute right-[3px] top-[3px] h-1 w-1 rounded-full bg-[#00c853]" />}
+                    {hasData && !active && <span className="absolute right-0.75 top-0.75 h-1 w-1 rounded-full bg-[#00c853]" />}
                   </button>
                 );
               })}
@@ -1001,14 +1001,14 @@ export default function SupporterReportClient() {
           <div className="mb-3 overflow-hidden rounded-xl border border-[rgba(0,200,83,0.15)] bg-[rgba(8,22,14,0.95)]">
             <div className="h-0.5 bg-linear-to-r from-transparent via-[#00c853] via-40% to-transparent" />
             <div className="overflow-x-auto">
-              <table className="min-w-[900px] w-full border-collapse">
+              <table className="min-w-225 w-full border-collapse">
                 <THead days={Array.from({ length: TOTAL_DAYS }, (_, i) => i)} />
                 <tbody>
                   {NUM_ROWS.map((r, ri) => (
                     <tr key={r.key} className={ri % 2 === 0 ? "bg-transparent" : "bg-black/12"}>
                       <td className="whitespace-nowrap border-b border-r border-[rgba(0,200,83,0.08)] px-3.5 py-1.5">
                         <div className="flex items-center gap-2">
-                          <div className={`flex h-[26px] w-[26px] shrink-0 items-center justify-center rounded-[7px] border ${r.borderClass} ${r.bgClass}`}>
+                          <div className={`flex h-6.5 w-6.5 shrink-0 items-center justify-center rounded-[7px] border ${r.borderClass} ${r.bgClass}`}>
                             <r.Icon size={12} className={r.colorClass} strokeWidth={1.8} />
                           </div>
                           <div>
@@ -1027,7 +1027,7 @@ export default function SupporterReportClient() {
                             value={numData[r.key][i]}
                             onChange={(e) => setNum(r.key, i, e.target.value)}
                             placeholder="—"
-                            className={`h-[26px] min-w-7 w-full rounded border border-[rgba(0,200,83,0.08)] bg-[rgba(0,200,83,0.03)] text-center font-mono text-[11px] font-semibold outline-none ${r.colorClass}`}
+                            className={`h-6.5 min-w-7 w-full rounded border border-[rgba(0,200,83,0.08)] bg-[rgba(0,200,83,0.03)] text-center font-mono text-[11px] font-semibold outline-none ${r.colorClass}`}
                           />
                         </td>
                       ))}
@@ -1046,7 +1046,7 @@ export default function SupporterReportClient() {
                     <tr key={r.key} className={ri % 2 === 0 ? "bg-[rgba(200,162,39,0.02)]" : "bg-transparent"}>
                       <td className="whitespace-nowrap border-b border-r border-[rgba(0,200,83,0.08)] px-3.5 py-1.5">
                         <div className="flex items-center gap-2">
-                          <div className={`flex h-[26px] w-[26px] shrink-0 items-center justify-center rounded-[7px] border ${r.borderClass} ${r.bgClass}`}>
+                          <div className={`flex h-6.5 w-6.5 shrink-0 items-center justify-center rounded-[7px] border ${r.borderClass} ${r.bgClass}`}>
                             <r.Icon size={12} className={r.colorClass} strokeWidth={1.8} />
                           </div>
                           <div className="text-[12px] text-[#f0fff4]">{r.label}</div>
@@ -1085,7 +1085,7 @@ export default function SupporterReportClient() {
               onChange={(e) => setAdvice(e.target.value)}
               placeholder="দায়িত্বশীল হিসেবে এখানে পরামর্শ লিখুন..."
               rows={4}
-              className="min-h-[90px] w-full resize-y rounded-[10px] border border-[rgba(200,162,39,0.18)] bg-[rgba(5,12,8,0.7)] p-[12px_14px] text-[13px] leading-[1.75] text-[#f0fff4] outline-none transition-colors focus:border-[rgba(200,162,39,0.5)]"
+              className="min-h-22.5 w-full resize-y rounded-[10px] border border-[rgba(200,162,39,0.18)] bg-[rgba(5,12,8,0.7)] p-[12px_14px] text-[13px] leading-[1.75] text-[#f0fff4] outline-none transition-colors focus:border-[rgba(200,162,39,0.5)]"
             />
 
             <div className="mt-2.5 flex justify-end">
@@ -1134,7 +1134,7 @@ export default function SupporterReportClient() {
             <button
               type="button"
               onClick={deleteReport}
-              className="flex items-center gap-1.5 rounded-lg border border-[rgba(255,120,120,0.3)] px-[18px] py-[9px] font-mono text-[12px] tracking-wide text-[rgba(255,160,160,0.85)]"
+              className="flex items-center gap-1.5 rounded-lg border border-[rgba(255,120,120,0.3)] px-4.5 py-2.25 font-mono text-[12px] tracking-wide text-[rgba(255,160,160,0.85)]"
             >
               <Trash2 size={13} strokeWidth={2} /> রিপোর্ট ডিলিট
             </button>
@@ -1143,7 +1143,7 @@ export default function SupporterReportClient() {
           <button
             type="button"
             onClick={reset}
-            className="flex items-center gap-1.5 rounded-lg border border-[rgba(232,245,233,0.1)] px-5 py-[9px] font-mono text-[12px] tracking-wide text-[rgba(232,245,233,0.38)]"
+            className="flex items-center gap-1.5 rounded-lg border border-[rgba(232,245,233,0.1)] px-5 py-2.25 font-mono text-[12px] tracking-wide text-[rgba(232,245,233,0.38)]"
           >
             <RotateCcw size={13} strokeWidth={2} /> রিসেট
           </button>
@@ -1151,7 +1151,7 @@ export default function SupporterReportClient() {
           <button
             type="button"
             onClick={handleReportSave}
-            className={`flex items-center gap-2 rounded-lg px-7 py-[9px] font-mono text-[12px] font-bold uppercase tracking-[2px] transition-all ${
+            className={`flex items-center gap-2 rounded-lg px-7 py-2.25 font-mono text-[12px] font-bold uppercase tracking-[2px] transition-all ${
               reportSaved
                 ? "border border-[#00c853] bg-[rgba(0,200,83,0.14)] text-[#00c853]"
                 : "border border-transparent bg-[#00c853] text-[#050f08] shadow-[0_0_20px_rgba(0,200,83,0.3)]"
@@ -1179,7 +1179,7 @@ export default function SupporterReportClient() {
             className="absolute inset-0 cursor-pointer border-none bg-black/60"
           />
 
-          <aside className="absolute right-0 top-0 flex h-full w-full max-w-[420px] flex-col border-l border-[rgba(200,162,39,0.18)] bg-[rgba(6,16,10,0.98)] shadow-[-8px_0_32px_rgba(0,0,0,0.5)]">
+          <aside className="absolute right-0 top-0 flex h-full w-full max-w-105 flex-col border-l border-[rgba(200,162,39,0.18)] bg-[rgba(6,16,10,0.98)] shadow-[-8px_0_32px_rgba(0,0,0,0.5)]">
             <div className="flex items-center gap-2 border-b border-[rgba(200,162,39,0.14)] px-4 py-3.5">
               <History size={15} color="#c8a227" strokeWidth={1.8} />
               <span className="font-mono text-[11px] uppercase tracking-[2.5px] text-[rgba(200,162,39,0.9)]">রিপোর্ট হিস্ট্রি</span>

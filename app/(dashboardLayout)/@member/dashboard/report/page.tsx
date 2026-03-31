@@ -1,1 +1,0 @@
-export default function MemberReport() { return <div className="p-6 text-xl">Sodosso Report Content</div>; }
