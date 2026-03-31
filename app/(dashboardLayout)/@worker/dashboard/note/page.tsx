@@ -1,3 +1,5 @@
+import { NoteClient } from "@/components/dashboard/Note/NoteClient"
+
 export default function WorkerNote() {
-  return <div className="p-6 text-xl">Kormi Note Content</div>
+  return <NoteClient />
 }
