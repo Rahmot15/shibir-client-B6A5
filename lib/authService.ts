@@ -1,4 +1,13 @@
-const API_BASE = "http://localhost:5000/api/v1";
+const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000";
+const API_BASE = `${BACKEND_URL}/api/v1`;
+
+async function parseJsonSafe<T = unknown>(res: Response): Promise<T | null> {
+  try {
+    return (await res.json()) as T;
+  } catch {
+    return null;
+  }
+}
 
 type ApiResponse<T = unknown> = {
   success: boolean;
@@ -35,7 +44,7 @@ export async function registerUser(
     body: JSON.stringify(payload),
   });
 
-  const data = await res.json();
+  const data = await parseJsonSafe<ApiResponse<UserData>>(res);
 
   if (!res.ok) {
     return {
@@ -44,7 +53,12 @@ export async function registerUser(
     };
   }
 
-  return data as ApiResponse<UserData>;
+  return (
+    data || {
+      success: false,
+      message: "নিবন্ধন ব্যর্থ হয়েছে",
+    }
+  );
 }
 
 export async function loginUser(
@@ -57,7 +71,7 @@ export async function loginUser(
     body: JSON.stringify(payload),
   });
 
-  const data = await res.json();
+  const data = await parseJsonSafe<ApiResponse<UserData>>(res);
 
   if (!res.ok) {
     return {
@@ -66,7 +80,12 @@ export async function loginUser(
     };
   }
 
-  return data as ApiResponse<UserData>;
+  return (
+    data || {
+      success: false,
+      message: "লগইন ব্যর্থ হয়েছে",
+    }
+  );
 }
 
 export async function getMe(): Promise<ApiResponse<UserData>> {
@@ -76,7 +95,7 @@ export async function getMe(): Promise<ApiResponse<UserData>> {
     credentials: "include",
   });
 
-  const data = await res.json();
+  const data = await parseJsonSafe<ApiResponse<UserData>>(res);
 
   if (!res.ok) {
     return {
@@ -85,7 +104,12 @@ export async function getMe(): Promise<ApiResponse<UserData>> {
     };
   }
 
-  return data as ApiResponse<UserData>;
+  return (
+    data || {
+      success: false,
+      message: "ব্যবহারকারীর তথ্য পাওয়া যায়নি",
+    }
+  );
 }
 
 export async function logoutUser(): Promise<ApiResponse<null>> {
@@ -95,7 +119,7 @@ export async function logoutUser(): Promise<ApiResponse<null>> {
     credentials: "include",
   });
 
-  const data = await res.json();
+  const data = await parseJsonSafe<ApiResponse<null>>(res);
 
   if (!res.ok) {
     return {
@@ -104,5 +128,10 @@ export async function logoutUser(): Promise<ApiResponse<null>> {
     };
   }
 
-  return data as ApiResponse<null>;
+  return (
+    data || {
+      success: false,
+      message: "লগআউট ব্যর্থ হয়েছে",
+    }
+  );
 }

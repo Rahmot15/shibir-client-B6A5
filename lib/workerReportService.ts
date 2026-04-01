@@ -1,10 +1,19 @@
-const API_BASE = `${process.env.NEXT_PUBLIC_BACKEND_URL}/api/v1`;
+const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000";
+const API_BASE = `${BACKEND_URL}/api/v1`;
 
 type ApiResponse<T = unknown> = {
   success: boolean;
   message: string;
   data?: T;
 };
+
+async function parseJsonSafe<T = unknown>(res: Response): Promise<T | null> {
+  try {
+    return (await res.json()) as T;
+  } catch {
+    return null;
+  }
+}
 
 export type WorkerNumericMetric =
   | "QURAN_AYAH"
@@ -121,10 +130,11 @@ export async function saveOrUpdateMyWorkerReport(
     method: "POST",
     headers: { "Content-Type": "application/json" },
     credentials: "include",
+    cache: "no-store",
     body: JSON.stringify(payload),
   });
 
-  const data = await res.json();
+  const data = await parseJsonSafe<ApiResponse<WorkerReportDetails>>(res);
 
   if (!res.ok) {
     return {
@@ -133,7 +143,7 @@ export async function saveOrUpdateMyWorkerReport(
     };
   }
 
-  return data as ApiResponse<WorkerReportDetails>;
+  return data || { success: false, message: "রিপোর্ট সেভ করা যায়নি" };
 }
 
 export async function saveOrUpdateMyWorkerPlan(
@@ -143,10 +153,11 @@ export async function saveOrUpdateMyWorkerPlan(
     method: "PATCH",
     headers: { "Content-Type": "application/json" },
     credentials: "include",
+    cache: "no-store",
     body: JSON.stringify(payload),
   });
 
-  const data = await res.json();
+  const data = await parseJsonSafe<ApiResponse<WorkerReportDetails>>(res);
 
   if (!res.ok) {
     return {
@@ -155,7 +166,7 @@ export async function saveOrUpdateMyWorkerPlan(
     };
   }
 
-  return data as ApiResponse<WorkerReportDetails>;
+  return data || { success: false, message: "পরিকল্পনা সেভ করা যায়নি" };
 }
 
 export async function getMyWorkerReportHistory(): Promise<
@@ -165,9 +176,10 @@ export async function getMyWorkerReportHistory(): Promise<
     method: "GET",
     headers: { "Content-Type": "application/json" },
     credentials: "include",
+    cache: "no-store",
   });
 
-  const data = await res.json();
+  const data = await parseJsonSafe<ApiResponse<WorkerReportHistoryItem[]>>(res);
 
   if (!res.ok) {
     return {
@@ -176,7 +188,7 @@ export async function getMyWorkerReportHistory(): Promise<
     };
   }
 
-  return data as ApiResponse<WorkerReportHistoryItem[]>;
+  return data || { success: false, message: "রিপোর্ট হিস্ট্রি পাওয়া যায়নি" };
 }
 
 export async function getMyWorkerReportById(
@@ -186,9 +198,10 @@ export async function getMyWorkerReportById(
     method: "GET",
     headers: { "Content-Type": "application/json" },
     credentials: "include",
+    cache: "no-store",
   });
 
-  const data = await res.json();
+  const data = await parseJsonSafe<ApiResponse<WorkerReportDetails>>(res);
 
   if (!res.ok) {
     return {
@@ -197,7 +210,7 @@ export async function getMyWorkerReportById(
     };
   }
 
-  return data as ApiResponse<WorkerReportDetails>;
+  return data || { success: false, message: "রিপোর্ট পাওয়া যায়নি" };
 }
 
 export async function getMyWorkerReportByMonth(
@@ -209,10 +222,11 @@ export async function getMyWorkerReportByMonth(
       method: "GET",
       headers: { "Content-Type": "application/json" },
       credentials: "include",
+      cache: "no-store",
     }
   );
 
-  const data = await res.json();
+  const data = await parseJsonSafe<ApiResponse<WorkerReportDetails>>(res);
 
   if (!res.ok) {
     return {
@@ -221,7 +235,7 @@ export async function getMyWorkerReportByMonth(
     };
   }
 
-  return data as ApiResponse<WorkerReportDetails>;
+  return data || { success: false, message: "এই মাসের রিপোর্ট পাওয়া যায়নি" };
 }
 
 export async function deleteMyWorkerReport(
@@ -231,9 +245,10 @@ export async function deleteMyWorkerReport(
     method: "DELETE",
     headers: { "Content-Type": "application/json" },
     credentials: "include",
+    cache: "no-store",
   });
 
-  const data = await res.json();
+  const data = await parseJsonSafe<ApiResponse<null>>(res);
 
   if (!res.ok) {
     return {
@@ -242,7 +257,7 @@ export async function deleteMyWorkerReport(
     };
   }
 
-  return data as ApiResponse<null>;
+  return data || { success: false, message: "রিপোর্ট ডিলিট করা যায়নি" };
 }
 
 export async function addWorkerAdvice(
@@ -253,10 +268,11 @@ export async function addWorkerAdvice(
     method: "POST",
     headers: { "Content-Type": "application/json" },
     credentials: "include",
+    cache: "no-store",
     body: JSON.stringify({ text }),
   });
 
-  const data = await res.json();
+  const data = await parseJsonSafe<ApiResponse<{ id: string; text: string; createdAt: string }>>(res);
 
   if (!res.ok) {
     return {
@@ -265,7 +281,7 @@ export async function addWorkerAdvice(
     };
   }
 
-  return data as ApiResponse<{ id: string; text: string; createdAt: string }>;
+  return data || { success: false, message: "পরামর্শ সেভ করা যায়নি" };
 }
 
 export async function getWorkerAdviceList(
@@ -275,9 +291,10 @@ export async function getWorkerAdviceList(
     method: "GET",
     headers: { "Content-Type": "application/json" },
     credentials: "include",
+    cache: "no-store",
   });
 
-  const data = await res.json();
+  const data = await parseJsonSafe<ApiResponse<{ id: string; text: string; createdAt: string }[]>>(res);
 
   if (!res.ok) {
     return {
@@ -286,5 +303,5 @@ export async function getWorkerAdviceList(
     };
   }
 
-  return data as ApiResponse<{ id: string; text: string; createdAt: string }[]>;
+  return data || { success: false, message: "পরামর্শ তালিকা পাওয়া যায়নি" };
 }
