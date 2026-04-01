@@ -3,7 +3,13 @@ import { NextRequest, NextResponse } from "next/server"
 type Role = "SUPPORTER" | "WORKER" | "ASSOCIATE" | "MEMBER" | "ADMIN"
 
 const allowedRoutesByRole: Record<Role, string[]> = {
-  ADMIN: ["/dashboard/overview", "/dashboard/note", "/dashboard/manage-users", "/dashboard/approve-viva"],
+  ADMIN: [
+    "/dashboard/overview",
+    "/dashboard/note",
+    "/dashboard/manage-users",
+    "/dashboard/approve-viva",
+    "/dashboard/reportCheck",
+  ],
   ASSOCIATE: ["/dashboard/overview", "/dashboard/note", "/dashboard/exam", "/dashboard/syllabus"],
   MEMBER: ["/dashboard/overview", "/dashboard/note", "/dashboard/guidance"],
   SUPPORTER: ["/dashboard/overview", "/dashboard/note", "/dashboard/exam", "/dashboard/syllabus", "/dashboard/report"],

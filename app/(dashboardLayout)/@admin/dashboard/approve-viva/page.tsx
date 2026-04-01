@@ -1,1 +1,5 @@
-export default function AdminApproveViva() { return <div className="p-6 text-xl">Admin Approve Viva Content</div>; }
+import { AdminApproveVivaClient } from "@/components/dashboard/Admin/AdminApproveVivaClient";
+
+export default function AdminApproveViva() {
+	return <AdminApproveVivaClient />
+}
