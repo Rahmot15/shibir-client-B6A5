@@ -26,6 +26,16 @@ import { useState, useEffect, useCallback, useRef } from "react"
 import { NoteToolbar } from "./NoteToolbar"
 import { Button }      from "@/components/ui/button"
 import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog"
+import {
   Save, Plus, Loader2, StickyNote, History,
   ArrowLeft, Search, Trash2, Calendar,
   FileText,
@@ -57,6 +67,8 @@ export function NoteClient() {
   const [currentNote,  setCurrentNote]  = useState<Note|null>(null)
   const [isSaving,     setIsSaving]     = useState(false)
   const [isLoading,    setIsLoading]    = useState(false)
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
+  const [pendingDeleteNote, setPendingDeleteNote] = useState<Note | null>(null)
   const [title,        setTitle]        = useState("")
   const [searchQuery,  setSearchQuery]  = useState("")
   const [stats,        setStats]        = useState({ words:0, chars:0 })
@@ -199,8 +211,13 @@ export function NoteClient() {
 
   const openNote = (note: Note) => { setCurrentNote(note); setView("edit") }
 
-  const deleteNote = async (e: React.MouseEvent, id: string) => {
+  const openDeleteConfirmation = (e: React.MouseEvent, note: Note) => {
     e.stopPropagation()
+    setPendingDeleteNote(note)
+    setIsDeleteDialogOpen(true)
+  }
+
+  const deleteNote = async (id: string) => {
     try {
       await noteService.deleteNote(id)
       setNotes(p => p.filter(n => n.id!==id))
@@ -208,6 +225,9 @@ export function NoteClient() {
       if (currentNote?.id===id) { setCurrentNote(null); setView("list") }
     } catch {
       toast.error("ডিলিট করতে সমস্যা হয়েছে")
+    } finally {
+      setIsDeleteDialogOpen(false)
+      setPendingDeleteNote(null)
     }
   }
 
@@ -289,7 +309,7 @@ export function NoteClient() {
                     <FileText size={16} strokeWidth={1.8}/>
                   </div>
                   <Button variant="ghost" size="icon"
-                    onClick={e=>deleteNote(e,note.id)}
+                    onClick={e=>openDeleteConfirmation(e, note)}
                     className="h-7 w-7 text-white/10 hover:text-red-400 hover:bg-red-400/10 rounded-lg opacity-0 group-hover:opacity-100 transition-all">
                     <Trash2 size={14}/>
                   </Button>
@@ -323,6 +343,28 @@ export function NoteClient() {
             )}
           </div>
         )}
+
+        <AlertDialog open={isDeleteDialogOpen} onOpenChange={setIsDeleteDialogOpen}>
+          <AlertDialogContent className="border border-white/10 bg-[#071310] text-emerald-50">
+            <AlertDialogHeader>
+              <AlertDialogTitle className="text-emerald-50">নোটটি ডিলিট করতে চান?</AlertDialogTitle>
+              <AlertDialogDescription className="text-white/60">
+                {pendingDeleteNote?.title || "এই নোট"} ডিলিট করলে এটি আর ফেরত আনা যাবে না।
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel className="border-white/15 bg-transparent text-white/80 hover:bg-white/5 hover:text-white">
+                Cancel
+              </AlertDialogCancel>
+              <AlertDialogAction
+                className="bg-red-500 text-white hover:bg-red-400"
+                onClick={() => pendingDeleteNote && deleteNote(pendingDeleteNote.id)}
+              >
+                Delete
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </div>
     )
   }
