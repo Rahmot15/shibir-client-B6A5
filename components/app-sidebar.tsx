@@ -50,6 +50,7 @@ const navByRole: Record<Role, { title: string; url: string; icon: React.ReactNod
   MEMBER: [
     { title: "Overview",  url: "/dashboard/overview",  icon: <LayoutDashboardIcon /> },
     { title: "Note",      url: "/dashboard/note",      icon: <StickyNoteIcon /> },
+    { title: "Syllabus",  url: "/dashboard/syllabus",  icon: <BookOpenIcon /> },
     { title: "Guidance",  url: "/dashboard/guidance",  icon: <BookOpenIcon /> },
   ],
   SUPPORTER: [
