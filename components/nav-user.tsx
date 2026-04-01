@@ -1,5 +1,6 @@
 "use client"
 
+import { useRouter } from "next/navigation"
 import {
   Avatar,
   AvatarFallback,
@@ -20,6 +21,7 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from "@/components/ui/sidebar"
+import { useAuth } from "@/components/auth/AuthContext"
 import {
   CircleUserRoundIcon,
   LogOutIcon,
@@ -36,6 +38,8 @@ export function NavUser({
   }
 }) {
   const { isMobile } = useSidebar()
+  const router = useRouter()
+  const { logout } = useAuth()
 
   const initials = user.name
     .split(" ")
@@ -109,7 +113,10 @@ export function NavUser({
 
             {/* Menu items */}
             <DropdownMenuGroup className="space-y-0.5">
-              <DropdownMenuItem className="flex cursor-pointer items-center gap-2.5 rounded-lg px-3 py-2 text-[13px] text-emerald-100/60 hover:bg-emerald-500/8 hover:text-emerald-200 focus:bg-emerald-500/8 focus:text-emerald-200 transition-colors [&_svg]:h-3.5 [&_svg]:w-3.5 [&_svg]:text-emerald-500/50">
+              <DropdownMenuItem
+                onSelect={() => router.push("/dashboard/profile")}
+                className="flex cursor-pointer items-center gap-2.5 rounded-lg px-3 py-2 text-[13px] text-emerald-100/60 hover:bg-emerald-500/8 hover:text-emerald-200 focus:bg-emerald-500/8 focus:text-emerald-200 transition-colors [&_svg]:h-3.5 [&_svg]:w-3.5 [&_svg]:text-emerald-500/50"
+              >
                 <CircleUserRoundIcon />
                 প্রোফাইল
               </DropdownMenuItem>
@@ -117,7 +124,12 @@ export function NavUser({
 
             <DropdownMenuSeparator className="my-1.5 bg-emerald-500/10" />
 
-            <DropdownMenuItem className="flex cursor-pointer items-center gap-2.5 rounded-lg px-3 py-2 text-[13px] text-red-400/70 hover:bg-red-500/8 hover:text-red-400 focus:bg-red-500/8 focus:text-red-400 transition-colors [&_svg]:h-3.5 [&_svg]:w-3.5 [&_svg]:text-red-400/60">
+            <DropdownMenuItem
+              onSelect={() => {
+                void logout()
+              }}
+              className="flex cursor-pointer items-center gap-2.5 rounded-lg px-3 py-2 text-[13px] text-red-400/70 hover:bg-red-500/8 hover:text-red-400 focus:bg-red-500/8 focus:text-red-400 transition-colors [&_svg]:h-3.5 [&_svg]:w-3.5 [&_svg]:text-red-400/60"
+            >
               <LogOutIcon />
               লগ আউট
             </DropdownMenuItem>

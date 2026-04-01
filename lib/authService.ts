@@ -32,6 +32,8 @@ export type UserData = {
   email: string;
   role: string;
   image?: string;
+  createdAt?: string;
+  updatedAt?: string;
 };
 
 export async function registerUser(

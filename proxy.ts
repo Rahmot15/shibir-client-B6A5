@@ -6,13 +6,27 @@ const allowedRoutesByRole: Record<Role, string[]> = {
   ADMIN: [
     "/dashboard/overview",
     "/dashboard/note",
+    "/dashboard/profile",
     "/dashboard/manage-users",
     "/dashboard/approve-viva",
   ],
-  ASSOCIATE: ["/dashboard/overview", "/dashboard/note", "/dashboard/exam", "/dashboard/syllabus"],
-  MEMBER: ["/dashboard/overview", "/dashboard/note", "/dashboard/syllabus"],
-  SUPPORTER: ["/dashboard/overview", "/dashboard/note", "/dashboard/exam", "/dashboard/syllabus", "/dashboard/report"],
-  WORKER: ["/dashboard/overview", "/dashboard/note", "/dashboard/exam", "/dashboard/syllabus"],
+  ASSOCIATE: [
+    "/dashboard/overview",
+    "/dashboard/note",
+    "/dashboard/profile",
+    "/dashboard/exam",
+    "/dashboard/syllabus",
+  ],
+  MEMBER: ["/dashboard/overview", "/dashboard/note", "/dashboard/profile", "/dashboard/syllabus"],
+  SUPPORTER: [
+    "/dashboard/overview",
+    "/dashboard/note",
+    "/dashboard/profile",
+    "/dashboard/exam",
+    "/dashboard/syllabus",
+    "/dashboard/report",
+  ],
+  WORKER: ["/dashboard/overview", "/dashboard/note", "/dashboard/profile", "/dashboard/exam", "/dashboard/syllabus"],
 }
 
 const reportPageAllowedRoles: Role[] = ["WORKER", "MEMBER", "ASSOCIATE"]

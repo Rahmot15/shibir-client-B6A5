@@ -108,7 +108,7 @@ export function AppSidebar({ role, user, ...props }: AppSidebarProps) {
       </SidebarHeader>
 
       {/* ── NAV ── */}
-      <SidebarContent className="bg-[#050f08] px-2 py-3">
+      <SidebarContent className="bg-[#050f08] px-2 py-3 flex flex-col">
 
         {/* Role badge */}
         {role && (
