@@ -4,6 +4,8 @@
 
 .tiptap {
   outline: none;
+  font-family: "Hind Siliguri", "Noto Sans Bengali", "Segoe UI", "Segoe UI Emoji", "Noto Color Emoji", "Apple Color Emoji", sans-serif;
+  font-variant-emoji: emoji;
 
   /* ── First child margin reset ── */
   > :first-child { margin-top: 0; }
@@ -22,10 +24,8 @@
     margin: 1.5rem 0 0.75rem;
     padding-bottom: 0.5rem;
     border-bottom: 1px solid rgba(0, 200, 83, 0.18);
-    background: linear-gradient(135deg, #ecfdf5 30%, #4ade80);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    color: #ecfdf5;
+    text-shadow: 0 0 16px rgba(74, 222, 128, 0.18);
   }
 
   h2 {

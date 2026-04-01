@@ -149,7 +149,11 @@ export function NoteToolbar({ editor }: NoteToolbarProps) {
             {/* Text color */}
             <Popover>
               <PopoverTrigger asChild>
-                <button className="toolbar-icon-btn group relative" title="Text Color">
+                <button
+                  className="toolbar-icon-btn group relative"
+                  title="Text Color"
+                  onMouseDown={e => e.preventDefault()}
+                >
                   <Palette className="icon"/>
                   <span className="absolute bottom-0.5 left-1/2 h-1 w-3.5 -translate-x-1/2 rounded-full transition-all"
                     style={{ background: editor.getAttributes("textStyle")?.color || "#f1f5f9" }}/>
@@ -160,6 +164,7 @@ export function NoteToolbar({ editor }: NoteToolbarProps) {
                 <div className="grid grid-cols-5 gap-1">
                   {TEXT_COLORS.map(c=>(
                     <button key={c.value} title={c.label}
+                      onMouseDown={e => e.preventDefault()}
                       onClick={()=> c.value
                         ? editor.chain().focus().setColor?.(c.value).run()
                         : editor.chain().focus().unsetColor?.().run()}
@@ -175,7 +180,11 @@ export function NoteToolbar({ editor }: NoteToolbarProps) {
             {/* Highlight */}
             <Popover>
               <PopoverTrigger asChild>
-                <button className="toolbar-icon-btn group relative" title="Highlight">
+                <button
+                  className="toolbar-icon-btn group relative"
+                  title="Highlight"
+                  onMouseDown={e => e.preventDefault()}
+                >
                   <Highlighter className="icon"/>
                   <span className="absolute bottom-0.5 left-1/2 h-1 w-3.5 -translate-x-1/2 rounded-full transition-all"
                     style={{ background: editor.getAttributes("highlight")?.color || "#fef08a33" }}/>
@@ -186,6 +195,7 @@ export function NoteToolbar({ editor }: NoteToolbarProps) {
                 <div className="grid grid-cols-4 gap-1.5">
                   {HIGHLIGHT_COLORS.map(c=>(
                     <button key={c.value} title={c.label}
+                      onMouseDown={e => e.preventDefault()}
                       onClick={()=> c.value
                         ? editor.chain().focus().toggleHighlight?.({ color:c.value }).run()
                         : editor.chain().focus().unsetHighlight?.().run()}
@@ -391,6 +401,7 @@ function TB({
       <TooltipTrigger asChild>
         <Button
           variant="ghost" size="icon" type="button"
+          onMouseDown={(e) => e.preventDefault()}
           onClick={onClick} disabled={disabled}
           className={[
             "h-7 w-7 md:h-[30px] md:w-[30px] rounded-md transition-all duration-150 flex-shrink-0",

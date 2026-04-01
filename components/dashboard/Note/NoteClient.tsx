@@ -64,6 +64,7 @@ export function NoteClient() {
   const lastSavedContent = useRef<string>("")
   const lastSavedTitle   = useRef<string>("")
   const autoSaveTimer    = useRef<ReturnType<typeof setTimeout>|undefined>(undefined)
+  const hydratedNoteId   = useRef<string | null>(null)
 
   /* ── Editor ── */
   const editor = useEditor({
@@ -130,12 +131,15 @@ export function NoteClient() {
   /* ── Sync editor when note changes ── */
   useEffect(() => {
     if (currentNote && editor) {
+      // Only hydrate the editor when switching to a different note.
+      if (hydratedNoteId.current === currentNote.id) return
       editor.commands.setContent(currentNote.content, { emitUpdate: false })
       setTitle(currentNote.title)
       const html = editor.getHTML()
       setStats(countStats(html))
       lastSavedContent.current = JSON.stringify(currentNote.content)
       lastSavedTitle.current   = currentNote.title
+      hydratedNoteId.current   = currentNote.id
     }
   }, [currentNote, editor])
 
@@ -160,10 +164,11 @@ export function NoteClient() {
       if (currentNote) {
         const updated = await noteService.updateNote(currentNote.id, { title:currentTitle, content })
         setNotes(p => p.map(n => n.id===updated.id ? updated : n))
-        setCurrentNote(updated)
+        setCurrentNote(p => (p && p.id === updated.id ? { ...p, ...updated } : p))
       } else {
         const created = await noteService.createNote({ title:currentTitle, content })
         setNotes(p => [created, ...p])
+        hydratedNoteId.current = created.id
         setCurrentNote(created)
       }
       lastSavedContent.current = JSON.stringify(content)
@@ -181,6 +186,7 @@ export function NoteClient() {
     if (editor && !editor.isEmpty) await handleSave(true)
     setCurrentNote(null); setTitle("")
     editor?.commands.clearContent(false)
+    hydratedNoteId.current = null
     lastSavedContent.current = ""; lastSavedTitle.current = ""
     setView("edit")
   }
