@@ -14,7 +14,6 @@ import {
 	FileTextIcon,
 	FlameIcon,
 	NotebookPenIcon,
-	SparklesIcon,
 	TargetIcon,
 	UsersIcon,
 } from "lucide-react"
@@ -257,7 +256,6 @@ export default function WorkerOverview() {
 					<div className="flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
 						<div>
 							<p className="mb-2 inline-flex items-center gap-2 rounded-full border border-emerald-400/30 bg-emerald-500/10 px-3 py-1 text-[11px] font-semibold tracking-[1.4px] text-emerald-300 uppercase">
-								<SparklesIcon className="h-3.5 w-3.5" />
 								Worker Command Center
 							</p>
 							<h1 className="text-[26px] font-extrabold tracking-tight text-emerald-50 md:text-[31px]">

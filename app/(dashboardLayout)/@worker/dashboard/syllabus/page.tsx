@@ -154,7 +154,6 @@ export default function WorkerSyllabus() {
           <div className="relative z-10 flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
             <div>
               <p className="mb-2 inline-flex items-center gap-2 rounded-full border border-emerald-400/30 bg-emerald-500/10 px-3 py-1 text-[11px] font-semibold tracking-[1.5px] text-emerald-300 uppercase">
-                <SparklesIcon className="h-3.5 w-3.5" />
                 Worker Dashboard
               </p>
               <h1 className="text-2xl font-extrabold tracking-tight text-emerald-50 md:text-3xl">সাথী সিলেবাস</h1>

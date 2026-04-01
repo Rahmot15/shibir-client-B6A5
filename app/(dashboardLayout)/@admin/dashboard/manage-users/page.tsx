@@ -1,1 +1,5 @@
-export default function AdminManageUsers() { return <div className="p-6 text-xl">Admin Manage Users Content</div>; }
+import { AdminManageUsersClient } from "@/components/dashboard/Admin/AdminManageUsersClient";
+
+export default function AdminManageUsers() {
+	return <AdminManageUsersClient />
+}

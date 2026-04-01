@@ -147,7 +147,7 @@ export default function AssociateSyllabus() {
   const syllabusUrl = encodeURI("/সদস্য সহায়িকা 20233.pdf")
 
   return (
-    <div className="min-h-screen bg-[#050f08] px-4 py-6 text-emerald-50 md:px-6">
+    <div className="min-h-screen bg-[#050f08] px-0 py-6 text-emerald-50 md:px-6">
       <div className="mx-auto max-w-7xl">
         <section className="relative overflow-hidden rounded-3xl border border-emerald-500/25 bg-[radial-gradient(circle_at_top,rgba(16,185,129,0.18),rgba(5,15,8,0.95)_45%)] p-6 md:p-8">
           <div className="absolute -top-14 -right-14 h-48 w-48 rounded-full bg-emerald-400/10 blur-3xl" />
@@ -156,7 +156,6 @@ export default function AssociateSyllabus() {
           <div className="relative z-10 flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
             <div>
               <p className="mb-2 inline-flex items-center gap-2 rounded-full border border-emerald-400/30 bg-emerald-500/10 px-3 py-1 text-[11px] font-semibold tracking-[1.5px] text-emerald-300 uppercase">
-                <SparklesIcon className="h-3.5 w-3.5" />
                 Associate Dashboard
               </p>
               <h1 className="text-2xl font-extrabold tracking-tight text-emerald-50 md:text-3xl">সদস্য সহায়িকা</h1>
