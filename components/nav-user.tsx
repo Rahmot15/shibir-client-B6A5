@@ -22,10 +22,8 @@ import {
 } from "@/components/ui/sidebar"
 import {
   CircleUserRoundIcon,
-  BellIcon,
   LogOutIcon,
   ChevronUpIcon,
-  SettingsIcon,
 } from "lucide-react"
 
 export function NavUser({
@@ -114,14 +112,6 @@ export function NavUser({
               <DropdownMenuItem className="flex cursor-pointer items-center gap-2.5 rounded-lg px-3 py-2 text-[13px] text-emerald-100/60 hover:bg-emerald-500/8 hover:text-emerald-200 focus:bg-emerald-500/8 focus:text-emerald-200 transition-colors [&_svg]:h-3.5 [&_svg]:w-3.5 [&_svg]:text-emerald-500/50">
                 <CircleUserRoundIcon />
                 প্রোফাইল
-              </DropdownMenuItem>
-              <DropdownMenuItem className="flex cursor-pointer items-center gap-2.5 rounded-lg px-3 py-2 text-[13px] text-emerald-100/60 hover:bg-emerald-500/8 hover:text-emerald-200 focus:bg-emerald-500/8 focus:text-emerald-200 transition-colors [&_svg]:h-3.5 [&_svg]:w-3.5 [&_svg]:text-emerald-500/50">
-                <BellIcon />
-                নোটিফিকেশন
-              </DropdownMenuItem>
-              <DropdownMenuItem className="flex cursor-pointer items-center gap-2.5 rounded-lg px-3 py-2 text-[13px] text-emerald-100/60 hover:bg-emerald-500/8 hover:text-emerald-200 focus:bg-emerald-500/8 focus:text-emerald-200 transition-colors [&_svg]:h-3.5 [&_svg]:w-3.5 [&_svg]:text-emerald-500/50">
-                <SettingsIcon />
-                সেটিংস
               </DropdownMenuItem>
             </DropdownMenuGroup>
 

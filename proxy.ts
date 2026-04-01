@@ -10,7 +10,7 @@ const allowedRoutesByRole: Record<Role, string[]> = {
     "/dashboard/approve-viva",
   ],
   ASSOCIATE: ["/dashboard/overview", "/dashboard/note", "/dashboard/exam", "/dashboard/syllabus"],
-  MEMBER: ["/dashboard/overview", "/dashboard/note", "/dashboard/guidance", "/dashboard/syllabus"],
+  MEMBER: ["/dashboard/overview", "/dashboard/note", "/dashboard/syllabus"],
   SUPPORTER: ["/dashboard/overview", "/dashboard/note", "/dashboard/exam", "/dashboard/syllabus", "/dashboard/report"],
   WORKER: ["/dashboard/overview", "/dashboard/note", "/dashboard/exam", "/dashboard/syllabus"],
 }

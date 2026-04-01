@@ -1,1 +1,5 @@
-export default function MemberOverview() { return <div className="p-6 text-xl">Sodosso Overview Content</div>; }
+import { MemberOverviewContent } from "../../../../../components/dashboard/Member/MemberOverviewContent";
+
+export default function MemberOverview() {
+  return <MemberOverviewContent />;
+}
