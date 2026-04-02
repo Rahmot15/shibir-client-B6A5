@@ -5,8 +5,8 @@ export type NavLink = {
 
 export const NAV_LINKS: NavLink[] = [
 	{ title: "হোম", url: "/" },
-	{ title: "সংগঠন", url: "/" },
+	{ title: "কিশোরকণ্ঠ", url: "/" },
 	{ title: "কার্যক্রম", url: "/" },
-	{ title: "যোগাযোগ", url: "/" },
+	{ title: "সংবাদ", url: "/" },
 	{ title: "নোট", url: "/dashboard/note" },
 ];

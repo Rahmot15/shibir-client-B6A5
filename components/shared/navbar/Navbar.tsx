@@ -8,6 +8,7 @@ import {
 import NavbarActionsClient from "@/components/shared/navbar/NavbarActionsClient";
 import NavbarScrollClient from "@/components/shared/navbar/NavbarScrollClient";
 import { NAV_LINKS } from "@/components/shared/navbar/nav-links";
+import { MoonStar } from "lucide-react";
 
 export default function Navbar() {
 	return (
@@ -17,7 +18,7 @@ export default function Navbar() {
 				<div className="flex min-w-0 flex-1 items-center gap-2.5">
 					<Link href="/" className="flex items-center gap-2.5">
 						<div className="flex h-8.5 w-8.5 items-center justify-center rounded-full border border-[rgba(0,200,83,0.35)] text-base text-[#f0fff4] shadow-[0_0_12px_rgba(0,200,83,0.2)]">
-							☽
+							<MoonStar className="h-4 w-4" strokeWidth={2} />
 						</div>
 						<div className="min-w-0">
 							<div className="hidden text-[13px] font-semibold leading-[1.2] tracking-[0.5px] text-[#f0fff4] sm:block">

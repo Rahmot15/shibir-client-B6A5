@@ -1,4 +1,5 @@
 import MotionReveal from "@/components/shared/MotionReveal";
+import { Sparkles } from "lucide-react";
 
 export default function Hero() {
 	return (
@@ -11,9 +12,7 @@ export default function Hero() {
 				y={12}
 				className="mb-9 inline-flex items-center gap-2 rounded-[2px] border border-[rgba(0,200,83,0.2)] bg-[rgba(0,200,83,0.05)] px-[18px] py-[6px] font-mono text-[9px] uppercase tracking-[3.5px] text-[rgba(0,200,83,0.7)]"
 			>
-				<span className="text-[#c8a227]">◆</span>
 				প্রতিষ্ঠা ১৯৭৭ · বাংলাদেশ
-				<span className="text-[#c8a227]">◆</span>
 			</MotionReveal>
 
 			<MotionReveal
@@ -61,17 +60,17 @@ export default function Hero() {
 
 			<MotionReveal delay={0.85} duration={0.8} y={14} className="flex flex-wrap justify-center gap-3.5">
 				<a
-					href="#"
+					href="/reports"
 					className="rounded-[4px] bg-[#00c853] px-9 py-[13px] font-mono text-xs font-bold uppercase tracking-[2px] text-[#050f08] no-underline shadow-[0_0_30px_rgba(0,200,83,0.3)] transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#00e676] hover:shadow-[0_0_45px_rgba(0,200,83,0.45)]"
 				>
-					সদস্য হোন
+					রিপোর্ট রাখুন
 				</a>
 
 				<a
-					href="#"
+					href="/dashboard/note"
 					className="rounded-[4px] border border-[rgba(0,200,83,0.3)] bg-transparent px-9 py-[13px] font-mono text-xs uppercase tracking-[2px] text-[#f0fff4] no-underline transition-all duration-300 hover:-translate-y-0.5 hover:border-[rgba(0,200,83,0.65)] hover:bg-[rgba(0,200,83,0.08)]"
 				>
-					আরও জানুন
+					নোট নিন
 				</a>
 			</MotionReveal>
 
