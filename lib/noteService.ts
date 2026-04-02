@@ -1,7 +1,6 @@
 import { JSONContent } from "@tiptap/react";
 
-const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000";
-const BASE_URL = `${BACKEND_URL}/api/v1/notes`;
+const BASE_URL = "/api/v1/notes";
 
 export interface Note {
   id: string;

@@ -54,13 +54,20 @@ export async function proxy(request: NextRequest) {
   }
 
   const cookie = request.headers.get("cookie") ?? ""
+  const meUrl = `${request.nextUrl.origin}/api/v1/auth/me`
 
-  const meResponse = await fetch("http://localhost:5000/api/v1/auth/me", {
-    headers: {
-      Cookie: cookie,
-    },
-    cache: "no-store",
-  })
+  let meResponse: Response
+
+  try {
+    meResponse = await fetch(meUrl, {
+      headers: {
+        Cookie: cookie,
+      },
+      cache: "no-store",
+    })
+  } catch {
+    return NextResponse.redirect(new URL("/login", request.url))
+  }
 
   if (!meResponse.ok) {
     return NextResponse.redirect(new URL("/login", request.url))

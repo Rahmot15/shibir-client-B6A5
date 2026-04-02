@@ -1,7 +1,7 @@
 import { AppSidebar } from "@/components/app-sidebar"
 import { SiteHeader } from "@/components/site-header"
 import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar"
-import { cookies } from "next/headers"
+import { cookies, headers } from "next/headers"
 import { redirect } from "next/navigation"
 
 type Role = "SUPPORTER" | "WORKER" | "ASSOCIATE" | "MEMBER" | "ADMIN"
@@ -20,8 +20,12 @@ export default async function DashboardLayout({
   admin: React.ReactNode
 }) {
   const cookieStore = await cookies()
+  const headerStore = await headers()
+  const host = headerStore.get("host")
+  const protocol = host?.includes("localhost") ? "http" : "https"
+  const baseUrl = host ? `${protocol}://${host}` : "http://localhost:3000"
 
-  const res = await fetch(`http://localhost:5000/api/v1/auth/me`, {
+  const res = await fetch(`${baseUrl}/api/v1/auth/me`, {
     headers: { Cookie: cookieStore.toString() },
     cache: "no-store",
   })

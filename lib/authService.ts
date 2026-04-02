@@ -1,5 +1,4 @@
-const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000";
-const API_BASE = `${BACKEND_URL}/api/v1`;
+const API_BASE = "/api/v1";
 
 async function parseJsonSafe<T = unknown>(res: Response): Promise<T | null> {
   try {

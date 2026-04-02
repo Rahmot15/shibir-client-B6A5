@@ -1,11 +1,25 @@
 import MotionReveal from "@/components/shared/MotionReveal";
+import Image from "next/image";
 
 export default function Hero() {
 	return (
 		<section className="relative flex min-h-screen flex-col items-center justify-center overflow-hidden px-[clamp(20px,6vw,80px)] pb-20 pt-[100px] text-center">
+			<div className="absolute inset-0 z-0">
+				<Image
+					src="/shibir_banner.png"
+					alt="Hero background"
+					fill
+					priority
+					className="object-cover object-center brightness-110 saturate-110"
+				/>
+			</div>
+			<div className="pointer-events-none absolute inset-0 z-10 bg-[radial-gradient(circle_at_50%_35%,rgba(0,200,83,0.14)_0%,rgba(3,18,10,0.5)_45%,rgba(2,10,6,0.72)_100%)]" />
+			<div className="pointer-events-none absolute inset-0 z-10 bg-[linear-gradient(to_bottom,rgba(2,8,5,0.55)_0%,rgba(2,8,5,0.3)_35%,rgba(2,8,5,0.62)_100%)]" />
+
 			<div className="pointer-events-none absolute left-1/2 top-1/2 h-[min(520px,90vw)] w-[min(520px,90vw)] -translate-x-1/2 -translate-y-1/2 rounded-full border border-[rgba(0,200,83,0.07)]" />
 			<div className="pointer-events-none absolute left-1/2 top-1/2 h-[min(380px,70vw)] w-[min(380px,70vw)] -translate-x-1/2 -translate-y-1/2 rounded-full border border-[rgba(200,162,39,0.06)]" />
 
+			<div className="relative z-20 flex w-full max-w-[980px] flex-col items-center">
 			<MotionReveal
 				delay={0.1}
 				y={12}
@@ -72,12 +86,13 @@ export default function Hero() {
 					নোট নিন
 				</a>
 			</MotionReveal>
+			</div>
 
 			<MotionReveal
 				delay={1.2}
 				duration={1}
 				y={0}
-				className="absolute bottom-9 left-1/2 flex -translate-x-1/2 animate-[hero-bounce_2.5s_ease-in-out_infinite] flex-col items-center gap-1.5 opacity-45"
+				className="absolute bottom-4 left-1/2 z-30 flex -translate-x-1/2 animate-[hero-bounce_2.5s_ease-in-out_infinite] flex-col items-center gap-1.5 opacity-45 sm:bottom-7"
 			>
 				<div className="h-10 w-px bg-gradient-to-b from-transparent to-[rgba(0,200,83,0.6)]" />
 				<div className="font-mono text-[9px] uppercase tracking-[3px] text-[rgba(0,200,83,0.6)]">

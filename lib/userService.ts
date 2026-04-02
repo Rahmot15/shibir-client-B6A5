@@ -1,5 +1,4 @@
-const BACKEND_URL = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000";
-const BASE_URL = `${BACKEND_URL}/api/v1/users`;
+const BASE_URL = "/api/v1/users";
 const USERS_CACHE_TTL_MS = 30 * 1000;
 
 let cachedUsers: ManagedUser[] | null = null;
