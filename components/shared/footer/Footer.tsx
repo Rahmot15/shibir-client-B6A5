@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { Facebook, Globe, Linkedin, MoonStar, Send, Youtube } from "lucide-react";
+import Image from "next/image";
+import { Facebook, Globe, Linkedin, Send, Youtube } from "lucide-react";
 
 export default function Footer() {
 	const cols = [
@@ -50,7 +51,13 @@ export default function Footer() {
 						className="inline-flex items-center gap-2.5 rounded-lg border border-[rgba(0,200,83,0.14)] bg-[rgba(0,200,83,0.04)] px-3 py-2 transition-colors hover:border-[rgba(0,200,83,0.35)]"
 					>
 						<span className="flex h-9 w-9 items-center justify-center rounded-full border border-[rgba(0,200,83,0.3)] text-[#f0fff4] shadow-[0_0_12px_rgba(0,200,83,0.15)]">
-							<MoonStar className="h-4 w-4" strokeWidth={2} />
+							<Image
+								src="/Bangladesh_Islami_Chhatra_Shibir_Emblem.svg"
+								alt="বাংলাদেশ ইসলামী ছাত্রশিবির লোগো"
+								width={24}
+								height={24}
+								className="h-6 w-6 object-contain"
+							/>
 						</span>
 						<span>
 							<span className="block text-[13px] font-semibold text-[#f0fff4]">ইসলামী ছাত্রশিবির</span>
