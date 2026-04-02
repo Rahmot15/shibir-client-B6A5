@@ -1,4 +1,4 @@
-// import Footer from "@/components/shared/footer/Footer"
+import Footer from "@/components/shared/footer/Footer"
 import Navbar from "@/components/shared/navbar/Navbar"
 
 export default function CommonLayout({
@@ -9,6 +9,6 @@ export default function CommonLayout({
   return <div>
     <Navbar/>
     {children}
-    {/* <Footer/> */}
+    <Footer/>
     </div>
 }

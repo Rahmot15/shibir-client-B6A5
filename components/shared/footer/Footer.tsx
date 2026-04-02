@@ -1,150 +1,95 @@
 "use client";
 
+import Link from "next/link";
+import { Facebook, Globe, Linkedin, MoonStar, Send, Youtube } from "lucide-react";
+
 export default function Footer() {
 	const cols = [
 		{
 			title: "সংগঠন",
-			links: ["আমাদের পরিচয়", "ইতিহাস", "নেতৃবৃন্দ", "কেন্দ্রীয় কমিটি"],
+			links: [
+				{ label: "আমাদের পরিচয়", href: "/info/identity" },
+				{ label: "ইতিহাস", href: "/info/history" },
+				{ label: "নেতৃবৃন্দ", href: "/info/leadership" },
+				{ label: "কেন্দ্রীয় কমিটি", href: "/info/central-committee" },
+			],
 		},
 		{
 			title: "কার্যক্রম",
-			links: ["শিক্ষা কার্যক্রম", "সমাজসেবা", "প্রশিক্ষণ", "বৃত্তি প্রকল্প"],
+			links: [
+				{ label: "শিক্ষা কার্যক্রম", href: "/info/education-programs" },
+				{ label: "সমাজসেবা", href: "/info/social-service" },
+				{ label: "প্রশিক্ষণ", href: "/info/training" },
+				{ label: "বৃত্তি প্রকল্প", href: "/info/scholarship" },
+			],
 		},
 		{
 			title: "যোগাযোগ",
-			links: ["ঢাকা অফিস", "জেলা শাখাসমূহ", "প্রেস বিজ্ঞপ্তি", "সদস্যপদ"],
+			links: [
+				{ label: "ঢাকা অফিস", href: "/info/dhaka-office" },
+				{ label: "জেলা শাখাসমূহ", href: "/info/district-branches" },
+				{ label: "প্রেস বিজ্ঞপ্তি", href: "/info/press" },
+				{ label: "সদস্যপদ", href: "/info/membership" },
+			],
 		},
 	];
 
+	const socials = [
+		{ label: "Facebook", href: "https://facebook.com", icon: Facebook },
+		{ label: "Telegram", href: "https://t.me", icon: Send },
+		{ label: "YouTube", href: "https://youtube.com", icon: Youtube },
+		{ label: "LinkedIn", href: "https://linkedin.com", icon: Linkedin },
+	];
+
 	return (
-		<footer
-			style={{
-				borderTop: "1px solid rgba(0,200,83,0.1)",
-				background: "#050f08",
-			}}
-		>
-			<div
-				style={{
-					maxWidth: 1100,
-					margin: "0 auto",
-					padding: "64px clamp(20px,6vw,80px) 48px",
-					display: "grid",
-					gridTemplateColumns: "1.6fr repeat(3, 1fr)",
-					gap: 40,
-				}}
-			>
-				<div>
-					<div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 16 }}>
-						<div
-							style={{
-								width: 36,
-								height: 36,
-								borderRadius: "50%",
-								border: "1px solid rgba(0,200,83,0.3)",
-								display: "flex",
-								alignItems: "center",
-								justifyContent: "center",
-								fontSize: 17,
-								boxShadow: "0 0 12px rgba(0,200,83,0.15)",
-							}}
-						>
-							☽
-						</div>
-						<div>
-							<div style={{ fontSize: 13, fontWeight: 600, color: "#f0fff4" }}>
-								ইসলামী ছাত্রশিবির
-							</div>
-							<div style={{ fontSize: 9, color: "rgba(0,200,83,0.55)", letterSpacing: "2px" }}>
-								BANGLADESH
-							</div>
-						</div>
-					</div>
-					<p
-						style={{
-							fontSize: 12,
-							color: "rgba(232,245,233,0.38)",
-							lineHeight: 1.9,
-							maxWidth: 240,
-							marginBottom: 24,
-						}}
+		<footer className="border-t border-[rgba(0,200,83,0.1)] bg-[#050f08]">
+			<div className="mx-auto grid w-full max-w-275 gap-9 px-[clamp(20px,6vw,80px)] py-12 sm:grid-cols-2 lg:grid-cols-[1.6fr_repeat(3,1fr)]">
+				<div className="space-y-5">
+					<Link
+						href="/"
+						className="inline-flex items-center gap-2.5 rounded-lg border border-[rgba(0,200,83,0.14)] bg-[rgba(0,200,83,0.04)] px-3 py-2 transition-colors hover:border-[rgba(0,200,83,0.35)]"
 					>
-						সত্য, ন্যায় ও মানবতার পথে একটি আলোকিত বাংলাদেশ গড়ার প্রত্যয়ে আমরা
-						অবিচল।
-					</p>
-					<div style={{ display: "flex", gap: 10 }}>
-						{["f", "t", "yt", "in"].map((s) => (
-							<div
-								key={s}
-								style={{
-									width: 32,
-									height: 32,
-									borderRadius: 4,
-									border: "1px solid rgba(0,200,83,0.15)",
-									display: "flex",
-									alignItems: "center",
-									justifyContent: "center",
-									fontSize: 10,
-									color: "rgba(232,245,233,0.35)",
-									cursor: "pointer",
-									transition: "all 0.25s",
-									fontFamily: "var(--font-geist-mono,monospace)",
-								}}
-								onMouseEnter={(e) => {
-									e.currentTarget.style.borderColor = "rgba(0,200,83,0.45)";
-									e.currentTarget.style.color = "#00c853";
-								}}
-								onMouseLeave={(e) => {
-									e.currentTarget.style.borderColor = "rgba(0,200,83,0.15)";
-									e.currentTarget.style.color = "rgba(232,245,233,0.35)";
-								}}
+						<span className="flex h-9 w-9 items-center justify-center rounded-full border border-[rgba(0,200,83,0.3)] text-[#f0fff4] shadow-[0_0_12px_rgba(0,200,83,0.15)]">
+							<MoonStar className="h-4 w-4" strokeWidth={2} />
+						</span>
+						<span>
+							<span className="block text-[13px] font-semibold text-[#f0fff4]">ইসলামী ছাত্রশিবির</span>
+							<span className="block text-[9px] tracking-[2px] text-[rgba(0,200,83,0.55)]">
+								BANGLADESH
+							</span>
+						</span>
+					</Link>
+
+					<div className="flex flex-wrap gap-2.5">
+						{socials.map((item) => (
+							<a
+								key={item.label}
+								href={item.href}
+								target="_blank"
+								rel="noreferrer"
+								aria-label={item.label}
+								className="flex h-9 w-9 items-center justify-center rounded-lg border border-[rgba(0,200,83,0.15)] text-[rgba(232,245,233,0.45)] transition-all hover:border-[rgba(0,200,83,0.45)] hover:text-[#00c853]"
 							>
-								{s}
-							</div>
+								<item.icon className="h-4 w-4" />
+							</a>
 						))}
 					</div>
 				</div>
 
-				{cols.map((col, i) => (
-					<div key={i}>
-						<div
-							style={{
-								fontSize: 10,
-								letterSpacing: "3px",
-								color: "rgba(0,200,83,0.6)",
-								textTransform: "uppercase",
-								marginBottom: 20,
-								fontFamily: "var(--font-geist-mono,monospace)",
-							}}
-						>
+				{cols.map((col) => (
+					<div key={col.title}>
+						<div className="mb-4 font-mono text-[10px] uppercase tracking-[3px] text-[rgba(0,200,83,0.6)]">
 							{col.title}
 						</div>
-						<ul
-							style={{
-								listStyle: "none",
-								margin: 0,
-								padding: 0,
-								display: "flex",
-								flexDirection: "column",
-								gap: 12,
-							}}
-						>
-							{col.links.map((l) => (
-								<li key={l}>
-									<a
-										href="#"
-										style={{
-											fontSize: 13,
-											color: "rgba(232,245,233,0.4)",
-											textDecoration: "none",
-											transition: "color 0.25s",
-										}}
-										onMouseEnter={(e) => (e.currentTarget.style.color = "#f0fff4")}
-										onMouseLeave={(e) =>
-											(e.currentTarget.style.color = "rgba(232,245,233,0.4)")
-										}
+						<ul className="space-y-2.5">
+							{col.links.map((link) => (
+								<li key={link.label}>
+									<Link
+										href={link.href}
+										className="text-sm text-[rgba(232,245,233,0.42)] transition-colors hover:text-[#f0fff4]"
 									>
-										{l}
-									</a>
+										{link.label}
+									</Link>
 								</li>
 							))}
 						</ul>
@@ -152,40 +97,24 @@ export default function Footer() {
 				))}
 			</div>
 
-			<div
-				style={{
-					borderTop: "1px solid rgba(0,200,83,0.07)",
-					padding: "20px clamp(20px,6vw,80px)",
-					display: "flex",
-					alignItems: "center",
-					justifyContent: "space-between",
-					flexWrap: "wrap",
-					gap: 12,
-				}}
-			>
-				<span
-					style={{
-						fontSize: 11,
-						color: "rgba(232,245,233,0.22)",
-						fontFamily: "var(--font-geist-mono,monospace)",
-						letterSpacing: "1px",
-					}}
-				>
-					© ২০২৬ বাংলাদেশ ইসলামী ছাত্রশিবির — সর্বস্বত্ব সংরক্ষিত
-				</span>
-				<span style={{ fontSize: 14, color: "rgba(200,162,39,0.4)", letterSpacing: "3px" }}>
-					بِسْمِ اللَّهِ الرَّحْمَنِ الرَّحِيمِ
-				</span>
-				<span
-					style={{
-						fontSize: 10,
-						color: "rgba(232,245,233,0.2)",
-						fontFamily: "var(--font-geist-mono,monospace)",
-						letterSpacing: "1.5px",
-					}}
-				>
-					TRUTH · JUSTICE · LIBERATION
-				</span>
+			<div className="border-t border-[rgba(0,200,83,0.07)] px-[clamp(20px,6vw,80px)] py-4">
+				<div className="mx-auto flex w-full max-w-275 flex-wrap items-center justify-between gap-3">
+					<Link
+						href="/"
+						className="font-mono text-[11px] tracking-[1px] text-[rgba(232,245,233,0.22)] transition-colors hover:text-[rgba(232,245,233,0.55)]"
+					>
+						© ২০২৬ বাংলাদেশ ইসলামী ছাত্রশিবির
+					</Link>
+					<a
+						href="https://www.google.com/maps/search/Dhaka"
+						target="_blank"
+						rel="noreferrer"
+						className="inline-flex items-center gap-1.5 font-mono text-[10px] tracking-[1.5px] text-[rgba(232,245,233,0.3)] transition-colors hover:text-[#c8a227]"
+					>
+						<Globe className="h-3.5 w-3.5" />
+						ঢাকা, বাংলাদেশ
+					</a>
+				</div>
 			</div>
 		</footer>
 	);
