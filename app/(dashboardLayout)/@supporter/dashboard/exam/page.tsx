@@ -6,8 +6,8 @@ import {
   XCircleIcon, ChevronRightIcon, TimerIcon, TrophyIcon,
   VideoIcon, SendIcon, UserIcon, ShieldCheckIcon,
   AlertCircleIcon, StarIcon, MoonIcon, BookOpenIcon,
-  ArrowRightIcon, RefreshCwIcon, LockIcon, UnlockIcon,
-  PhoneCallIcon, BadgeCheckIcon, ChevronLeftIcon,
+  ArrowRightIcon, RefreshCwIcon,
+  BadgeCheckIcon, ChevronLeftIcon,
 } from "lucide-react"
 
 /* ═══════════════════════════════════════════════════
@@ -218,7 +218,7 @@ function useTimer(initial: number, active: boolean, onEnd: () => void) {
       })
     }, 1000)
     return () => clearInterval(ref.current!)
-  }, [active])
+  }, [active, onEnd])
   return seconds
 }
 
@@ -451,7 +451,7 @@ export default function SupporterExamPage() {
             <h3 className="mb-4 text-[13px] font-semibold text-white/60">বিষয়ভিত্তিক ফলাফল</h3>
             {cats.map(cat => {
               const qs = QUESTIONS.filter(q => q.category === cat)
-              const correct = qs.filter((q, i) => answers[QUESTIONS.indexOf(q)] === q.correct).length
+              const correct = qs.filter((q) => answers[QUESTIONS.indexOf(q)] === q.correct).length
               const total = qs.length
               const cpct = Math.round((correct / total) * 100)
               return (

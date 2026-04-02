@@ -2,11 +2,11 @@
 
 import Link from "next/link"
 import {
-  BookOpenIcon, ClipboardListIcon, FileTextIcon, LayoutDashboardIcon,
-  MoonIcon, TrendingUpIcon, CalendarIcon, CheckCircleIcon,
-  ChevronRightIcon, StarIcon, ZapIcon, ShieldCheckIcon,
-  HeartIcon, UsersIcon, BookMarkedIcon, ArrowRightIcon,
-  CircleIcon, ClockIcon, AwardIcon, MessageSquareIcon,
+  BookOpenIcon, ClipboardListIcon, FileTextIcon,
+  MoonIcon, CalendarIcon, CheckCircleIcon,
+  ChevronRightIcon, ZapIcon,
+  BookMarkedIcon, ArrowRightIcon,
+  CircleIcon, ClockIcon,
   SunIcon, ActivityIcon, TargetIcon, BellIcon,
 } from "lucide-react"
 

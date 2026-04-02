@@ -2,11 +2,11 @@
 
 import { useState } from "react"
 import {
-  BookOpenIcon, CheckCircleIcon, CircleIcon, ChevronDownIcon,
+  BookOpenIcon, CircleIcon, ChevronDownIcon,
   ChevronRightIcon, StarIcon, CalendarIcon, BookMarkedIcon,
-  UsersIcon, ShieldIcon, HeartIcon, GraduationCapIcon,
-  MoonIcon, ScrollTextIcon, ZapIcon, TrophyIcon, ClockIcon,
-  CheckIcon, LockIcon,
+  UsersIcon, ShieldIcon, HeartIcon,
+  ScrollTextIcon, ZapIcon, TrophyIcon,
+  CheckIcon,
 } from "lucide-react"
 
 /* ═══════════════════════════════════════

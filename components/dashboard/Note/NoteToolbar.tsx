@@ -10,8 +10,7 @@ import {
   AlignLeft, AlignCenter, AlignRight, AlignJustify,
   Highlighter, Palette, Code, Code2,
   Image as ImageIcon, Minus, Subscript, Superscript,
-  Eraser, ChevronDown, MergeIcon, SplitSquareHorizontal,
-  PlusSquare, X, WrapText,
+  Eraser, SplitSquareHorizontal, X, WrapText,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {

@@ -1,5 +1,4 @@
 import MotionReveal from "@/components/shared/MotionReveal";
-import { Sparkles } from "lucide-react";
 
 export default function Hero() {
 	return (

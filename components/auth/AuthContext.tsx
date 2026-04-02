@@ -3,7 +3,7 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from "react";
 import { getMe, logoutUser, UserData } from "@/lib/authService";
 import { toast } from "sonner";
-import { useRouter, usePathname } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 type AuthContextType = {
   user: UserData | null;
@@ -18,7 +18,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<UserData | null>(null);
   const [loading, setLoading] = useState(true);
   const router = useRouter();
-  const pathname = usePathname();
 
   useEffect(() => {
     async function checkUser() {
@@ -29,7 +28,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         } else {
           setUser(null);
         }
-      } catch (error) {
+      } catch {
         setUser(null);
       } finally {
         setLoading(false);
@@ -45,7 +44,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setUser(null);
       toast.success("সফলভাবে লগআউট হয়েছে");
       router.push("/");
-    } catch (error) {
+    } catch {
       toast.error("লগআউট ব্যর্থ হয়েছে");
     }
   };
