@@ -1,5 +1,14 @@
 import MotionReveal from "@/components/shared/MotionReveal";
 import Image from "next/image";
+import { Baloo_Da_2 } from "next/font/google";
+
+const baloo2 = Baloo_Da_2({
+	subsets: ["bengali", "latin"],
+	weight: ["400", "500", "600", "700", "800"],
+	display: "swap",
+});
+
+
 
 export default function Hero() {
 	return (
@@ -32,7 +41,7 @@ export default function Hero() {
 				delay={0.25}
 				duration={0.8}
 				y={20}
-				className="mb-2 text-[clamp(38px,8vw,88px)] font-bold leading-[1.1] tracking-[-0.5px] text-[#f0fff4]"
+				className={`${baloo2.className} mb-2 text-[clamp(42px,8.8vw,98px)] font-bold leading-[1.18] tracking-[-0.5px] text-[#f0fff4]`}
 			>
 				বাংলাদেশ ইসলামী
 			</MotionReveal>
@@ -41,7 +50,7 @@ export default function Hero() {
 				delay={0.4}
 				duration={0.8}
 				y={20}
-				className="mb-7 bg-[linear-gradient(135deg,#00c853_0%,#00e676_50%,#c8a227_100%)] bg-clip-text text-[clamp(38px,8vw,88px)] font-bold leading-[1.1] text-transparent"
+				className={`${baloo2.className} mb-7 bg-[linear-gradient(135deg,#00c853_0%,#00e676_50%,#c8a227_100%)] bg-clip-text text-[clamp(42px,8.8vw,98px)] font-bold leading-[1.18] text-transparent`}
 			>
 				ছাত্রশিবির
 			</MotionReveal>

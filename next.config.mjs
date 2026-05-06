@@ -1,6 +1,14 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
 	images: {
+		domains: [
+			"plus.unsplash.com",
+			"images.unsplash.com",
+			"rokbucket.rokomari.io",
+			"ecom.kishorkanthabd.com",
+			"waflife-media.waflife.com",
+			"wafilife-media.wafilife.com",
+		],
 		remotePatterns: [
 			{
 				protocol: "https",
@@ -9,6 +17,22 @@ const nextConfig = {
 			{
 				protocol: "https",
 				hostname: "images.unsplash.com",
+			},
+			{
+				protocol: "https",
+				hostname: "rokbucket.rokomari.io",
+			},
+			{
+				protocol: "https",
+				hostname: "ecom.kishorkanthabd.com",
+			},
+			{
+				protocol: "https",
+				hostname: "waflife-media.waflife.com",
+			},
+			{
+				protocol: "https",
+				hostname: "wafilife-media.wafilife.com",
 			},
 		],
 	},
