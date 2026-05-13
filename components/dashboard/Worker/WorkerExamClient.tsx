@@ -351,10 +351,18 @@ export default function WorkerExamClient() {
         <div className="mx-auto max-w-2xl">
           <div className="mb-6 flex items-center justify-between gap-4">
             <div className="flex items-center gap-2">
-              <div className="flex h-8 w-8 items-center justify-center rounded-lg border border-emerald-500/20 bg-emerald-500/10">
-                <ClipboardListIcon className="h-4 w-4 text-emerald-400" strokeWidth={1.8} />
+              <button
+                onClick={() => setPhase("landing")}
+                className="flex h-8 w-8 items-center justify-center rounded-lg border border-white/10 bg-white/5 text-white/60 hover:border-emerald-500/30 hover:bg-emerald-500/10 hover:text-emerald-400 transition-all"
+              >
+                <ChevronLeftIcon className="h-4 w-4" strokeWidth={2} />
+              </button>
+              <div className="flex items-center gap-2">
+                <div className="flex h-8 w-8 items-center justify-center rounded-lg border border-emerald-500/20 bg-emerald-500/10">
+                  <ClipboardListIcon className="h-4 w-4 text-emerald-400" strokeWidth={1.8} />
+                </div>
+                <span className="text-[13px] font-semibold text-emerald-50 text-nowrap">কর্মী সিলেবাস পরীক্ষা</span>
               </div>
-              <span className="text-[13px] font-semibold text-emerald-50">কর্মী সিলেবাস পরীক্ষা</span>
             </div>
 
             <div
