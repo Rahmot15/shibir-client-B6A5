@@ -118,17 +118,22 @@ export default function NavbarActionsClient({ links }: Props) {
         )}
       </div>
 
-      {/* ════════════════════════════════
-          MOBILE (< xl) — Sheet drawer
-      ════════════════════════════════ */}
+      {/* ── MOBILE (< xl) — Sheet drawer ── */}
       <div className="flex items-center gap-2 xl:hidden">
-        {/* Mobile report pill */}
-        {!loading && user && (
-          <Link href="/reports"
-            className="flex items-center gap-1 rounded-lg border border-amber-500/28 bg-amber-500/8 px-2.5 py-1.5 text-[10px] font-semibold tracking-[1px] text-amber-300/85 transition-all hover:border-amber-500/50">
-            <FileText className="h-3.5 w-3.5" strokeWidth={2}/>
-            রিপোর্ট
-          </Link>
+        {/* Mobile action button: Login or Report */}
+        {!loading && (
+          user ? (
+            <Link href="/reports"
+              className="flex items-center gap-1 rounded-lg border border-amber-500/28 bg-amber-500/8 px-2.5 py-1.5 text-[10px] font-semibold tracking-[1px] text-amber-300/85 transition-all hover:border-amber-500/50">
+              <FileText className="h-3.5 w-3.5" strokeWidth={2}/>
+              রিপোর্ট
+            </Link>
+          ) : (
+            <Link href="/login"
+              className="flex items-center gap-1 rounded-lg border border-emerald-500/28 bg-emerald-500/8 px-2.5 py-1.5 text-[10px] font-semibold tracking-[1px] text-emerald-400 transition-all hover:border-emerald-500/50 shadow-[0_0_10px_rgba(0,200,83,0.1)]">
+              লগইন
+            </Link>
+          )
         )}
 
         <Sheet>

@@ -50,6 +50,7 @@ type InputProps = {
   onChange: (value: string) => void;
   error?: string;
   rightSlot?: ReactNode;
+  onKeyDown?: (event: React.KeyboardEvent<HTMLInputElement>) => void;
 };
 
 export function Input({
@@ -61,6 +62,7 @@ export function Input({
   onChange,
   error,
   rightSlot,
+  onKeyDown,
 }: InputProps) {
   const [focused, setFocused] = useState(false);
 
@@ -115,6 +117,7 @@ export function Input({
           onChange={(event) => onChange(event.target.value)}
           onFocus={() => setFocused(true)}
           onBlur={() => setFocused(false)}
+          onKeyDown={onKeyDown}
           style={{
             flex: 1,
             height: 46,

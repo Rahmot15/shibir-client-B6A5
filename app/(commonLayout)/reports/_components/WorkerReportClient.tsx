@@ -548,7 +548,7 @@ function Step2Report({ numData, chkData, setNum, toggleChk, onSubmit }: {
 
         {/* Day scroller */}
         <div className="rounded-2xl border border-emerald-500/14 bg-[#071310] p-4">
-          <div className="flex gap-1.5 overflow-x-auto pb-3" style={{ scrollbarWidth: "none" }}>
+          <div className="flex gap-1.5 overflow-x-auto pb-3 no-scrollbar" style={{ scrollbarWidth: "none" }}>
             {DAYS.map(d => (
               <button key={d} onClick={() => setActiveDay(d)} style={{
                 flexShrink: 0, width: 36, height: 36, borderRadius: 8,
@@ -1360,7 +1360,7 @@ export default function WorkerReport() {
     <div className="min-h-screen bg-[#050f08] pt-16 pb-6 md:pb-10 md:px-10">
 
       {/* Page header */}
-      <div className="sticky top-16 z-10 border-b border-emerald-500/10 bg-[#050f08]/95 backdrop-blur-md px-4 py-3 md:px-8">
+      <div className="border-b border-emerald-500/10 bg-[#050f08]/95 backdrop-blur-md px-4 py-3 md:px-8">
         <div className={`mx-auto ${isReportTab ? "max-w-none" : "max-w-4xl"}`}>
           <div className="flex items-center justify-between gap-4 mb-3">
             <div className="flex items-center gap-2.5">

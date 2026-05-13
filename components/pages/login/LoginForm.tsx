@@ -68,6 +68,12 @@ export default function LoginForm() {
     }
   }
 
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter") {
+      handleSubmit();
+    }
+  };
+
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
       <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
@@ -85,6 +91,7 @@ export default function LoginForm() {
         value={email}
         onChange={setEmail}
         error={errors.email}
+        onKeyDown={handleKeyDown}
       />
 
       <Input
@@ -95,6 +102,7 @@ export default function LoginForm() {
         value={password}
         onChange={setPassword}
         error={errors.password}
+        onKeyDown={handleKeyDown}
         rightSlot={
           <button
             type="button"

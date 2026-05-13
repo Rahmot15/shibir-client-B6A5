@@ -96,6 +96,12 @@ export default function RegisterForm() {
     }
   }
 
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === "Enter") {
+      handleSubmit();
+    }
+  };
+
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
       <div style={{ display: "flex", gap: 8 }}>
@@ -106,9 +112,25 @@ export default function RegisterForm() {
 
       <Divider text="অথবা ফর্ম পূরণ করুন" />
 
-      <Input label="পূর্ণ নাম" placeholder="আপনার নাম লিখুন" icon={User} value={name} onChange={setName} error={errors.name} />
+      <Input
+        label="পূর্ণ নাম"
+        placeholder="আপনার নাম লিখুন"
+        icon={User}
+        value={name}
+        onChange={setName}
+        error={errors.name}
+        onKeyDown={handleKeyDown}
+      />
 
-      <Input label="ইমেইল" placeholder="আপনার ইমেইল লিখুন" icon={Mail} value={email} onChange={setEmail} error={errors.email} />
+      <Input
+        label="ইমেইল"
+        placeholder="আপনার ইমেইল লিখুন"
+        icon={Mail}
+        value={email}
+        onChange={setEmail}
+        error={errors.email}
+        onKeyDown={handleKeyDown}
+      />
 
       <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
         <Input
@@ -119,6 +141,7 @@ export default function RegisterForm() {
           value={password}
           onChange={setPassword}
           error={errors.password}
+          onKeyDown={handleKeyDown}
           rightSlot={
             <button
               type="button"
@@ -177,6 +200,7 @@ export default function RegisterForm() {
         icon={Lock}
         value={confirm}
         onChange={setConfirm}
+        onKeyDown={handleKeyDown}
         error={errors.confirm}
       />
 
