@@ -247,14 +247,6 @@ export default function WorkerSyllabus() {
 
   return (
     <div className="min-h-screen bg-[#060e09] px-4 pb-12 pt-6 text-emerald-50 sm:px-6 lg:px-8">
-      {/* subtle grid texture overlay */}
-      <div
-        className="pointer-events-none fixed inset-0 opacity-[0.03]"
-        style={{
-          backgroundImage:
-            "repeating-linear-gradient(0deg,transparent,transparent 39px,rgba(255,255,255,.6) 39px,rgba(255,255,255,.6) 40px),repeating-linear-gradient(90deg,transparent,transparent 39px,rgba(255,255,255,.6) 39px,rgba(255,255,255,.6) 40px)",
-        }}
-      />
 
       <div className="relative mx-auto max-w-5xl">
 

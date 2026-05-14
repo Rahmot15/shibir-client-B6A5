@@ -271,15 +271,7 @@ export default function AssociateSyllabus() {
 
   return (
     <div className="min-h-screen bg-[#060e09] text-emerald-50">
-      {/* grid texture */}
-      <div
-        className="pointer-events-none fixed inset-0 opacity-[0.025]"
-        style={{
-          backgroundImage:
-            "repeating-linear-gradient(0deg,transparent,transparent 47px,rgba(255,255,255,1) 47px,rgba(255,255,255,1) 48px)," +
-            "repeating-linear-gradient(90deg,transparent,transparent 47px,rgba(255,255,255,1) 47px,rgba(255,255,255,1) 48px)",
-        }}
-      />
+
 
       <div className="relative mx-auto max-w-4xl px-1 pb-12 pt-6 sm:px-6 sm:pb-16 sm:pt-8 lg:px-8">
 

@@ -310,7 +310,7 @@ export function NoteClient() {
                   </div>
                   <Button variant="ghost" size="icon"
                     onClick={e=>openDeleteConfirmation(e, note)}
-                    className="h-7 w-7 text-white/10 hover:text-red-400 hover:bg-red-400/10 rounded-lg opacity-0 group-hover:opacity-100 transition-all">
+                    className="h-7 w-7 text-white/10 hover:text-red-400 hover:bg-red-400/10 rounded-lg opacity-100 sm:opacity-0 group-hover:opacity-100 transition-all">
                     <Trash2 size={14}/>
                   </Button>
                 </div>
