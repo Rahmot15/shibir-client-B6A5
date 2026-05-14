@@ -11,6 +11,9 @@ import {
   ShieldCheckIcon,
   SparklesIcon,
   TargetIcon,
+  TrendingUpIcon,
+  BookMarkedIcon,
+  LayersIcon,
 } from "lucide-react";
 
 import { getMe, type UserData } from "@/lib/authService";
@@ -23,17 +26,14 @@ import {
 } from "@/lib/workerReportService";
 
 const SYLLABUS_MODULE_TOTAL = 23;
-const SYLLABUS_STORAGE_KEY = "syllabus_p rogress";
+const SYLLABUS_STORAGE_KEY = "syllabus_progress";
+
+/* ─── utils ──────────────────────────────────────────────────── */
 
 function toBnDate(value: string) {
   const d = new Date(value);
   if (Number.isNaN(d.getTime())) return "-";
-
-  return d.toLocaleDateString("bn-BD", {
-    year: "numeric",
-    month: "long",
-    day: "numeric",
-  });
+  return d.toLocaleDateString("bn-BD", { year: "numeric", month: "long", day: "numeric" });
 }
 
 function numFrom(value: string | number) {
@@ -45,7 +45,6 @@ function isOnTime(monthIso: string, submittedAtIso: string) {
   const monthDate = new Date(monthIso);
   const submitted = new Date(submittedAtIso);
   if (Number.isNaN(monthDate.getTime()) || Number.isNaN(submitted.getTime())) return false;
-
   const due = new Date(monthDate.getFullYear(), monthDate.getMonth() + 1, 0, 23, 59, 59, 999);
   return submitted.getTime() <= due.getTime();
 }
@@ -57,6 +56,124 @@ function countWords(note: Note) {
   return text.split(" ").length;
 }
 
+/* ─── atoms ──────────────────────────────────────────────────── */
+
+function Divider({
+  label,
+  icon: Icon,
+  color = "emerald",
+}: {
+  label: string;
+  icon: React.ElementType;
+  color?: "emerald" | "blue" | "amber" | "cyan";
+}) {
+  const cls = {
+    emerald: { line: "bg-emerald-500/20", text: "text-emerald-400", icon: "text-emerald-400" },
+    blue: { line: "bg-blue-500/20", text: "text-blue-400", icon: "text-blue-400" },
+    amber: { line: "bg-amber-500/20", text: "text-amber-400", icon: "text-amber-400" },
+    cyan: { line: "bg-cyan-500/20", text: "text-cyan-400", icon: "text-cyan-400" },
+  }[color];
+
+  return (
+    <div className="flex items-center gap-3">
+      <div className={`h-px flex-1 ${cls.line}`} />
+      <div className="flex items-center gap-1.5">
+        <Icon className={`h-3 w-3 ${cls.icon}`} strokeWidth={2} />
+        <span className={`text-[10px] font-bold uppercase tracking-[2px] ${cls.text}`}>{label}</span>
+      </div>
+      <div className={`h-px flex-1 ${cls.line}`} />
+    </div>
+  );
+}
+
+function StatRow({
+  label,
+  value,
+  sub,
+  color = "emerald",
+}: {
+  label: string;
+  value: React.ReactNode;
+  sub?: string;
+  color?: "emerald" | "blue" | "amber" | "cyan";
+}) {
+  const numCls = {
+    emerald: "text-emerald-400",
+    blue: "text-blue-400",
+    amber: "text-amber-400",
+    cyan: "text-cyan-400",
+  }[color];
+
+  return (
+    <div className="flex items-center justify-between border-b border-white/[0.04] py-3 last:border-0 last:pb-0 first:pt-0">
+      <div>
+        <p className="text-[13px] text-white/65">{label}</p>
+        {sub && <p className="mt-0.5 text-[10px] text-white/25">{sub}</p>}
+      </div>
+      <span className={`font-mono text-[15px] font-black tabular-nums ${numCls}`}>{value}</span>
+    </div>
+  );
+}
+
+function BarMeter({ pct, color = "emerald" }: { pct: number; color?: string }) {
+  const grad: Record<string, string> = {
+    emerald: "from-emerald-500 to-emerald-300",
+    blue: "from-blue-400 to-cyan-300",
+    amber: "from-amber-400 to-emerald-300",
+  };
+  return (
+    <div className="h-1 overflow-hidden rounded-full bg-white/[0.06]">
+      <div
+        className={`h-full rounded-full bg-gradient-to-r transition-all duration-500 ${grad[color] ?? grad.emerald}`}
+        style={{ width: `${Math.min(pct, 100)}%` }}
+      />
+    </div>
+  );
+}
+
+function QuickLink({
+  href,
+  icon: Icon,
+  label,
+  sub,
+  color,
+}: {
+  href: string;
+  icon: React.ElementType;
+  label: string;
+  sub: string;
+  color: "emerald" | "blue" | "amber";
+}) {
+  const border = {
+    emerald: "border-emerald-500/20 hover:border-emerald-400/35 hover:bg-emerald-500/8",
+    blue: "border-blue-500/20 hover:border-blue-400/35 hover:bg-blue-500/8",
+    amber: "border-amber-500/20 hover:border-amber-400/35 hover:bg-amber-500/8",
+  }[color];
+  const iconCls = {
+    emerald: "text-emerald-400",
+    blue: "text-blue-400",
+    amber: "text-amber-400",
+  }[color];
+
+  return (
+    <Link
+      href={href}
+      className={`group flex items-center gap-3 rounded-xl border bg-white/[0.02] px-4 py-3.5 transition-colors ${border}`}
+    >
+      <div className={`shrink-0 ${iconCls}`}>
+        <Icon className="h-4 w-4" strokeWidth={1.8} />
+      </div>
+      <div className="min-w-0 flex-1">
+        <p className="text-[13px] font-semibold text-white/80">{label}</p>
+        <p className="mt-0.5 text-[11px] text-white/28">{sub}</p>
+      </div>
+      <ArrowRightIcon className="h-3.5 w-3.5 shrink-0 text-white/15 transition-transform group-hover:translate-x-0.5 group-hover:text-white/35" />
+    </Link>
+  );
+}
+
+/* ─── page ───────────────────────────────────────────────────── */
+
 export function MemberOverviewContent() {
   const [me, setMe] = useState<UserData | null>(null);
   const [notes, setNotes] = useState<Note[]>([]);
@@ -67,31 +184,22 @@ export function MemberOverviewContent() {
 
   useEffect(() => {
     let mounted = true;
-
     const load = async () => {
       try {
         setLoading(true);
         const [meRes, historyRes] = await Promise.all([getMe(), getMyWorkerReportHistory()]);
 
         let fetchedNotes: Note[] = [];
-        try {
-          fetchedNotes = await noteService.getAllNotes();
-        } catch {
-          fetchedNotes = [];
-        }
+        try { fetchedNotes = await noteService.getAllNotes(); } catch { fetchedNotes = []; }
 
         const historyRows = historyRes.success && historyRes.data ? historyRes.data : [];
         let detail: WorkerReportDetails | null = null;
-
         if (historyRows.length > 0) {
           const latestRes = await getMyWorkerReportById(historyRows[0].id);
-          if (latestRes.success && latestRes.data) {
-            detail = latestRes.data;
-          }
+          if (latestRes.success && latestRes.data) detail = latestRes.data;
         }
 
         if (!mounted) return;
-
         setMe(meRes.success && meRes.data ? meRes.data : null);
         setNotes(fetchedNotes);
         setHistory(historyRows);
@@ -100,27 +208,18 @@ export function MemberOverviewContent() {
         if (mounted) setLoading(false);
       }
     };
-
     void load();
-
-    return () => {
-      mounted = false;
-    };
+    return () => { mounted = false; };
   }, []);
 
   useEffect(() => {
     try {
       const raw = localStorage.getItem(SYLLABUS_STORAGE_KEY);
       if (!raw) return;
-
       const parsed = JSON.parse(raw);
       if (!Array.isArray(parsed)) return;
-
-      const unique = new Set(parsed.filter((v) => typeof v === "number"));
-      setSyllabusDone(unique.size);
-    } catch {
-      setSyllabusDone(0);
-    }
+      setSyllabusDone(new Set(parsed.filter((v) => typeof v === "number")).size);
+    } catch { setSyllabusDone(0); }
   }, []);
 
   const onTimeRate = useMemo(() => {
@@ -131,207 +230,206 @@ export function MemberOverviewContent() {
 
   const thisWeekNotes = useMemo(() => {
     const threshold = Date.now() - 7 * 24 * 60 * 60 * 1000;
-    return notes.filter((note) => new Date(note.createdAt).getTime() >= threshold).length;
+    return notes.filter((n) => new Date(n.createdAt).getTime() >= threshold).length;
   }, [notes]);
 
-  const totalWords = useMemo(() => notes.reduce((sum, note) => sum + countWords(note), 0), [notes]);
+  const totalWords = useMemo(() => notes.reduce((sum, n) => sum + countWords(n), 0), [notes]);
 
   const reportEntries = latestReport?.numericEntries.length ?? 0;
-  const quranTotal = (latestReport?.numericEntries ?? [])
-    .filter((m) => m.metric === "QURAN_AYAH")
-    .reduce((sum, cur) => sum + numFrom(cur.value), 0);
-  const hadithTotal = (latestReport?.numericEntries ?? [])
-    .filter((m) => m.metric === "HADITH_COUNT")
-    .reduce((sum, cur) => sum + numFrom(cur.value), 0);
-
+  const quranTotal = (latestReport?.numericEntries ?? []).filter((m) => m.metric === "QURAN_AYAH").reduce((s, c) => s + numFrom(c.value), 0);
+  const hadithTotal = (latestReport?.numericEntries ?? []).filter((m) => m.metric === "HADITH_COUNT").reduce((s, c) => s + numFrom(c.value), 0);
   const syllabusProgress = Math.round((syllabusDone / SYLLABUS_MODULE_TOTAL) * 100);
+  const val = (v: React.ReactNode) => (loading ? <span className="opacity-30">—</span> : v);
 
   return (
-    <div className="min-h-screen bg-[#050f08] text-emerald-50">
-      <section className="relative overflow-hidden border-b border-emerald-500/15 bg-[#071310] px-4 py-6 md:px-8 md:py-7">
-        <div className="pointer-events-none absolute -left-20 -bottom-20 h-56 w-56 rounded-full bg-cyan-500/10 blur-3xl" />
-        <div className="pointer-events-none absolute -right-24 -top-24 h-64 w-64 rounded-full bg-emerald-500/10 blur-3xl" />
+    <div className="min-h-screen bg-[#060e09] text-emerald-50">
 
-        <div className="relative mx-auto max-w-7xl">
-          <div className="flex flex-col gap-5 lg:flex-row lg:items-end lg:justify-between">
-            <div>
-              <p className="mb-2 inline-flex items-center gap-2 rounded-full border border-emerald-400/30 bg-emerald-500/10 px-3 py-1 text-[11px] font-semibold uppercase tracking-[1.2px] text-emerald-300">
-                <ShieldCheckIcon className="h-3.5 w-3.5" />
+      <div className="relative mx-auto max-w-4xl px-4 pb-16 pt-8 sm:px-6 lg:px-8">
+
+        {/* ── Hero ── */}
+        <header className="mb-10">
+          <div className="mb-5 flex items-center gap-3">
+            <div className="h-px flex-1 bg-emerald-500/20" />
+            <div className="flex items-center gap-1.5">
+              <ShieldCheckIcon className="h-3 w-3 text-emerald-500/45" strokeWidth={2} />
+              <span className="font-mono text-[10px] font-bold uppercase tracking-[3px] text-emerald-500/45">
                 Member Overview
-              </p>
-              <h1 className="text-xl font-bold tracking-tight text-emerald-50 sm:text-2xl md:text-3xl">
-                {me?.name || "সদস্য"} Command Snapshot
-              </h1>
-              <p className="mt-2 max-w-2xl text-xs text-emerald-100/70 sm:text-sm">
-                রিপোর্ট, নোট, সিলেবাস এবং আপনার Member role readiness এক স্ক্রিনে দেখুন।
-              </p>
-            </div>
-
-            <div className="grid grid-cols-2 gap-2 sm:gap-3 lg:min-w-md lg:grid-cols-4">
-              <div className="rounded-xl border border-emerald-500/20 bg-emerald-500/8 p-2.5 sm:p-3">
-                <p className="text-[11px] text-emerald-200/70">রিপোর্ট</p>
-                <p className="mt-1 text-lg font-bold text-emerald-200 sm:text-xl">{loading ? "..." : history.length}</p>
-              </div>
-              <div className="rounded-xl border border-blue-500/20 bg-blue-500/8 p-2.5 sm:p-3">
-                <p className="text-[11px] text-blue-200/70">নোট</p>
-                <p className="mt-1 text-lg font-bold text-blue-200 sm:text-xl">{loading ? "..." : notes.length}</p>
-              </div>
-              <div className="rounded-xl border border-amber-500/20 bg-amber-500/8 p-2.5 sm:p-3">
-                <p className="text-[11px] text-amber-200/70">সিলেবাস</p>
-                <p className="mt-1 text-lg font-bold text-amber-200 sm:text-xl">{syllabusProgress}%</p>
-              </div>
-              <div className="rounded-xl border border-cyan-500/20 bg-cyan-500/8 p-2.5 sm:p-3">
-                <p className="text-[11px] text-cyan-200/70">On-Time</p>
-                <p className="mt-1 text-lg font-bold text-cyan-200 sm:text-xl">{loading ? "..." : `${onTimeRate}%`}</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      <section className="mx-auto grid max-w-7xl gap-4 px-2 py-4 sm:px-4 sm:py-6 md:px-8 lg:grid-cols-[1.15fr_0.85fr]">
-        <div className="space-y-4">
-          <div className="rounded-2xl border border-emerald-500/15 bg-[#07130f]/80 p-3 backdrop-blur-md sm:p-4 md:p-5">
-            <div className="mb-3 flex items-center justify-between">
-              <h2 className="text-sm font-semibold text-emerald-100 sm:text-base">Quick Sections</h2>
-              <SparklesIcon className="h-4 w-4 text-emerald-300/70" />
-            </div>
-
-            <div className="grid gap-2.5 sm:grid-cols-3">
-              <Link
-                href="/reports"
-                className="group rounded-xl border border-blue-500/20 bg-[#081610] p-3 transition hover:border-blue-400/35 hover:bg-blue-500/12"
-              >
-                <FileTextIcon className="h-4 w-4 text-blue-300" />
-                <p className="mt-2 text-sm font-semibold text-emerald-100">Report Overview</p>
-                <p className="mt-1 text-xs text-emerald-200/60">{loading ? "Loading..." : `${history.length} submitted report`}</p>
-              </Link>
-
-              <Link
-                href="/dashboard/note"
-                className="group rounded-xl border border-emerald-500/20 bg-[#081610] p-3 transition hover:border-emerald-400/35 hover:bg-emerald-500/12"
-              >
-                <NotebookPenIcon className="h-4 w-4 text-emerald-300" />
-                <p className="mt-2 text-sm font-semibold text-emerald-100">Note Overview</p>
-                <p className="mt-1 text-xs text-emerald-200/60">{loading ? "Loading..." : `${notes.length} total note`}</p>
-              </Link>
-
-              <Link
-                href="/dashboard/syllabus"
-                className="group rounded-xl border border-amber-500/20 bg-[#081610] p-3 transition hover:border-amber-400/35 hover:bg-amber-500/12"
-              >
-                <BookOpenIcon className="h-4 w-4 text-amber-300" />
-                <p className="mt-2 text-sm font-semibold text-emerald-100">Syllabus Overview</p>
-                <p className="mt-1 text-xs text-emerald-200/60">{syllabusDone}/{SYLLABUS_MODULE_TOTAL} complete</p>
-              </Link>
-            </div>
-          </div>
-
-          <div className="rounded-2xl border border-blue-500/15 bg-[#07130f]/80 p-3 backdrop-blur-md sm:p-4 md:p-5">
-            <div className="mb-3 flex items-center justify-between">
-              <h2 className="text-sm font-semibold text-emerald-100 sm:text-base">Member Report Pulse</h2>
-              <Link href="/reports" className="inline-flex items-center gap-1 text-xs text-blue-300/75 hover:text-blue-300">
-                Open Report
-                <ArrowRightIcon className="h-3.5 w-3.5" />
-              </Link>
-            </div>
-
-            <div className="grid gap-2.5 sm:grid-cols-2 lg:grid-cols-4">
-              <article className="rounded-xl border border-blue-500/20 bg-blue-500/8 p-3">
-                <p className="text-[11px] text-blue-200/75">মোট সাবমিট</p>
-                <p className="mt-1 text-xl font-bold text-blue-100">{loading ? "..." : history.length}</p>
-              </article>
-              <article className="rounded-xl border border-cyan-500/20 bg-cyan-500/8 p-3">
-                <p className="text-[11px] text-cyan-200/75">On-Time Rate</p>
-                <p className="mt-1 text-xl font-bold text-cyan-100">{loading ? "..." : `${onTimeRate}%`}</p>
-              </article>
-              <article className="rounded-xl border border-emerald-500/20 bg-emerald-500/8 p-3">
-                <p className="text-[11px] text-emerald-200/75">কুরআন আয়াত</p>
-                <p className="mt-1 text-xl font-bold text-emerald-100">{loading ? "..." : quranTotal}</p>
-              </article>
-              <article className="rounded-xl border border-amber-500/20 bg-amber-500/8 p-3">
-                <p className="text-[11px] text-amber-200/75">হাদিস</p>
-                <p className="mt-1 text-xl font-bold text-amber-100">{loading ? "..." : hadithTotal}</p>
-              </article>
-            </div>
-
-            <div className="mt-3 flex items-center gap-2 rounded-xl border border-white/8 bg-white/3 px-3 py-2.5">
-              <CalendarClockIcon className="h-3.5 w-3.5 text-amber-300" />
-              <span className="text-[11px] text-white/50">
-                সর্বশেষ সাবমিশন: {history[0] ? toBnDate(history[0].submittedAt) : "এখনও জমা হয়নি"}
               </span>
             </div>
-
-            <div className="mt-3 h-1.5 overflow-hidden rounded-full bg-blue-500/15">
-              <div className="h-full rounded-full bg-linear-to-r from-blue-400 to-cyan-300" style={{ width: `${onTimeRate}%` }} />
-            </div>
-          </div>
-        </div>
-
-        <div className="space-y-4">
-          <div className="rounded-2xl border border-emerald-500/15 bg-[#07130f]/80 p-3 backdrop-blur-md sm:p-4 md:p-5">
-            <h2 className="text-sm font-semibold text-emerald-100 sm:text-base">Note Overview</h2>
-            <p className="mt-1 text-xs text-emerald-200/60">Personal learning notes snapshot.</p>
-
-            <div className="mt-3 space-y-2.5">
-              <div className="rounded-lg border border-emerald-500/15 bg-[#06100c] p-2.5">
-                <div className="mb-1 flex items-center justify-between text-xs">
-                  <span className="font-medium text-emerald-100">This Week Added</span>
-                  <span className="text-emerald-300/80">{loading ? "..." : thisWeekNotes}</span>
-                </div>
-              </div>
-              <div className="rounded-lg border border-blue-500/15 bg-[#06100c] p-2.5">
-                <div className="mb-1 flex items-center justify-between text-xs">
-                  <span className="font-medium text-emerald-100">Approx. Total Words</span>
-                  <span className="text-blue-300/80">{loading ? "..." : totalWords}</span>
-                </div>
-              </div>
-              <div className="rounded-lg border border-amber-500/15 bg-[#06100c] p-2.5">
-                <div className="mb-1 flex items-center justify-between text-xs">
-                  <span className="font-medium text-emerald-100">Latest Report Entries</span>
-                  <span className="text-amber-300/80">{loading ? "..." : reportEntries}</span>
-                </div>
-              </div>
-            </div>
-
-            <div className="mt-3">
-              <Link
-                href="/dashboard/note"
-                className="inline-flex h-9 w-full items-center justify-center gap-2 rounded-lg bg-emerald-500 text-sm font-semibold text-[#03210f] transition hover:bg-emerald-400"
-              >
-                Open Notes
-                <ArrowRightIcon className="h-4 w-4" />
-              </Link>
-            </div>
+            <div className="h-px flex-1 bg-emerald-500/20" />
           </div>
 
-          <div className="rounded-2xl border border-amber-500/15 bg-[#07130f]/80 p-3 backdrop-blur-md sm:p-4 md:p-5">
-            <div className="flex items-center justify-between">
-              <h2 className="text-sm font-semibold text-emerald-100 sm:text-base">Syllabus & Role Readiness</h2>
-              <TargetIcon className="h-4 w-4 text-amber-300" />
-            </div>
-
-            <div className="mt-3 rounded-lg border border-amber-500/20 bg-amber-500/8 p-3">
-              <div className="mb-1 flex items-center justify-between text-xs">
-                <span className="text-amber-100/80">Syllabus Progress</span>
-                <span className="font-semibold text-amber-200">{syllabusProgress}%</span>
-              </div>
-              <div className="h-1.5 overflow-hidden rounded-full bg-amber-500/20">
-                <div className="h-full rounded-full bg-linear-to-r from-amber-300 to-emerald-300" style={{ width: `${syllabusProgress}%` }} />
-              </div>
-              <p className="mt-1 text-[11px] text-amber-100/70">
-                সম্পন্ন: {syllabusDone} / {SYLLABUS_MODULE_TOTAL} modules
+          <div className="flex flex-col gap-5 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <h1 className="text-[28px] font-black leading-none tracking-tight text-white sm:text-[38px]">
+                {me?.name || "সদস্য"}
+                <span className="ml-2 text-emerald-400 sm:ml-3">Snapshot</span>
+              </h1>
+              <p className="mt-2.5 max-w-xs text-[12px] leading-relaxed text-white/35 sm:text-[13px]">
+                রিপোর্ট, নোট, সিলেবাস এবং role readiness এক স্ক্রিনে।
               </p>
             </div>
 
-            <div className="mt-3 space-y-1.5 text-xs text-emerald-200/70">
-              <div className="rounded-lg border border-emerald-500/15 bg-[#06100c] px-3 py-2">Role: {me?.role || "MEMBER"}</div>
-              <div className="rounded-lg border border-emerald-500/15 bg-[#06100c] px-3 py-2">Focus: রিপোর্ট + স্টাডি consistency + নোট refinement</div>
-              <div className="rounded-lg border border-emerald-500/15 bg-[#06100c] px-3 py-2">Target: নিয়মিত রিপোর্ট submit এবং syllabus completion</div>
+            {/* 4 stat chips — 2×2 on mobile, 4-col on sm */}
+            <div className="grid grid-cols-2 gap-2 sm:flex sm:gap-4">
+              {[
+                { n: val(history.length), l: "রিপোর্ট", c: "text-emerald-400" },
+                { n: val(notes.length), l: "নোট", c: "text-blue-400" },
+                { n: `${syllabusProgress}%`, l: "সিলেবাস", c: "text-amber-400" },
+                { n: val(`${onTimeRate}%`), l: "On-Time", c: "text-cyan-400" },
+              ].map((s) => (
+                <div key={s.l} className="flex flex-col items-center rounded-xl border border-white/[0.06] bg-white/[0.02] px-4 py-3 sm:rounded-none sm:border-0 sm:bg-transparent sm:px-0">
+                  <span className={`font-mono text-[22px] font-black leading-none sm:text-[26px] ${s.c}`}>
+                    {s.n}
+                  </span>
+                  <span className="mt-1 text-[9px] text-white/28">{s.l}</span>
+                </div>
+              ))}
             </div>
           </div>
+        </header>
+
+        {/* ── content ── */}
+        <div className="space-y-10">
+
+          {/* ─ Quick Links ─ */}
+          <section>
+            <Divider label="Quick Sections" icon={SparklesIcon} color="emerald" />
+            <div className="mt-5 flex flex-col gap-2">
+              <QuickLink
+                href="/reports"
+                icon={FileTextIcon}
+                label="Report Overview"
+                sub={loading ? "লোড হচ্ছে..." : `${history.length}টি রিপোর্ট জমা দেওয়া হয়েছে`}
+                color="blue"
+              />
+              <QuickLink
+                href="/dashboard/note"
+                icon={NotebookPenIcon}
+                label="Note Overview"
+                sub={loading ? "লোড হচ্ছে..." : `${notes.length}টি নোট · এই সপ্তাহে ${thisWeekNotes}টি`}
+                color="emerald"
+              />
+              <QuickLink
+                href="/dashboard/syllabus"
+                icon={BookOpenIcon}
+                label="Syllabus Overview"
+                sub={`${syllabusDone}/${SYLLABUS_MODULE_TOTAL} মডিউল সম্পন্ন`}
+                color="amber"
+              />
+            </div>
+          </section>
+
+          {/* ─ Report Pulse ─ */}
+          <section>
+            <div className="flex items-center justify-between">
+              <Divider label="Report Pulse" icon={TrendingUpIcon} color="blue" />
+              <Link
+                href="/reports"
+                className="ml-4 shrink-0 flex items-center gap-1 text-[11px] text-blue-400/60 transition-colors hover:text-blue-400"
+              >
+                সব দেখুন
+                <ArrowRightIcon className="h-3 w-3" />
+              </Link>
+            </div>
+
+            <div className="mt-5 space-y-0">
+              <StatRow label="মোট সাবমিট" value={val(history.length)} sub="মোট রিপোর্ট" color="blue" />
+              <StatRow label="On-Time Rate" value={val(`${onTimeRate}%`)} sub="সময়মতো জমার হার" color="cyan" />
+              <StatRow label="কুরআন আয়াত" value={val(quranTotal)} sub="সর্বশেষ রিপোর্ট থেকে" color="emerald" />
+              <StatRow label="হাদিস" value={val(hadithTotal)} sub="সর্বশেষ রিপোর্ট থেকে" color="amber" />
+            </div>
+
+            {/* on-time bar */}
+            <div className="mt-4">
+              <div className="mb-1.5 flex justify-between">
+                <span className="text-[10px] text-white/22">On-Time Submission</span>
+                <span className="font-mono text-[10px] text-blue-400/50">{val(`${onTimeRate}%`)}</span>
+              </div>
+              <BarMeter pct={onTimeRate} color="blue" />
+            </div>
+
+            <div className="mt-3 flex items-center gap-2">
+              <CalendarClockIcon className="h-3 w-3 shrink-0 text-amber-400/50" strokeWidth={2} />
+              <span className="text-[11px] text-white/28">
+                সর্বশেষ: {history[0] ? toBnDate(history[0].submittedAt) : "এখনও জমা হয়নি"}
+              </span>
+            </div>
+          </section>
+
+          {/* ─ Note + Syllabus (side by side on md+) ─ */}
+          <div className="grid grid-cols-1 gap-10 md:grid-cols-2">
+
+            {/* Notes */}
+            <section>
+              <Divider label="Note Overview" icon={NotebookPenIcon} color="emerald" />
+              <div className="mt-5 space-y-0">
+                <StatRow label="এই সপ্তাহে যোগ" value={val(thisWeekNotes)} sub="গত ৭ দিন" color="emerald" />
+                <StatRow label="আনুমানিক শব্দ" value={val(totalWords.toLocaleString("bn-BD"))} sub="সব নোটে মোট" color="blue" />
+                <StatRow label="সর্বশেষ রিপোর্ট এন্ট্রি" value={val(reportEntries)} sub="latest report" color="amber" />
+              </div>
+              <div className="mt-4">
+                <Link
+                  href="/dashboard/note"
+                  className="flex w-full items-center justify-center gap-2 rounded-xl border border-emerald-500/30 bg-emerald-500/10 py-2.5 text-[13px] font-semibold text-emerald-300 transition-colors hover:bg-emerald-500/18"
+                >
+                  নোট খুলুন
+                  <ArrowRightIcon className="h-4 w-4" />
+                </Link>
+              </div>
+            </section>
+
+            {/* Syllabus */}
+            <section>
+              <Divider label="Syllabus & Readiness" icon={TargetIcon} color="amber" />
+              <div className="mt-5">
+                <div className="mb-1.5 flex justify-between">
+                  <span className="text-[10px] text-white/22">Syllabus Progress</span>
+                  <span className="font-mono text-[10px] text-amber-400/50">{syllabusProgress}%</span>
+                </div>
+                <BarMeter pct={syllabusProgress} color="amber" />
+
+                <div className="mt-4 space-y-0">
+                  <StatRow label="সম্পন্ন মডিউল" value={`${syllabusDone}/${SYLLABUS_MODULE_TOTAL}`} sub="মোট মডিউল" color="amber" />
+                  <StatRow label="Role" value={me?.role ?? "MEMBER"} color="emerald" />
+                </div>
+
+                <div className="mt-4 space-y-1.5">
+                  {[
+                    "রিপোর্ট + স্টাডি consistency",
+                    "নোট refinement",
+                    "নিয়মিত সিলেবাস completion",
+                  ].map((item) => (
+                    <div key={item} className="flex items-start gap-2">
+                      <LayersIcon className="mt-0.5 h-3 w-3 shrink-0 text-emerald-500/40" strokeWidth={2} />
+                      <p className="text-[11px] text-white/35">{item}</p>
+                    </div>
+                  ))}
+                </div>
+
+                <div className="mt-4">
+                  <Link
+                    href="/dashboard/syllabus"
+                    className="flex w-full items-center justify-center gap-2 rounded-xl border border-amber-500/30 bg-amber-500/8 py-2.5 text-[13px] font-semibold text-amber-300 transition-colors hover:bg-amber-500/15"
+                  >
+                    সিলেবাস দেখুন
+                    <ArrowRightIcon className="h-4 w-4" />
+                  </Link>
+                </div>
+              </div>
+            </section>
+
+          </div>
         </div>
-      </section>
+
+        {/* footer */}
+        <div className="mt-14 flex items-center gap-4">
+          <div className="h-px flex-1 bg-white/[0.05]" />
+          <span className="font-mono text-[9px] uppercase tracking-[3px] text-white/14">সদস্য · Member</span>
+          <div className="h-px flex-1 bg-white/[0.05]" />
+        </div>
+
+      </div>
     </div>
   );
 }
