@@ -5,8 +5,11 @@ import {
   GraduationCapIcon,
   ShieldCheckIcon,
   SparklesIcon,
+  ArrowRightIcon,
 } from "lucide-react"
 import AssociateSyllabusViewer from "@/components/dashboard/Associate/AssociateSyllabusViewer"
+
+/* ─── data ─────────────────────────────────────────────────── */
 
 const quranStudyList = [
   "সূরা ফাতিহা সম্পূর্ণ",
@@ -43,15 +46,15 @@ const quranMemorizeGuide = [
 ]
 
 const hadithStudy = [
-  "রিয়াজুস সালেহীন - ইমাম নববী (১ম অংশ)",
-  "সহীহ আল বুখারী - নির্বাচিত বাব",
-  "সহীহ মুসলিম - নির্বাচিত বাব",
-  "সুনান আত-তিরমিযী - নির্বাচিত বাব",
+  { title: "রিয়াজুস সালেহীন", author: "ইমাম নববী", note: "১ম অংশ" },
+  { title: "সহীহ আল বুখারী", author: "ইমাম বুখারী", note: "নির্বাচিত বাব" },
+  { title: "সহীহ মুসলিম", author: "ইমাম মুসলিম", note: "নির্বাচিত বাব" },
+  { title: "সুনান আত-তিরমিযী", author: "ইমাম তিরমিযী", note: "নির্বাচিত বাব" },
 ]
 
-const booksPartOne = [
-  "কুরআন বোঝার সহজ উপায় - আবু তালিব মুহাম্মাদ",
-  "হাদিস পরিচয় - মাওলানা নিজামুদ্দীন",
+const books = [
+  "কুরআন বোঝার সহজ উপায় — আবু তালিব মুহাম্মাদ",
+  "হাদিস পরিচয় — মাওলানা নিজামুদ্দীন",
   "ইসলামের রাজনৈতিক ভিত্তি",
   "নৈতিক চেতনা গঠনের মূল বিষয়",
   "সংগঠন পদ্ধতি",
@@ -65,9 +68,6 @@ const booksPartOne = [
   "দীন প্রতিষ্ঠায় কর্মসূচি",
   "ইসলামী রাষ্ট্রব্যবস্থার রূপরেখা",
   "ইসলামের জীবনব্যবস্থা",
-]
-
-const booksPartTwo = [
   "শিক্ষাক্ষেত্রে ইসলামী পদ্ধতি",
   "অর্থনৈতিক নীতিমালা ও সামাজিক ন্যায়বিচার",
   "নারী ও পরিবার ব্যবস্থা",
@@ -97,144 +97,332 @@ const coreSubjects = [
 ]
 
 const specialDays = [
-  "প্রতিষ্ঠাবার্ষিকী - ৬ ফেব্রুয়ারী",
-  "শহীদ দিবস - ১১ মার্চ",
-  "বালাকোট দিবস - ৬ মে",
-  "কুরআন দিবস - ১১ মে",
-  "পলাশী দিবস - ২৩ জুন",
-  "ঈদ পালন - শাওয়াল ১ ও জিলহজ্জ ১০",
+  { date: "৬ ফেব্রুয়ারী", label: "প্রতিষ্ঠাবার্ষিকী" },
+  { date: "১১ মার্চ", label: "শহীদ দিবস" },
+  { date: "৬ মে", label: "বালাকোট দিবস" },
+  { date: "১১ মে", label: "কুরআন দিবস" },
+  { date: "২৩ জুন", label: "পলাশী দিবস" },
+  { date: "শাওয়াল ১", label: "ঈদুল ফিতর" },
 ]
 
-function SectionTitle({
+/* ─── design tokens ─────────────────────────────────────────── */
+
+const accent = {
+  emerald: {
+    line: "bg-emerald-400/35",
+    label: "text-emerald-400",
+    tag: "border-emerald-500/25 bg-emerald-500/8 text-emerald-200/80 hover:bg-emerald-500/15 hover:text-emerald-100",
+    num: "text-emerald-500/45",
+  },
+  cyan: {
+    line: "bg-cyan-400/35",
+    label: "text-cyan-400",
+    tag: "border-cyan-500/25 bg-cyan-500/8 text-cyan-200/80 hover:bg-cyan-500/15 hover:text-cyan-100",
+    num: "text-cyan-500/45",
+  },
+  indigo: {
+    line: "bg-indigo-400/35",
+    label: "text-indigo-400",
+    tag: "border-indigo-500/25 bg-indigo-500/8 text-indigo-200/80 hover:bg-indigo-500/15 hover:text-indigo-100",
+    num: "text-indigo-500/45",
+  },
+  amber: {
+    line: "bg-amber-400/35",
+    label: "text-amber-400",
+    tag: "border-amber-500/25 bg-amber-500/8 text-amber-200/80 hover:bg-amber-500/15 hover:text-amber-100",
+    num: "text-amber-500/45",
+  },
+  fuchsia: {
+    line: "bg-fuchsia-400/35",
+    label: "text-fuchsia-400",
+    tag: "border-fuchsia-500/25 bg-fuchsia-500/8 text-fuchsia-200/80 hover:bg-fuchsia-500/15 hover:text-fuchsia-100",
+    num: "text-fuchsia-500/45",
+  },
+  sky: {
+    line: "bg-sky-400/35",
+    label: "text-sky-400",
+    tag: "border-sky-500/25 bg-sky-500/8 text-sky-200/80 hover:bg-sky-500/15 hover:text-sky-100",
+    num: "text-sky-500/45",
+  },
+} as const
+
+type AccentKey = keyof typeof accent
+
+/* ─── atoms ─────────────────────────────────────────────────── */
+
+function SectionDivider({
   icon: Icon,
-  title,
-  subtitle,
+  label,
+  index,
+  count,
+  color,
 }: {
   icon: React.ElementType
-  title: string
-  subtitle?: string
+  label: string
+  index: string
+  count?: number
+  color: AccentKey
 }) {
+  const c = accent[color]
   return (
-    <div className="mb-4 flex items-center justify-between gap-3 border-b border-emerald-500/20 pb-3">
-      <div className="flex items-center gap-2.5">
-        <div className="rounded-lg border border-emerald-500/30 bg-emerald-500/10 p-2">
-          <Icon className="h-4 w-4 text-emerald-300" strokeWidth={1.8} />
-        </div>
-        <h2 className="text-sm font-bold tracking-[1.6px] text-emerald-100 uppercase">{title}</h2>
+    <div className="flex items-center gap-3 sm:gap-4">
+      <span className={`shrink-0 font-mono text-[10px] font-black tabular-nums ${c.label} opacity-40`}>
+        {index}
+      </span>
+      <div className={`h-px flex-1 ${c.line} opacity-60`} />
+      <div className="flex shrink-0 items-center gap-2">
+        <Icon className={`h-3.5 w-3.5 ${c.label}`} strokeWidth={2} />
+        <span className={`text-[10px] font-bold uppercase tracking-[2px] sm:tracking-[2.5px] ${c.label}`}>
+          {label}
+        </span>
+        {count !== undefined && (
+          <span className={`rounded-full border px-1.5 py-px font-mono text-[9px] font-bold ${c.tag}`}>
+            {count}
+          </span>
+        )}
       </div>
-      {subtitle ? <p className="text-[11px] text-emerald-300/80">{subtitle}</p> : null}
+      <div className={`h-px flex-1 ${c.line} opacity-60`} />
     </div>
   )
 }
 
-function ListGrid({ items, columns = 2 }: { items: string[]; columns?: 1 | 2 }) {
+function PillList({ items, color }: { items: string[]; color: AccentKey }) {
+  const c = accent[color]
   return (
-    <div className={columns === 2 ? "grid gap-2 md:grid-cols-2" : "grid gap-2"}>
-      {items.map((item, index) => (
-        <div
+    <div className="flex flex-wrap gap-2">
+      {items.map((item, i) => (
+        <span
           key={item}
-          className="rounded-xl border border-white/10 bg-white/3 px-3 py-2.5 text-sm text-emerald-50/95"
+          className={`inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-[12px] transition-colors ${c.tag}`}
         >
-          <span className="mr-2 text-emerald-300/80">{index + 1}.</span>
+          <span className={`font-mono text-[9px] font-bold tabular-nums ${c.num}`}>
+            {String(i + 1).padStart(2, "0")}
+          </span>
           {item}
+        </span>
+      ))}
+    </div>
+  )
+}
+
+function InlineList({ items, color, startIndex = 1 }: { items: string[]; color: AccentKey; startIndex?: number }) {
+  const c = accent[color]
+  return (
+    <div className="divide-y divide-white/[0.04]">
+      {items.map((item, i) => (
+        <div key={item} className="flex items-baseline gap-3 py-2.5 first:pt-0 last:pb-0">
+          <span className={`shrink-0 font-mono text-[10px] font-bold tabular-nums ${c.num}`}>
+            {String(i + startIndex).padStart(2, "0")}
+          </span>
+          <span className="text-[13px] leading-snug text-white/68">{item}</span>
         </div>
       ))}
     </div>
   )
 }
 
+function HadithRow({
+  index,
+  title,
+  author,
+  note,
+  color,
+}: {
+  index: number
+  title: string
+  author: string
+  note: string
+  color: AccentKey
+}) {
+  const c = accent[color]
+  return (
+    <div className="flex items-start gap-4 border-b border-white/[0.04] py-4 last:border-0 last:pb-0 first:pt-0">
+      <span className={`mt-0.5 shrink-0 font-mono text-[11px] font-black tabular-nums ${c.num}`}>
+        {String(index).padStart(2, "0")}
+      </span>
+      <div className="min-w-0 flex-1">
+        <p className="text-[14px] font-semibold text-white/85">{title}</p>
+        <p className="mt-0.5 text-[11px] text-white/32">{author}</p>
+      </div>
+      <span className={`shrink-0 rounded-full border px-2.5 py-1 font-mono text-[9px] font-semibold ${c.tag}`}>
+        {note}
+      </span>
+    </div>
+  )
+}
+
+function DayRow({ date, label, color }: { date: string; label: string; color: AccentKey }) {
+  const c = accent[color]
+  return (
+    <div className="flex items-center gap-3 border-b border-white/[0.04] py-3 last:border-0 last:pb-0 first:pt-0">
+      <span className={`shrink-0 rounded-lg border px-2.5 py-1 font-mono text-[10px] font-bold ${c.tag}`}>
+        {date}
+      </span>
+      <ArrowRightIcon className={`h-3 w-3 shrink-0 ${c.label} opacity-35`} />
+      <span className="text-[13px] text-white/65">{label}</span>
+    </div>
+  )
+}
+
+/* ─── page ──────────────────────────────────────────────────── */
+
 export default function AssociateSyllabus() {
   const syllabusUrl = encodeURI("/সদস্য সহায়িকা 20233.pdf")
 
   return (
-    <div className="min-h-screen bg-[#050f08] px-0 py-6 text-emerald-50 md:px-6">
-      <div className="mx-auto max-w-7xl">
-        <section className="relative overflow-hidden rounded-3xl border border-emerald-500/25 bg-[radial-gradient(circle_at_top,rgba(16,185,129,0.18),rgba(5,15,8,0.95)_45%)] p-6 md:p-8">
-          <div className="absolute -top-14 -right-14 h-48 w-48 rounded-full bg-emerald-400/10 blur-3xl" />
-          <div className="absolute -bottom-12 -left-10 h-40 w-40 rounded-full bg-amber-300/10 blur-3xl" />
+    <div className="min-h-screen bg-[#060e09] text-emerald-50">
+      {/* grid texture */}
+      <div
+        className="pointer-events-none fixed inset-0 opacity-[0.025]"
+        style={{
+          backgroundImage:
+            "repeating-linear-gradient(0deg,transparent,transparent 47px,rgba(255,255,255,1) 47px,rgba(255,255,255,1) 48px)," +
+            "repeating-linear-gradient(90deg,transparent,transparent 47px,rgba(255,255,255,1) 47px,rgba(255,255,255,1) 48px)",
+        }}
+      />
 
-          <div className="relative z-10 flex flex-col gap-5 md:flex-row md:items-end md:justify-between">
+      <div className="relative mx-auto max-w-4xl px-1 pb-12 pt-6 sm:px-6 sm:pb-16 sm:pt-8 lg:px-8">
+
+        {/* ── Hero ── */}
+        <header className="mb-12">
+          <div className="mb-5 flex items-center gap-3">
+            <div className="h-px flex-1 bg-emerald-500/20" />
+            <span className="font-mono text-[10px] font-bold uppercase tracking-[3px] text-emerald-500/45">
+              Associate Dashboard
+            </span>
+            <div className="h-px flex-1 bg-emerald-500/20" />
+          </div>
+
+          <div className="flex flex-col gap-6 sm:flex-row sm:items-end sm:justify-between">
             <div>
-              <p className="mb-2 inline-flex items-center gap-2 rounded-full border border-emerald-400/30 bg-emerald-500/10 px-3 py-1 text-[11px] font-semibold tracking-[1.5px] text-emerald-300 uppercase">
-                Associate Dashboard
-              </p>
-              <h1 className="text-2xl font-extrabold tracking-tight text-emerald-50 md:text-3xl">সদস্য সহায়িকা</h1>
-              <p className="mt-2 max-w-2xl text-sm text-emerald-200/85 md:text-base">
-                প্রশিক্ষণ কর্মসূচি এবং শিক্ষা উপকরণের সম্পূর্ণ পথপ্রদর্শক।
+              <h1 className="text-[32px] font-black leading-none tracking-tight text-white sm:text-[44px]">
+                সদস্য
+                <span className="ml-2 sm:ml-3 text-emerald-400">সিলেবাস</span>
+              </h1>
+              <p className="mt-3 max-w-sm text-[13px] leading-relaxed text-white/38">
+                প্রশিক্ষণ কর্মসূচি ও শিক্ষা উপকরণের সম্পূর্ণ পথপ্রদর্শক।
               </p>
             </div>
 
-            <div className="grid grid-cols-2 gap-3 text-center sm:grid-cols-4 md:min-w-105">
+            <div className="flex gap-5">
               {[
-                { label: "কুরআন টপিক", value: "২০" },
-                { label: "হাদিস বই", value: "৪" },
-                { label: "পাঠ্যবই", value: "৩০" },
-                { label: "মূল বিষয়", value: "৮" },
-              ].map((item) => (
-                <div key={item.label} className="rounded-xl border border-emerald-500/25 bg-black/20 px-3 py-2">
-                  <p className="text-xl font-bold text-emerald-300">{item.value}</p>
-                  <p className="text-[11px] text-emerald-100/80">{item.label}</p>
+                { n: "২০", l: "কুরআন", color: "text-emerald-400" },
+                { n: "৪", l: "হাদিস", color: "text-indigo-400" },
+                { n: "৩০", l: "বই", color: "text-fuchsia-400" },
+                { n: "৮", l: "বিষয়", color: "text-sky-400" },
+              ].map((s) => (
+                <div key={s.l} className="flex flex-col items-center">
+                  <span className={`font-mono text-[24px] font-black leading-none sm:text-[30px] ${s.color}`}>
+                    {s.n}
+                  </span>
+                  <span className="mt-1 text-[9px] text-white/28">{s.l}</span>
                 </div>
               ))}
             </div>
           </div>
-        </section>
+        </header>
 
+        {/* PDF Viewer */}
         <AssociateSyllabusViewer pdfUrl={syllabusUrl} />
 
-        <section className="mt-6 grid gap-6 lg:grid-cols-2">
-          <article className="rounded-2xl border border-emerald-500/20 bg-linear-to-b from-emerald-500/10 to-white/2 p-5">
-            <SectionTitle icon={BookOpenIcon} title="আল কুরআন অধ্যয়ন" subtitle="সিলেবাস ভিত্তিক পাঠ তালিকা" />
-            <ListGrid items={quranStudyList} />
-          </article>
+        {/* ── Sections ── */}
+        <div className="mt-14 space-y-12">
 
-          <article className="rounded-2xl border border-cyan-500/20 bg-linear-to-b from-cyan-500/10 to-white/2 p-5">
-            <SectionTitle icon={ShieldCheckIcon} title="কুরআন মুখস্থ নির্দেশনা" subtitle="নির্বাচিত আয়াত/সূরা" />
-            <ListGrid items={quranMemorizeGuide} columns={1} />
-          </article>
-        </section>
+          {/* 01 — Quran Study */}
+          <section>
+            <SectionDivider icon={BookOpenIcon} label="আল কুরআন অধ্যয়ন" index="০১" count={20} color="emerald" />
+            <p className="mb-4 mt-5 text-[10px] uppercase tracking-widest text-white/22">
+              সিলেবাস ভিত্তিক পাঠ তালিকা
+            </p>
+            <PillList items={quranStudyList} color="emerald" />
+          </section>
 
-        <section className="mt-6 grid gap-6 xl:grid-cols-3">
-          <article className="rounded-2xl border border-indigo-500/20 bg-linear-to-b from-indigo-500/10 to-white/2 p-5 xl:col-span-2">
-            <SectionTitle icon={BookMarkedIcon} title="আল হাদিস অধ্যয়ন" subtitle="প্রস্তাবিত গ্রন্থসমূহ" />
-            <ListGrid items={hadithStudy} columns={1} />
-          </article>
+          {/* 02 — Quran Memorize */}
+          <section>
+            <SectionDivider icon={ShieldCheckIcon} label="কুরআন মুখস্থ নির্দেশনা" index="০২" count={8} color="cyan" />
+            <p className="mb-4 mt-5 text-[10px] uppercase tracking-widest text-white/22">
+              নির্বাচিত আয়াত / সূরা
+            </p>
+            <PillList items={quranMemorizeGuide} color="cyan" />
+          </section>
 
-          <article className="rounded-2xl border border-amber-500/20 bg-linear-to-b from-amber-500/10 to-white/2 p-5">
-            <SectionTitle icon={CalendarDaysIcon} title="গুরুত্বপূর্ণ দিবস" subtitle="সাংগঠনিক দিনপঞ্জি" />
-            <ListGrid items={specialDays} columns={1} />
-          </article>
-        </section>
-
-        <section className="mt-6 rounded-2xl border border-fuchsia-500/20 bg-linear-to-b from-fuchsia-500/10 to-white/2 p-5">
-          <SectionTitle icon={GraduationCapIcon} title="পাঠ্যবই ও ইসলামী আদর্শ" subtitle="মোট ৩০টি বই" />
-
-          <div className="grid gap-4 md:grid-cols-2">
-            <div className="rounded-xl border border-white/10 bg-black/15 p-3">
-              <p className="mb-3 text-xs font-semibold tracking-[1.5px] text-fuchsia-200 uppercase">১ম অংশ (১-১৫)</p>
-              <ListGrid items={booksPartOne} columns={1} />
+          {/* 03 — Hadith */}
+          <section>
+            <SectionDivider icon={BookMarkedIcon} label="আল হাদিস অধ্যয়ন" index="০৩" count={4} color="indigo" />
+            <p className="mb-4 mt-5 text-[10px] uppercase tracking-widest text-white/22">
+              প্রস্তাবিত গ্রন্থসমূহ
+            </p>
+            <div>
+              {hadithStudy.map((h, i) => (
+                <HadithRow key={h.title} index={i + 1} {...h} color="indigo" />
+              ))}
             </div>
+          </section>
 
-            <div className="rounded-xl border border-white/10 bg-black/15 p-3">
-              <p className="mb-3 text-xs font-semibold tracking-[1.5px] text-fuchsia-200 uppercase">২য় অংশ (১৬-৩০)</p>
-              <ListGrid items={booksPartTwo} columns={1} />
-            </div>
-          </div>
-        </section>
-
-        <section className="mt-6 rounded-2xl border border-sky-500/20 bg-linear-to-b from-sky-500/10 to-white/2 p-5">
-          <SectionTitle icon={SparklesIcon} title="মূল বিষয়সূচী" subtitle="আয়াত ও হাদিস মুখস্থকরণ" />
-          <div className="grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
-            {coreSubjects.map((subject) => (
-              <div
-                key={subject}
-                className="rounded-xl border border-sky-300/20 bg-sky-500/10 px-3 py-2 text-sm text-sky-100"
-              >
-                {subject}
+          {/* 04 — Books */}
+          <section>
+            <SectionDivider icon={GraduationCapIcon} label="পাঠ্যবই ও ইসলামী আদর্শ" index="০৪" count={30} color="fuchsia" />
+            <p className="mb-5 mt-5 text-[10px] uppercase tracking-widest text-white/22">মোট ৩০টি বই</p>
+            {/* two-column on sm+ */}
+            <div className="grid grid-cols-1 gap-x-10 sm:grid-cols-2">
+              <div>
+                <p className="mb-3 font-mono text-[9px] uppercase tracking-[2px] text-fuchsia-400/35">
+                  ১ম অংশ · ০১–১৫
+                </p>
+                <InlineList items={books.slice(0, 15)} color="fuchsia" startIndex={1} />
               </div>
-            ))}
+              <div className="mt-6 sm:mt-0">
+                <p className="mb-3 font-mono text-[9px] uppercase tracking-[2px] text-fuchsia-400/35">
+                  ২য় অংশ · ১৬–৩০
+                </p>
+                <InlineList items={books.slice(15)} color="fuchsia" startIndex={16} />
+              </div>
+            </div>
+          </section>
+
+          {/* 05 + 06 — days & core side by side on lg */}
+          <div className="grid grid-cols-1 gap-12 lg:grid-cols-2">
+
+            <section>
+              <SectionDivider icon={CalendarDaysIcon} label="গুরুত্বপূর্ণ দিবস" index="০৫" count={6} color="amber" />
+              <p className="mb-4 mt-5 text-[10px] uppercase tracking-widest text-white/22">
+                সাংগঠনিক দিনপঞ্জি
+              </p>
+              {specialDays.map((d) => (
+                <DayRow key={d.label} {...d} color="amber" />
+              ))}
+            </section>
+
+            <section>
+              <SectionDivider icon={SparklesIcon} label="মূল বিষয়সূচী" index="০৬" count={8} color="sky" />
+              <p className="mb-4 mt-5 text-[10px] uppercase tracking-widest text-white/22">
+                আয়াত ও হাদিস মুখস্থকরণ
+              </p>
+              <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+                {coreSubjects.map((s, i) => (
+                  <div
+                    key={s}
+                    className={`flex items-center gap-3 rounded-xl border px-4 py-3 transition-colors ${accent.sky.tag}`}
+                  >
+                    <span className={`shrink-0 font-mono text-[9px] font-black tabular-nums ${accent.sky.num}`}>
+                      {String(i + 1).padStart(2, "0")}
+                    </span>
+                    <span className="text-[13px] font-medium">{s}</span>
+                  </div>
+                ))}
+              </div>
+            </section>
+
           </div>
-        </section>
+        </div>
+
+        {/* footer */}
+        <div className="mt-16 flex items-center gap-4">
+          <div className="h-px flex-1 bg-white/[0.05]" />
+          <span className="font-mono text-[9px] uppercase tracking-[3px] text-white/14">সদস্য · Associate</span>
+          <div className="h-px flex-1 bg-white/[0.05]" />
+        </div>
+
       </div>
     </div>
   )
