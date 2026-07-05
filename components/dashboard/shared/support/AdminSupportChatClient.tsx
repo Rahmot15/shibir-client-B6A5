@@ -13,7 +13,7 @@ import {
   type SupportMessage,
 } from "@/lib/supportChatService";
 
-type UserSupportChatClientProps = {
+type AdminSupportChatClientProps = {
   conversationId: string;
 };
 
@@ -30,7 +30,7 @@ function formatTime(value: string) {
   });
 }
 
-export default function UserSupportChatClient({ conversationId }: UserSupportChatClientProps) {
+export default function AdminSupportChatClient({ conversationId }: AdminSupportChatClientProps) {
   const [messages, setMessages] = useState<SupportMessage[]>([]);
   const [isLoadingMessages, setIsLoadingMessages] = useState(true);
   const [isSending, setIsSending] = useState(false);
@@ -119,15 +119,15 @@ export default function UserSupportChatClient({ conversationId }: UserSupportCha
         <div className="mx-auto flex max-w-5xl items-center justify-between gap-3">
           <div>
             <p className="text-[11px] font-semibold tracking-[1.5px] text-emerald-300/80 uppercase">
-              Admin Support Chat
+              Admin Support Desk
             </p>
-            <h1 className="text-lg font-semibold text-emerald-50 md:text-xl">Conversation</h1>
+            <h1 className="text-lg font-semibold text-emerald-50 md:text-xl">Support Conversation</h1>
           </div>
 
           <Button asChild variant="outline" className="border-emerald-500/30 bg-transparent text-emerald-200 hover:bg-emerald-500/10">
             <Link href="/dashboard/support">
               <ArrowLeftIcon className="h-4 w-4" />
-              Back
+              Back to Inbox
             </Link>
           </Button>
         </div>
@@ -146,7 +146,7 @@ export default function UserSupportChatClient({ conversationId }: UserSupportCha
 
           {!isLoadingMessages && sortedMessages.length === 0 && (
             <div className="rounded-lg border border-emerald-500/15 bg-[#060f0c] px-3 py-4 text-center text-xs text-emerald-100/70">
-              No messages yet. Start by sending your first message.
+              No messages yet.
             </div>
           )}
 
@@ -157,17 +157,17 @@ export default function UserSupportChatClient({ conversationId }: UserSupportCha
               return (
                 <div
                   key={message.id}
-                  className={`flex ${isAdminMessage ? "justify-start" : "justify-end"}`}
+                  className={`flex ${isAdminMessage ? "justify-end" : "justify-start"}`}
                 >
                   <article
                     className={`max-w-[80%] rounded-xl border px-3 py-2 ${
                       isAdminMessage
-                        ? "border-cyan-500/25 bg-cyan-500/10"
-                        : "border-emerald-500/25 bg-emerald-500/12"
+                        ? "border-emerald-500/25 bg-emerald-500/12"
+                        : "border-cyan-500/25 bg-cyan-500/10"
                     }`}
                   >
                     <p className="text-[11px] font-medium text-emerald-100/80">
-                      {isAdminMessage ? "Admin" : "You"}
+                      {isAdminMessage ? "You (Admin)" : message.sender.name || "User"}
                     </p>
                     <p className="mt-1 text-sm leading-relaxed text-emerald-50">{message.text}</p>
                     <p className="mt-1 text-[10px] text-emerald-100/60">{formatTime(message.createdAt)}</p>
@@ -187,7 +187,7 @@ export default function UserSupportChatClient({ conversationId }: UserSupportCha
           <Input
             value={draft}
             onChange={(event) => setDraft(event.target.value)}
-            placeholder="Write your message..."
+            placeholder="Write your reply..."
             className="h-10 border-emerald-500/25 bg-[#07130f] px-3 text-sm text-emerald-50 placeholder:text-emerald-100/45"
           />
           <Button
