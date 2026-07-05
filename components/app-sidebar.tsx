@@ -19,6 +19,7 @@ import {
   ClipboardListIcon,
   FileTextIcon,
   LayoutDashboardIcon,
+  MessageSquareIcon,
   StickyNoteIcon,
   UsersIcon,
   MoonIcon,
@@ -40,17 +41,20 @@ const navByRole: Record<Role, { title: string; url: string; icon: React.ReactNod
     { title: "Note",          url: "/dashboard/note",          icon: <StickyNoteIcon /> },
     { title: "Manage Users",  url: "/dashboard/manage-users",  icon: <UsersIcon /> },
     { title: "Approve Viva",  url: "/dashboard/approve-viva",  icon: <CheckCircleIcon /> },
+    { title: "Support",       url: "/dashboard/support",       icon: <MessageSquareIcon /> },
   ],
   ASSOCIATE: [
     { title: "Overview", url: "/dashboard/overview", icon: <LayoutDashboardIcon /> },
     { title: "Note",     url: "/dashboard/note",     icon: <StickyNoteIcon /> },
     { title: "Syllabus", url: "/dashboard/syllabus", icon: <BookOpenIcon /> },
     { title: "Exam",     url: "/dashboard/exam",     icon: <ClipboardListIcon /> },
+    { title: "Support",  url: "/dashboard/support",  icon: <MessageSquareIcon /> },
   ],
   MEMBER: [
     { title: "Overview",  url: "/dashboard/overview",  icon: <LayoutDashboardIcon /> },
     { title: "Note",      url: "/dashboard/note",      icon: <StickyNoteIcon /> },
     { title: "Syllabus",  url: "/dashboard/syllabus",  icon: <BookOpenIcon /> },
+    { title: "Support",   url: "/dashboard/support",   icon: <MessageSquareIcon /> },
   ],
   SUPPORTER: [
     { title: "Overview", url: "/dashboard/overview", icon: <LayoutDashboardIcon /> },
@@ -58,12 +62,14 @@ const navByRole: Record<Role, { title: string; url: string; icon: React.ReactNod
     { title: "Note",     url: "/dashboard/note",     icon: <StickyNoteIcon /> },
     { title: "Syllabus", url: "/dashboard/syllabus", icon: <BookOpenIcon /> },
     { title: "Exam",     url: "/dashboard/exam",     icon: <ClipboardListIcon /> },
+    { title: "Support",  url: "/dashboard/support",  icon: <MessageSquareIcon /> },
   ],
   WORKER: [
     { title: "Overview",          url: "/dashboard/overview",          icon: <LayoutDashboardIcon /> },
     { title: "Note",              url: "/dashboard/note",              icon: <StickyNoteIcon /> },
     { title: "Syllabus",          url: "/dashboard/syllabus",          icon: <BookOpenIcon /> },
     { title: "Exam",              url: "/dashboard/exam",              icon: <ClipboardListIcon /> },
+    { title: "Support",           url: "/dashboard/support",           icon: <MessageSquareIcon /> },
   ],
 }
 

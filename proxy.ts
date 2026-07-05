@@ -9,6 +9,7 @@ const allowedRoutesByRole: Record<Role, string[]> = {
     "/dashboard/profile",
     "/dashboard/manage-users",
     "/dashboard/approve-viva",
+    "/dashboard/support",
   ],
   ASSOCIATE: [
     "/dashboard/overview",
@@ -16,8 +17,15 @@ const allowedRoutesByRole: Record<Role, string[]> = {
     "/dashboard/profile",
     "/dashboard/exam",
     "/dashboard/syllabus",
+    "/dashboard/support",
   ],
-  MEMBER: ["/dashboard/overview", "/dashboard/note", "/dashboard/profile", "/dashboard/syllabus"],
+  MEMBER: [
+    "/dashboard/overview",
+    "/dashboard/note",
+    "/dashboard/profile",
+    "/dashboard/syllabus",
+    "/dashboard/support",
+  ],
   SUPPORTER: [
     "/dashboard/overview",
     "/dashboard/note",
@@ -25,8 +33,16 @@ const allowedRoutesByRole: Record<Role, string[]> = {
     "/dashboard/exam",
     "/dashboard/syllabus",
     "/dashboard/report",
+    "/dashboard/support",
   ],
-  WORKER: ["/dashboard/overview", "/dashboard/note", "/dashboard/profile", "/dashboard/exam", "/dashboard/syllabus"],
+  WORKER: [
+    "/dashboard/overview",
+    "/dashboard/note",
+    "/dashboard/profile",
+    "/dashboard/exam",
+    "/dashboard/syllabus",
+    "/dashboard/support",
+  ],
 }
 
 const reportPageAllowedRoles: Role[] = ["WORKER", "MEMBER", "ASSOCIATE"]
