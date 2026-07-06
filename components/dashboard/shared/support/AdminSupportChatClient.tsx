@@ -4,18 +4,31 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { ArrowLeftIcon, SendIcon } from "lucide-react";
 import { toast } from "sonner";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import {
   getSupportConversationMessages,
   markSupportConversationSeen,
   sendSupportMessage,
   type SupportMessage,
 } from "@/lib/supportChatService";
+import {
+  disconnectSupportSocket,
+  joinSupportConversationRoom,
+} from "@/lib/supportSocket";
 
 type AdminSupportChatClientProps = {
   conversationId: string;
 };
+
+type FeedItem =
+  | { kind: "date"; id: string; label: string }
+  | {
+      kind: "group";
+      id: string;
+      senderId: string;
+      senderName: string;
+      isSelf: boolean;
+      messages: SupportMessage[];
+    };
 
 function formatTime(value: string) {
   const date = new Date(value);
@@ -28,6 +41,71 @@ function formatTime(value: string) {
     hour: "2-digit",
     minute: "2-digit",
   });
+}
+
+function formatDayLabel(value: string) {
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return "";
+
+  const today = new Date();
+  const yesterday = new Date();
+  yesterday.setDate(today.getDate() - 1);
+
+  const isSameDay = (a: Date, b: Date) =>
+    a.getFullYear() === b.getFullYear() && a.getMonth() === b.getMonth() && a.getDate() === b.getDate();
+
+  if (isSameDay(date, today)) return "Today";
+  if (isSameDay(date, yesterday)) return "Yesterday";
+
+  return date.toLocaleDateString([], { month: "short", day: "numeric" });
+}
+
+function getInitials(name: string | null) {
+  if (!name) return "?";
+  const parts = name.trim().split(/\s+/);
+  const initials = parts.slice(0, 2).map((part) => part[0]?.toUpperCase() || "");
+  return initials.join("") || "?";
+}
+
+// isSelf = ADMIN, since this client is the admin's view of the conversation
+function buildFeed(messages: SupportMessage[]): FeedItem[] {
+  const feed: FeedItem[] = [];
+  let lastDay = "";
+  let currentGroup: Extract<FeedItem, { kind: "group" }> | null = null;
+
+  messages.forEach((message) => {
+    const day = formatDayLabel(message.createdAt);
+
+    if (day !== lastDay) {
+      feed.push({ kind: "date", id: `date-${message.id}`, label: day });
+      lastDay = day;
+      currentGroup = null;
+    }
+
+    if (currentGroup && currentGroup.senderId === message.senderId) {
+      currentGroup.messages.push(message);
+    } else {
+      currentGroup = {
+        kind: "group",
+        id: `group-${message.id}`,
+        senderId: message.senderId,
+        senderName: message.sender.name || "User",
+        isSelf: message.sender.role === "ADMIN",
+        messages: [message],
+      };
+      feed.push(currentGroup);
+    }
+  });
+
+  return feed;
+}
+
+function mergeUniqueMessage(prev: SupportMessage[], message: SupportMessage) {
+  if (prev.some((item) => item.id === message.id)) {
+    return prev;
+  }
+
+  return [...prev, message];
 }
 
 export default function AdminSupportChatClient({ conversationId }: AdminSupportChatClientProps) {
@@ -45,7 +123,38 @@ export default function AdminSupportChatClient({ conversationId }: AdminSupportC
     [messages]
   );
 
+  const feed = useMemo(() => buildFeed(sortedMessages), [sortedMessages]);
+
+  const otherParticipantName = useMemo(() => {
+    const fromUser = sortedMessages.find((message) => message.sender.role !== "ADMIN");
+    return fromUser?.sender.name || "User";
+  }, [sortedMessages]);
+
   useEffect(() => {
+    const activeSocket = joinSupportConversationRoom(conversationId);
+    const handleReceiveMessage = (message: SupportMessage) => {
+      if (message.conversationId !== conversationId) {
+        return;
+      }
+
+      setMessages((prev) => mergeUniqueMessage(prev, message));
+    };
+
+    const handleMessagesSeen = (payload: { conversationId: string; seenByUserId: string; count: number }) => {
+      if (payload.conversationId !== conversationId) {
+        return;
+      }
+
+      setMessages((prev) =>
+        prev.map((message) =>
+          message.sender.role === "ADMIN" ? message : { ...message, isSeen: true }
+        )
+      );
+    };
+
+    activeSocket.on("receive_message", handleReceiveMessage);
+    activeSocket.on("messages_seen", handleMessagesSeen);
+
     const loadMessages = async () => {
       try {
         setIsLoadingMessages(true);
@@ -71,6 +180,13 @@ export default function AdminSupportChatClient({ conversationId }: AdminSupportC
     };
 
     void loadMessages();
+
+    return () => {
+      activeSocket.off("receive_message", handleReceiveMessage);
+      activeSocket.off("messages_seen", handleMessagesSeen);
+      activeSocket.off("conversation_joined");
+      disconnectSupportSocket();
+    };
   }, [conversationId]);
 
   useEffect(() => {
@@ -103,7 +219,6 @@ export default function AdminSupportChatClient({ conversationId }: AdminSupportC
         return;
       }
 
-      setMessages((prev) => [...prev, result.data as SupportMessage]);
       setDraft("");
     } catch (error) {
       const message = error instanceof Error ? error.message : "Failed to send support message";
@@ -114,90 +229,135 @@ export default function AdminSupportChatClient({ conversationId }: AdminSupportC
   };
 
   return (
-    <div className="min-h-screen bg-[#050f08] text-emerald-50">
-      <section className="border-b border-emerald-500/15 bg-[#071310] px-3 py-4 sm:px-4 md:px-8">
-        <div className="mx-auto flex max-w-5xl items-center justify-between gap-3">
-          <div>
-            <p className="text-[11px] font-semibold tracking-[1.5px] text-emerald-300/80 uppercase">
-              Admin Support Desk
+    <div className="flex h-[100dvh] flex-col  text-slate-100">
+      <section className="shrink-0 border-b border-white/[0.06] px-3 py-3 sm:px-4 md:px-0">
+        <div className="mx-auto flex max-w-3xl items-center justify-between gap-3">
+          <div className="min-w-0">
+            <p className="hidden font-mono text-[10px] uppercase tracking-[3px] text-slate-500 sm:block">
+              admin / conversation
             </p>
-            <h1 className="text-lg font-semibold text-emerald-50 md:text-xl">Support Conversation</h1>
+            <h1 className="truncate text-[15px] font-semibold text-white sm:text-base">
+              {otherParticipantName}
+            </h1>
           </div>
 
-          <Button asChild variant="outline" className="border-emerald-500/30 bg-transparent text-emerald-200 hover:bg-emerald-500/10">
-            <Link href="/dashboard/support">
-              <ArrowLeftIcon className="h-4 w-4" />
-              Back to Inbox
-            </Link>
-          </Button>
+          <Link
+            href="/dashboard/support"
+            className="flex h-8 shrink-0 items-center gap-1.5 rounded-md border border-white/10 px-2 font-mono text-[11px] text-slate-400 transition hover:border-white/20 hover:text-white sm:px-2.5"
+          >
+            <ArrowLeftIcon className="h-3.5 w-3.5" />
+            <span className="hidden sm:inline">inbox</span>
+          </Link>
         </div>
       </section>
 
-      <section className="mx-auto flex w-full max-w-5xl flex-col px-3 py-4 sm:px-4 md:px-8">
-        <div
-          ref={listRef}
-          className="h-[calc(100vh-260px)] space-y-2 overflow-y-auto rounded-xl border border-emerald-500/15 bg-[#07130f]/80 p-3"
-        >
+      <section className="mx-auto flex w-full max-w-3xl min-h-0 flex-1 flex-col px-2 py-3 sm:px-4 md:px-0">
+        <div ref={listRef} className="min-h-0 flex-1 space-y-0.5 overflow-y-auto px-1 sm:px-0">
           {isLoadingMessages && (
-            <div className="rounded-lg border border-emerald-500/15 bg-[#060f0c] px-3 py-4 text-center text-xs text-emerald-100/70">
-              Loading conversation messages...
+            <div className="py-8 text-center font-mono text-xs text-slate-600">
+              loading conversation...
             </div>
           )}
 
-          {!isLoadingMessages && sortedMessages.length === 0 && (
-            <div className="rounded-lg border border-emerald-500/15 bg-[#060f0c] px-3 py-4 text-center text-xs text-emerald-100/70">
-              No messages yet.
+          {!isLoadingMessages && feed.length === 0 && (
+            <div className="py-8 text-center font-mono text-xs text-slate-600">
+              no messages yet
             </div>
           )}
 
           {!isLoadingMessages &&
-            sortedMessages.map((message) => {
-              const isAdminMessage = message.sender.role === "ADMIN";
+            feed.map((item) => {
+              if (item.kind === "date") {
+                return (
+                  <div key={item.id} className="my-3 flex items-center justify-center">
+                    <span className="rounded-full border border-white/[0.08] px-2.5 py-0.5 font-mono text-[10px] uppercase tracking-wider text-slate-600">
+                      {item.label}
+                    </span>
+                  </div>
+                );
+              }
+
+              const isSelf = item.isSelf;
 
               return (
                 <div
-                  key={message.id}
-                  className={`flex ${isAdminMessage ? "justify-end" : "justify-start"}`}
+                  key={item.id}
+                  className={`flex w-full gap-2 py-1.5 sm:gap-2.5 ${
+                    isSelf ? "flex-row-reverse" : "flex-row"
+                  }`}
                 >
-                  <article
-                    className={`max-w-[80%] rounded-xl border px-3 py-2 ${
-                      isAdminMessage
-                        ? "border-emerald-500/25 bg-emerald-500/12"
-                        : "border-cyan-500/25 bg-cyan-500/10"
+                  <div
+                    className={`mt-0.5 flex h-7 w-7 shrink-0 items-center justify-center rounded-full text-[10px] font-semibold ring-1 sm:h-8 sm:w-8 sm:text-[11px] ${
+                      isSelf
+                        ? "bg-violet-500/15 text-violet-200 ring-violet-400/25"
+                        : "bg-cyan-500/15 text-cyan-200 ring-cyan-400/25"
                     }`}
                   >
-                    <p className="text-[11px] font-medium text-emerald-100/80">
-                      {isAdminMessage ? "You (Admin)" : message.sender.name || "User"}
-                    </p>
-                    <p className="mt-1 text-sm leading-relaxed text-emerald-50">{message.text}</p>
-                    <p className="mt-1 text-[10px] text-emerald-100/60">{formatTime(message.createdAt)}</p>
-                  </article>
+                    {getInitials(isSelf ? "You" : item.senderName)}
+                  </div>
+
+                  <div
+                    className={`flex min-w-0 max-w-[82%] flex-col sm:max-w-[70%] md:max-w-[65%] ${
+                      isSelf ? "items-end" : "items-start"
+                    }`}
+                  >
+                    <div
+                      className={`flex items-baseline gap-2 px-0.5 ${
+                        isSelf ? "flex-row-reverse" : "flex-row"
+                      }`}
+                    >
+                      <span
+                        className={`text-[13px] font-semibold sm:text-sm ${
+                          isSelf ? "text-violet-300" : "text-cyan-300"
+                        }`}
+                      >
+                        {isSelf ? "You" : item.senderName}
+                      </span>
+                      <span className="font-mono text-[10px] text-slate-600">
+                        {formatTime(item.messages[0].createdAt)}
+                      </span>
+                    </div>
+
+                    <div className={`mt-1 flex w-full flex-col gap-1 ${isSelf ? "items-end" : "items-start"}`}>
+                      {item.messages.map((message) => (
+                        <p
+                          key={message.id}
+                          className={`w-fit max-w-full whitespace-pre-wrap break-words rounded-2xl px-3.5 py-2 text-[15px] leading-relaxed sm:text-base ${
+                            isSelf
+                              ? "bg-violet-500/12 text-violet-50"
+                              : "bg-white/[0.045] text-slate-100"
+                          }`}
+                        >
+                          {message.text}
+                        </p>
+                      ))}
+                    </div>
+                  </div>
                 </div>
               );
             })}
         </div>
 
         <form
-          className="mt-3 flex items-center gap-2"
+          className="mt-2 flex shrink-0 items-center gap-2 rounded-xl border border-white/10 bg-white/[0.03] p-1.5"
           onSubmit={(event) => {
             event.preventDefault();
             void onSendMessage();
           }}
         >
-          <Input
+          <input
             value={draft}
             onChange={(event) => setDraft(event.target.value)}
-            placeholder="Write your reply..."
-            className="h-10 border-emerald-500/25 bg-[#07130f] px-3 text-sm text-emerald-50 placeholder:text-emerald-100/45"
+            placeholder="Reply to this conversation..."
+            className="h-10 flex-1 bg-transparent px-2.5 text-[15px] text-slate-100 outline-none placeholder:text-slate-600 sm:text-sm"
           />
-          <Button
+          <button
             type="submit"
             disabled={!draft.trim() || isSending}
-            className="h-10 rounded-lg bg-emerald-500 px-4 text-[#03210f] hover:bg-emerald-400 disabled:cursor-not-allowed disabled:opacity-60"
+            className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-violet-500 text-white transition hover:bg-violet-400 disabled:cursor-not-allowed disabled:opacity-40"
           >
-            {isSending ? "Sending..." : "Send"}
-            {!isSending && <SendIcon className="h-4 w-4" />}
-          </Button>
+            <SendIcon className="h-4 w-4" />
+          </button>
         </form>
       </section>
     </div>

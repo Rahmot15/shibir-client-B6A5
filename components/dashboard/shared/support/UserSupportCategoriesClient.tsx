@@ -2,51 +2,58 @@
 
 import { startTransition, useState } from "react";
 import { useRouter } from "next/navigation";
-import { CircleHelpIcon, ClipboardListIcon, HeadsetIcon, ArrowRightIcon } from "lucide-react";
+import { CircleHelpIcon, ClipboardListIcon, HeadsetIcon, ChevronRightIcon } from "lucide-react";
 import { toast } from "sonner";
-import { Button } from "@/components/ui/button";
 import {
   openSupportConversation,
   type ConversationType,
 } from "@/lib/supportChatService";
 
 type SupportCategoryItem = {
+  index: string;
   title: string;
   subtitle: string;
+  meta: string;
   type: ConversationType;
   Icon: React.ComponentType<{ className?: string }>;
-  iconToneClass: string;
-  borderToneClass: string;
-  bgToneClass: string;
+  accentBar: string;
+  iconClass: string;
+  dotClass: string;
 };
 
 const SUPPORT_CATEGORIES: SupportCategoryItem[] = [
   {
+    index: "01",
     title: "Viva Help",
     subtitle: "Viva, oral exam, schedule, and interview related support.",
+    meta: "Replies same day",
     type: "VIVA_HELP",
     Icon: HeadsetIcon,
-    iconToneClass: "text-cyan-300",
-    borderToneClass: "border-cyan-500/30",
-    bgToneClass: "bg-cyan-500/10",
+    accentBar: "bg-violet-400",
+    iconClass: "text-violet-300",
+    dotClass: "bg-violet-400",
   },
   {
+    index: "02",
     title: "Exam Help",
     subtitle: "Exam routine, submission, and result workflow support.",
+    meta: "Fast during exam week",
     type: "EXAM_HELP",
     Icon: ClipboardListIcon,
-    iconToneClass: "text-amber-300",
-    borderToneClass: "border-amber-500/30",
-    bgToneClass: "bg-amber-500/10",
+    accentBar: "bg-amber-400",
+    iconClass: "text-amber-300",
+    dotClass: "bg-amber-400",
   },
   {
+    index: "03",
     title: "General Support",
     subtitle: "Dashboard, account, and technical issue assistance.",
+    meta: "Handled anytime",
     type: "GENERAL_SUPPORT",
     Icon: CircleHelpIcon,
-    iconToneClass: "text-emerald-300",
-    borderToneClass: "border-emerald-500/30",
-    bgToneClass: "bg-emerald-500/10",
+    accentBar: "bg-cyan-400",
+    iconClass: "text-cyan-300",
+    dotClass: "bg-cyan-400",
   },
 ];
 
@@ -76,50 +83,69 @@ export default function UserSupportCategoriesClient() {
   };
 
   return (
-    <div className="min-h-screen bg-[#050f08] text-emerald-50">
-      <section className="relative overflow-hidden border-b border-emerald-500/15 bg-[#071310] px-3 py-6 sm:px-4 md:px-8 md:py-8">
-        <div className="pointer-events-none absolute -left-24 bottom-0 h-56 w-56 rounded-full bg-cyan-500/10 blur-3xl" />
-        <div className="pointer-events-none absolute -right-20 top-0 h-64 w-64 rounded-full bg-emerald-500/10 blur-3xl" />
-
-        <div className="relative mx-auto max-w-6xl">
-          <h1 className="text-2xl font-bold tracking-tight text-emerald-50 md:text-3xl">
-            Admin Support Desk
-          </h1>
-          <p className="mt-2 max-w-2xl text-sm text-emerald-100/70">
-            Select a support category. We will open your existing conversation if available,
-            otherwise create a new one.
-          </p>
-        </div>
+    <div className="min-h-screen  text-slate-100">
+      <section className="mx-auto max-w-3xl px-3 pb-4 pt-10 sm:px-4 md:px-0">
+        <p className="font-mono text-[11px] uppercase tracking-[3px] text-slate-500">
+          support / choose a category
+        </p>
+        <h1 className="mt-3 text-3xl font-semibold tracking-tight text-white md:text-4xl">
+          What do you need help with?
+        </h1>
+        <p className="mt-2 max-w-xl text-sm leading-relaxed text-slate-500">
+          Pick a category below. If you already have an open thread there, we'll take you
+          straight back into it.
+        </p>
       </section>
 
-      <section className="mx-auto grid max-w-6xl gap-4 px-3 py-6 sm:px-4 md:grid-cols-2 md:px-8 lg:grid-cols-3">
-        {SUPPORT_CATEGORIES.map((category) => {
-          const isLoading = loadingType === category.type;
+      <section className="mx-auto max-w-3xl px-3 pb-16 sm:px-4 md:px-0">
+        <div className="divide-y divide-white/[0.06] border-y border-white/[0.06]">
+          {SUPPORT_CATEGORIES.map((category) => {
+            const isLoading = loadingType === category.type;
+            const isDisabled = Boolean(loadingType);
 
-          return (
-            <article
-              key={category.type}
-              className={`rounded-2xl border ${category.borderToneClass} ${category.bgToneClass} p-4 backdrop-blur-md`}
-            >
-              <div className="mb-3 inline-flex h-10 w-10 items-center justify-center rounded-xl border border-white/15 bg-[#050f08]/70">
-                <category.Icon className={`h-5 w-5 ${category.iconToneClass}`} />
-              </div>
-
-              <h2 className="text-lg font-semibold text-emerald-50">{category.title}</h2>
-              <p className="mt-2 min-h-12 text-xs text-emerald-100/70">{category.subtitle}</p>
-
-              <Button
+            return (
+              <button
+                key={category.type}
                 type="button"
+                disabled={isDisabled}
                 onClick={() => handleOpenConversation(category.type)}
-                disabled={Boolean(loadingType)}
-                className="mt-4 h-9 w-full rounded-lg bg-emerald-500 text-[#03210f] hover:bg-emerald-400 disabled:cursor-not-allowed disabled:opacity-60"
+                className="group relative flex w-full items-center gap-4 py-5 pl-4 pr-2 text-left transition-colors disabled:cursor-not-allowed disabled:opacity-50"
               >
-                {isLoading ? "Opening..." : "Open Support Chat"}
-                {!isLoading && <ArrowRightIcon className="ml-1 h-4 w-4" />}
-              </Button>
-            </article>
-          );
-        })}
+                <span
+                  className={`absolute left-0 top-1/2 h-0 w-0.5 -translate-y-1/2 ${category.accentBar} transition-all duration-300 group-hover:h-3/4`}
+                />
+
+                <span className="font-mono text-xs text-slate-600">{category.index}</span>
+
+                <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg border border-white/[0.08] bg-white/[0.02]">
+                  <category.Icon className={`h-4.5 w-4.5 ${category.iconClass}`} />
+                </span>
+
+                <span className="min-w-0 flex-1">
+                  <span className="flex items-baseline gap-2">
+                    <span className="text-[15px] font-semibold text-white">{category.title}</span>
+                  </span>
+                  <span className="mt-0.5 block truncate text-[13px] text-slate-500">
+                    {category.subtitle}
+                  </span>
+                </span>
+
+                <span className="hidden shrink-0 items-center gap-1.5 font-mono text-[11px] text-slate-500 sm:flex">
+                  <span className={`h-1.5 w-1.5 rounded-full ${category.dotClass}`} />
+                  {category.meta}
+                </span>
+
+                <span className="ml-2 shrink-0 text-xs font-medium text-slate-400">
+                  {isLoading ? (
+                    <span className="font-mono text-[11px] text-slate-500">opening...</span>
+                  ) : (
+                    <ChevronRightIcon className="h-4 w-4 text-slate-600 transition-transform duration-200 group-hover:translate-x-0.5 group-hover:text-slate-300" />
+                  )}
+                </span>
+              </button>
+            );
+          })}
+        </div>
       </section>
     </div>
   );

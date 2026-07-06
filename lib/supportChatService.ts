@@ -1,4 +1,16 @@
-const API_BASE = "/api/v1/support";
+const getSupportApiBase = () => {
+  if (typeof window !== "undefined") {
+    const { hostname, origin } = window.location;
+
+    if (hostname === "localhost" || hostname === "127.0.0.1") {
+      return "http://localhost:5000/api/v1/support";
+    }
+
+    return `${origin}/api/v1/support`;
+  }
+
+  return `${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000"}/api/v1/support`;
+};
 
 type ApiResponse<T = unknown> = {
   success: boolean;
@@ -64,7 +76,7 @@ export type SendSupportMessagePayload = {
 export async function openSupportConversation(
   payload: OpenSupportConversationPayload
 ): Promise<ApiResponse<SupportConversation>> {
-  const res = await fetch(`${API_BASE}/conversations`, {
+  const res = await fetch(`${getSupportApiBase()}/conversations`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     credentials: "include",
@@ -87,7 +99,7 @@ export async function openSupportConversation(
 export async function getMySupportConversations(): Promise<
   ApiResponse<SupportConversationListItem[]>
 > {
-  const res = await fetch(`${API_BASE}/conversations/my`, {
+  const res = await fetch(`${getSupportApiBase()}/conversations/my`, {
     method: "GET",
     headers: { "Content-Type": "application/json" },
     credentials: "include",
@@ -109,7 +121,7 @@ export async function getMySupportConversations(): Promise<
 export async function getAdminSupportConversations(): Promise<
   ApiResponse<SupportConversationListItem[]>
 > {
-  const res = await fetch(`${API_BASE}/conversations/admin`, {
+  const res = await fetch(`${getSupportApiBase()}/conversations/admin`, {
     method: "GET",
     headers: { "Content-Type": "application/json" },
     credentials: "include",
@@ -131,7 +143,7 @@ export async function getAdminSupportConversations(): Promise<
 export async function getSupportConversationMessages(
   conversationId: string
 ): Promise<ApiResponse<SupportMessage[]>> {
-  const res = await fetch(`${API_BASE}/conversations/${conversationId}/messages`, {
+  const res = await fetch(`${getSupportApiBase()}/conversations/${conversationId}/messages`, {
     method: "GET",
     headers: { "Content-Type": "application/json" },
     credentials: "include",
@@ -153,7 +165,7 @@ export async function getSupportConversationMessages(
 export async function sendSupportMessage(
   payload: SendSupportMessagePayload
 ): Promise<ApiResponse<SupportMessage>> {
-  const res = await fetch(`${API_BASE}/messages`, {
+  const res = await fetch(`${getSupportApiBase()}/messages`, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     credentials: "include",
@@ -180,7 +192,7 @@ export type MarkSupportSeenResponse = {
 export async function markSupportConversationSeen(
   conversationId: string
 ): Promise<ApiResponse<MarkSupportSeenResponse>> {
-  const res = await fetch(`${API_BASE}/conversations/${conversationId}/seen`, {
+  const res = await fetch(`${getSupportApiBase()}/conversations/${conversationId}/seen`, {
     method: "PATCH",
     headers: { "Content-Type": "application/json" },
     credentials: "include",
