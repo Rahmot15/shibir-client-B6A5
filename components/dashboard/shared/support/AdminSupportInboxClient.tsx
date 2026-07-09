@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { RefreshCwIcon, SearchIcon } from "lucide-react";
+import { RefreshCwIcon, SearchIcon, InboxIcon } from "lucide-react";
 import { toast } from "sonner";
 import {
   getAdminSupportConversations,
@@ -175,14 +175,41 @@ export default function AdminSupportInboxClient() {
             </div>
 
             {isLoading && (
-              <div className="py-10 text-center font-mono text-xs text-slate-600">
-                loading conversations...
+              <div className="space-y-3 py-4">
+                {[1, 2, 3, 4, 5].map((i) => (
+                  <div
+                    key={i}
+                    className="grid w-full grid-cols-[1.6fr_1fr_2fr_0.9fr_0.7fr] items-center gap-3 border-b border-white/[0.04] px-1 py-3"
+                  >
+                    <span className="flex items-center gap-2.5">
+                      <div className="h-7 w-7 rounded-full bg-white/[0.04] animate-pulse" />
+                      <div className="space-y-1">
+                        <div className="h-3 w-24 rounded bg-white/[0.04] animate-pulse" />
+                        <div className="h-2.5 w-12 rounded bg-white/[0.04] animate-pulse" />
+                      </div>
+                    </span>
+                    <div className="h-3 w-16 rounded bg-white/[0.04] animate-pulse" />
+                    <div className="h-3.5 w-48 rounded bg-white/[0.04] animate-pulse" />
+                    <div className="h-3 w-16 rounded bg-white/[0.04] animate-pulse" />
+                    <div className="flex justify-end">
+                      <div className="h-4 w-8 rounded-full bg-white/[0.04] animate-pulse" />
+                    </div>
+                  </div>
+                ))}
               </div>
             )}
 
             {!isLoading && filteredConversations.length === 0 && (
-              <div className="py-10 text-center font-mono text-xs text-slate-600">
-                no conversations match this view
+              <div className="flex flex-col items-center justify-center py-16 text-center">
+                <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-white/[0.03] text-slate-500 ring-1 ring-white/10">
+                  <InboxIcon className="h-5 w-5" />
+                </div>
+                <h3 className="mt-4 text-sm font-semibold text-white">No Conversations Found</h3>
+                <p className="mt-2 max-w-xs text-xs leading-relaxed text-slate-500">
+                  {searchTerm.trim()
+                    ? `No conversations match "${searchTerm.trim()}" for the selected filter.`
+                    : "There are currently no active support conversations in this category."}
+                </p>
               </div>
             )}
 

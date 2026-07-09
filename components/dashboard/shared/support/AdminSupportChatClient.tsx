@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
-import { ArrowLeftIcon, SendIcon } from "lucide-react";
+import { ArrowLeftIcon, SendIcon, MessageSquareIcon } from "lucide-react";
 import { toast } from "sonner";
 import {
   getSupportConversationMessages,
@@ -254,14 +254,37 @@ export default function AdminSupportChatClient({ conversationId }: AdminSupportC
       <section className="mx-auto flex w-full max-w-3xl min-h-0 flex-1 flex-col px-2 py-3 sm:px-4 md:px-0">
         <div ref={listRef} className="min-h-0 flex-1 space-y-0.5 overflow-y-auto px-1 sm:px-0">
           {isLoadingMessages && (
-            <div className="py-8 text-center font-mono text-xs text-slate-600">
-              loading conversation...
+            <div className="space-y-4 py-4">
+              {[1, 2, 3, 4].map((i) => {
+                const isSelf = i % 2 === 0;
+                return (
+                  <div
+                    key={i}
+                    className={`flex w-full gap-2.5 ${isSelf ? "flex-row-reverse" : "flex-row"}`}
+                  >
+                    <div className="h-7 w-7 shrink-0 rounded-full bg-white/[0.04] animate-pulse sm:h-8 sm:w-8" />
+                    <div className={`flex flex-col gap-1 max-w-[70%] ${isSelf ? "items-end" : "items-start"}`}>
+                      <div className="h-3 w-16 rounded bg-white/[0.04] animate-pulse" />
+                      <div
+                        className="h-10 rounded-2xl bg-white/[0.04] animate-pulse"
+                        style={{ width: `${Math.floor((i * 45) % 120) + 120}px` }}
+                      />
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           )}
 
           {!isLoadingMessages && feed.length === 0 && (
-            <div className="py-8 text-center font-mono text-xs text-slate-600">
-              no messages yet
+            <div className="flex flex-col items-center justify-center py-20 text-center">
+              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-violet-500/10 text-violet-400 ring-1 ring-violet-400/20">
+                <MessageSquareIcon className="h-5 w-5" />
+              </div>
+              <h3 className="mt-4 text-sm font-semibold text-white">No messages yet</h3>
+              <p className="mt-2 max-w-xs text-xs leading-relaxed text-slate-500">
+                This support conversation is currently empty. Send a message to start helping this user.
+              </p>
             </div>
           )}
 
