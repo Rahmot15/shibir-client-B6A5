@@ -37,7 +37,11 @@ const nextConfig = {
 		],
 	},
 	async rewrites() {
-		const backendUrl = process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000"
+		const backendUrl =
+			process.env.NEXT_PUBLIC_BACKEND_URL ||
+			(process.env.NODE_ENV === "production"
+				? "https://shibir-server.vercel.app"
+				: "http://localhost:5000")
 
 		return [
 			{
