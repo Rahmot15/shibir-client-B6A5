@@ -10,7 +10,7 @@ import {
   EyeIcon, EyeOffIcon, CameraIcon, Loader2Icon, ZapIcon,
 } from "lucide-react"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { getMe, type UserData }                  from "@/lib/authService"
+import { changePassword, getMe, type UserData }  from "@/lib/authService"
 import { noteService, type Note }                from "@/lib/noteService"
 import { getMyWorkerReportHistory, type WorkerReportHistoryItem } from "@/lib/workerReportService"
 
@@ -167,8 +167,20 @@ export function ProfileOverviewContent() {
     if (newPw!==confirmPw)          { setPwMsg({type:"err",text:"পাসওয়ার্ড মিলছে না।"}); return }
     if (newPw.length<6)             { setPwMsg({type:"err",text:"কমপক্ষে ৬ অক্ষর দিন।"}); return }
     setPwBusy(true)
-    await new Promise(r=>setTimeout(r,1200)) // TODO: real API
+    try {
+      const result = await changePassword({ currentPassword: oldPw, newPassword: newPw })
+      if (!result.success) {
+        setPwBusy(false)
+        setPwMsg({type:"err",text:result.message})
+        return
+      }
+    } catch {
+      setPwBusy(false)
+      setPwMsg({type:"err",text:"Unable to change password. Please try again."})
+      return
+    }
     setPwBusy(false); setOldPw(""); setNewPw(""); setConfirmPw("")
+    setMe(current => current ? { ...current, needPasswordChange: false } : current)
     setPwMsg({type:"ok",text:"পাসওয়ার্ড সফলভাবে পরিবর্তন হয়েছে।"})
     setTimeout(()=>setPwMsg(null),3000)
   }

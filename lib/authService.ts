@@ -248,4 +248,23 @@ export async function resendEmailVerificationOTP(
   );
 }
 
+export async function changePassword(payload: {
+  currentPassword: string;
+  newPassword: string;
+}): Promise<ApiResponse<null>> {
+  const res = await fetch(`${API_BASE}/auth/change-password`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
+    body: JSON.stringify(payload),
+  });
+
+  const data = await parseJsonSafe<ApiResponse<null>>(res);
+
+  if (!res.ok) {
+    return { success: false, message: data?.message || "Password change failed" };
+  }
+
+  return data || { success: true, message: "Password changed successfully" };
+}
 
