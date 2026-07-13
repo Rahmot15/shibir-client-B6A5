@@ -25,6 +25,10 @@ type LoginPayload = {
   password: string;
 };
 
+export function getGoogleLoginUrl(redirectPath = "/dashboard/overview") {
+  return `${API_BASE}/auth/login/google?redirect=${encodeURIComponent(redirectPath)}`;
+}
+
 export type UserData = {
   id: string;
   name: string;
@@ -267,4 +271,3 @@ export async function changePassword(payload: {
 
   return data || { success: true, message: "Password changed successfully" };
 }
-

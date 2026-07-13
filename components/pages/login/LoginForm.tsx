@@ -6,8 +6,18 @@ import { useRouter } from "next/navigation";
 import { ArrowRight, Eye, EyeOff, Loader2, Lock, Mail } from "lucide-react";
 import { toast } from "sonner";
 import { Divider, Input, SocialBtn, socials } from "@/components/auth/shared";
-import { loginUser } from "@/lib/authService";
+import { getGoogleLoginUrl, loginUser } from "@/lib/authService";
 import { useAuth } from "@/components/auth/AuthContext";
+
+const DEMO_ADMIN_EMAIL = "demo-admin@example.com";
+const DEMO_ADMIN_PASSWORD = "Demo@123";
+const DEMO_SUPPORTER_EMAIL = "demo-supporter@example.com";
+const DEMO_SUPPORTER_PASSWORD = "Demo@123";
+
+type LoginCredentials = {
+  email: string;
+  password: string;
+};
 
 export default function LoginForm() {
   const router = useRouter();
@@ -18,24 +28,24 @@ export default function LoginForm() {
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
-  function validate() {
+  function validate(credentials: LoginCredentials) {
     const validationErrors: Record<string, string> = {};
 
-    if (!email) {
+    if (!credentials.email) {
       validationErrors.email = "ইমেইল দিন";
-    } else if (!/\S+@\S+\.\S+/.test(email)) {
+    } else if (!/\S+@\S+\.\S+/.test(credentials.email)) {
       validationErrors.email = "সঠিক ইমেইল দিন";
     }
 
-    if (!password) {
+    if (!credentials.password) {
       validationErrors.password = "পাসওয়ার্ড দিন";
     }
 
     return validationErrors;
   }
 
-  async function handleSubmit() {
-    const validationErrors = validate();
+  async function handleSubmit(credentials: LoginCredentials = { email, password }) {
+    const validationErrors = validate(credentials);
 
     if (Object.keys(validationErrors).length) {
       setErrors(validationErrors);
@@ -46,7 +56,7 @@ export default function LoginForm() {
     setLoading(true);
 
     try {
-      const result = await loginUser({ email, password });
+      const result = await loginUser(credentials);
 
       if (result.success && result.data) {
         setUser(result.data);
@@ -74,11 +84,26 @@ export default function LoginForm() {
     }
   };
 
+  function handleDemoLogin(demoEmail: string, demoPassword: string) {
+    setEmail(demoEmail);
+    setPassword(demoPassword);
+    void handleSubmit({ email: demoEmail, password: demoPassword });
+  }
+
+  function handleSocialLogin(provider: string) {
+    if (provider !== "google") {
+      toast.info("This login provider is not available yet.");
+      return;
+    }
+
+    window.location.assign(getGoogleLoginUrl());
+  }
+
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
       <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
         {socials.map((social) => (
-          <SocialBtn key={social.id} icon={social.icon} label={social.label} onClick={() => {}} />
+          <SocialBtn key={social.id} icon={social.icon} label={social.label} onClick={() => handleSocialLogin(social.id)} />
         ))}
       </div>
 
@@ -144,7 +169,7 @@ export default function LoginForm() {
 
       <button
         type="button"
-        onClick={handleSubmit}
+        onClick={() => handleSubmit()}
         disabled={loading}
         style={{
           display: "flex",
@@ -183,6 +208,33 @@ export default function LoginForm() {
         {loading ? "লগইন হচ্ছে..." : "লগইন করুন"}
       </button>
 
+      <div style={{ display: "flex", alignItems: "center", gap: 10, marginTop: 2 }}>
+        <div style={{ flex: 1, height: 1, background: "rgba(0,200,83,0.1)" }} />
+        <span style={{ fontSize: 10, color: "rgba(232,245,233,0.35)", letterSpacing: "0.8px" }}>
+          OR TRY A DEMO ACCOUNT
+        </span>
+        <div style={{ flex: 1, height: 1, background: "rgba(0,200,83,0.1)" }} />
+      </div>
+
+      <div style={{ display: "flex", gap: 8 }}>
+        <button
+          type="button"
+          disabled={loading}
+          onClick={() => handleDemoLogin(DEMO_ADMIN_EMAIL, DEMO_ADMIN_PASSWORD)}
+          style={demoButtonStyle(loading)}
+        >
+          Demo Admin
+        </button>
+        <button
+          type="button"
+          disabled={loading}
+          onClick={() => handleDemoLogin(DEMO_SUPPORTER_EMAIL, DEMO_SUPPORTER_PASSWORD)}
+          style={demoButtonStyle(loading)}
+        >
+          Demo Supporter
+        </button>
+      </div>
+
       <p style={{ textAlign: "center", fontSize: 12, color: "rgba(232,245,233,0.38)", letterSpacing: "0.3px" }}>
         অ্যাকাউন্ট নেই?{" "}
         <Link
@@ -202,4 +254,22 @@ export default function LoginForm() {
       <style>{"@keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }"}</style>
     </div>
   );
+}
+
+function demoButtonStyle(disabled: boolean): React.CSSProperties {
+  return {
+    flex: 1,
+    padding: "10px 12px",
+    borderRadius: 6,
+    border: "1px solid rgba(0,200,83,0.22)",
+    background: "rgba(0,200,83,0.05)",
+    color: "rgba(232,245,233,0.75)",
+    fontSize: 11,
+    fontWeight: 600,
+    letterSpacing: "0.7px",
+    cursor: disabled ? "not-allowed" : "pointer",
+    opacity: disabled ? 0.5 : 1,
+    transition: "all .2s",
+    fontFamily: "var(--font-geist-mono, monospace)",
+  };
 }

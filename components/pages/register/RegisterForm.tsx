@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import { ArrowRight, Eye, EyeOff, Loader2, Lock, Mail, User } from "lucide-react";
 import { toast } from "sonner";
 import { Divider, Input, SocialBtn, socials } from "@/components/auth/shared";
-import { registerUser } from "@/lib/authService";
+import { getGoogleLoginUrl, registerUser } from "@/lib/authService";
 
 const strengthLabels = ["", "দুর্বল", "মোটামুটি", "ভালো", "শক্তিশালী"];
 const strengthColors = ["", "#ef5350", "#c8a227", "#00a844", "#00c853"];
@@ -102,11 +102,20 @@ export default function RegisterForm() {
     }
   };
 
+  function handleSocialLogin(provider: string) {
+    if (provider !== "google") {
+      toast.info("This login provider is not available yet.");
+      return;
+    }
+
+    window.location.assign(getGoogleLoginUrl());
+  }
+
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 18 }}>
       <div style={{ display: "flex", gap: 8 }}>
         {socials.map((social) => (
-          <SocialBtn key={social.id} icon={social.icon} onClick={() => {}} compact />
+          <SocialBtn key={social.id} icon={social.icon} onClick={() => handleSocialLogin(social.id)} compact />
         ))}
       </div>
 
