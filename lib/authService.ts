@@ -136,3 +136,58 @@ export async function logoutUser(): Promise<ApiResponse<null>> {
     }
   );
 }
+
+export async function forgetPassword(email: string): Promise<ApiResponse<null>> {
+  const res = await fetch(`${API_BASE}/auth/forget-password`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
+    body: JSON.stringify({ email }),
+  });
+
+  const data = await parseJsonSafe<ApiResponse<null>>(res);
+
+  if (!res.ok) {
+    return {
+      success: false,
+      message: data?.message || "পাসওয়ার্ড রিসেট ওটিপি পাঠানো ব্যর্থ হয়েছে",
+    };
+  }
+
+  return (
+    data || {
+      success: true,
+      message: "পাসওয়ার্ড রিসেট ওটিপি পাঠানো হয়েছে",
+    }
+  );
+}
+
+export async function resetPassword(payload: {
+  email: string;
+  otp: string;
+  newPassword: string;
+}): Promise<ApiResponse<null>> {
+  const res = await fetch(`${API_BASE}/auth/reset-password`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
+    body: JSON.stringify(payload),
+  });
+
+  const data = await parseJsonSafe<ApiResponse<null>>(res);
+
+  if (!res.ok) {
+    return {
+      success: false,
+      message: data?.message || "পাসওয়ার্ড রিসেট ব্যর্থ হয়েছে",
+    };
+  }
+
+  return (
+    data || {
+      success: true,
+      message: "পাসওয়ার্ড রিসেট সফল হয়েছে",
+    }
+  );
+}
+

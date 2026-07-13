@@ -3,18 +3,14 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { ArrowRight, Eye, EyeOff, Loader2, Lock, Mail } from "lucide-react";
+import { ArrowRight, Loader2, Mail } from "lucide-react";
 import { toast } from "sonner";
-import { Divider, Input, SocialBtn, socials } from "@/components/auth/shared";
-import { loginUser } from "@/lib/authService";
-import { useAuth } from "@/components/auth/AuthContext";
+import { Input } from "@/components/auth/shared";
+import { forgetPassword } from "@/lib/authService";
 
-export default function LoginForm() {
+export default function ForgotPasswordForm() {
   const router = useRouter();
-  const { setUser } = useAuth();
   const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [showPass, setShowPass] = useState(false);
   const [loading, setLoading] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
@@ -25,10 +21,6 @@ export default function LoginForm() {
       validationErrors.email = "ইমেইল দিন";
     } else if (!/\S+@\S+\.\S+/.test(email)) {
       validationErrors.email = "সঠিক ইমেইল দিন";
-    }
-
-    if (!password) {
-      validationErrors.password = "পাসওয়ার্ড দিন";
     }
 
     return validationErrors;
@@ -43,19 +35,18 @@ export default function LoginForm() {
     }
 
     setErrors({});
-    setLoading(true);
+    loading || setLoading(true);
 
     try {
-      const result = await loginUser({ email, password });
+      const result = await forgetPassword(email);
 
-      if (result.success && result.data) {
-        setUser(result.data);
-        toast.success("সফলভাবে লগইন হয়েছে!", {
-          description: `স্বাগতম, ${result.data.name || "ব্যবহারকারী"}!`,
+      if (result.success) {
+        toast.success("পাসওয়ার্ড রিসেট ওটিপি পাঠানো হয়েছে!", {
+          description: "আপনার ইমেইল চেক করুন।",
         });
-        router.push("/");
+        router.push(`/reset-password?email=${encodeURIComponent(email)}`);
       } else {
-        toast.error("লগইন ব্যর্থ", {
+        toast.error("রিকোয়েস্ট ব্যর্থ", {
           description: result.message,
         });
       }
@@ -76,14 +67,6 @@ export default function LoginForm() {
 
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: 20 }}>
-      <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
-        {socials.map((social) => (
-          <SocialBtn key={social.id} icon={social.icon} label={social.label} onClick={() => {}} />
-        ))}
-      </div>
-
-      <Divider text="অথবা ইমেইল দিয়ে" />
-
       <Input
         label="ইমেইল"
         placeholder="আপনার ইমেইল লিখুন"
@@ -93,54 +76,6 @@ export default function LoginForm() {
         error={errors.email}
         onKeyDown={handleKeyDown}
       />
-
-      <Input
-        label="পাসওয়ার্ড"
-        type={showPass ? "text" : "password"}
-        placeholder="পাসওয়ার্ড লিখুন"
-        icon={Lock}
-        value={password}
-        onChange={setPassword}
-        error={errors.password}
-        onKeyDown={handleKeyDown}
-        rightSlot={
-          <button
-            type="button"
-            onClick={() => setShowPass((value) => !value)}
-            style={{
-              background: "none",
-              border: "none",
-              cursor: "pointer",
-              padding: 0,
-              color: "rgba(232,245,233,0.3)",
-              transition: "color .2s",
-              display: "flex",
-            }}
-            onMouseEnter={(event) => (event.currentTarget.style.color = "#00c853")}
-            onMouseLeave={(event) => (event.currentTarget.style.color = "rgba(232,245,233,0.3)")}
-          >
-            {showPass ? <EyeOff size={15} strokeWidth={1.8} /> : <Eye size={15} strokeWidth={1.8} />}
-          </button>
-        }
-      />
-
-      <div style={{ display: "flex", justifyContent: "flex-end", marginTop: -10 }}>
-        <Link
-          href="/forgot-password"
-          style={{
-            fontSize: 11,
-            color: "rgba(0,200,83,0.6)",
-            textDecoration: "none",
-            letterSpacing: "0.5px",
-            transition: "color .2s",
-            fontFamily: "var(--font-geist-mono, monospace)",
-          }}
-          onMouseEnter={(event) => (event.currentTarget.style.color = "#00c853")}
-          onMouseLeave={(event) => (event.currentTarget.style.color = "rgba(0,200,83,0.6)")}
-        >
-          পাসওয়ার্ড ভুলে গেছেন?
-        </Link>
-      </div>
 
       <button
         type="button"
@@ -180,13 +115,13 @@ export default function LoginForm() {
         }}
       >
         {loading ? <Loader2 size={16} style={{ animation: "spin 1s linear infinite" }} /> : <ArrowRight size={16} />}
-        {loading ? "লগইন হচ্ছে..." : "লগইন করুন"}
+        {loading ? "ওটিপি পাঠানো হচ্ছে..." : "ওটিপি পাঠান"}
       </button>
 
       <p style={{ textAlign: "center", fontSize: 12, color: "rgba(232,245,233,0.38)", letterSpacing: "0.3px" }}>
-        অ্যাকাউন্ট নেই?{" "}
+        পাসওয়ার্ড মনে পড়েছে?{" "}
         <Link
-          href="/register"
+          href="/login"
           style={{
             color: "#00c853",
             fontSize: 12,
@@ -195,7 +130,7 @@ export default function LoginForm() {
             textUnderlineOffset: 3,
           }}
         >
-          নিবন্ধন করুন
+          লগইন করুন
         </Link>
       </p>
 

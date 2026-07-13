@@ -8,6 +8,7 @@ const nextConfig = {
 			"ecom.kishorkanthabd.com",
 			"waflife-media.waflife.com",
 			"wafilife-media.wafilife.com",
+			"lh3.googleusercontent.com",
 		],
 		remotePatterns: [
 			{
@@ -33,6 +34,10 @@ const nextConfig = {
 			{
 				protocol: "https",
 				hostname: "wafilife-media.wafilife.com",
+			},
+			{
+				protocol: "https",
+				hostname: "lh3.googleusercontent.com",
 			},
 		],
 	},

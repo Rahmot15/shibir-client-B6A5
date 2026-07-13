@@ -4,7 +4,7 @@ import type { ReactNode } from "react";
 import Link from "next/link";
 import Background from "@/components/Background";
 
-type Mode = "login" | "register";
+type Mode = "login" | "register" | "forgot" | "reset";
 
 type AuthPageShellProps = {
   mode: Mode;
@@ -50,47 +50,49 @@ export default function AuthPageShell({ mode, title, subtitle, children }: AuthP
             }}
           />
 
-          <div style={{ display: "flex", borderBottom: "1px solid rgba(0,200,83,0.1)" }}>
-            <Link
-              href="/login"
-              style={{
-                flex: 1,
-                padding: "16px 0",
-                textAlign: "center",
-                textDecoration: "none",
-                color: mode === "login" ? "#00c853" : "rgba(232,245,233,0.35)",
-                fontSize: 11,
-                letterSpacing: "2.5px",
-                textTransform: "uppercase",
-                fontFamily: "var(--font-geist-mono, monospace)",
-                borderBottom: `2px solid ${mode === "login" ? "#00c853" : "transparent"}`,
-                marginBottom: -1,
-                transition: "all .25s",
-              }}
-            >
-              লগইন
-            </Link>
+          {(mode === "login" || mode === "register") && (
+            <div style={{ display: "flex", borderBottom: "1px solid rgba(0,200,83,0.1)" }}>
+              <Link
+                href="/login"
+                style={{
+                  flex: 1,
+                  padding: "16px 0",
+                  textAlign: "center",
+                  textDecoration: "none",
+                  color: mode === "login" ? "#00c853" : "rgba(232,245,233,0.35)",
+                  fontSize: 11,
+                  letterSpacing: "2.5px",
+                  textTransform: "uppercase",
+                  fontFamily: "var(--font-geist-mono, monospace)",
+                  borderBottom: `2px solid ${mode === "login" ? "#00c853" : "transparent"}`,
+                  marginBottom: -1,
+                  transition: "all .25s",
+                }}
+              >
+                লগইন
+              </Link>
 
-            <Link
-              href="/register"
-              style={{
-                flex: 1,
-                padding: "16px 0",
-                textAlign: "center",
-                textDecoration: "none",
-                color: mode === "register" ? "#00c853" : "rgba(232,245,233,0.35)",
-                fontSize: 11,
-                letterSpacing: "2.5px",
-                textTransform: "uppercase",
-                fontFamily: "var(--font-geist-mono, monospace)",
-                borderBottom: `2px solid ${mode === "register" ? "#00c853" : "transparent"}`,
-                marginBottom: -1,
-                transition: "all .25s",
-              }}
-            >
-              নিবন্ধন
-            </Link>
-          </div>
+              <Link
+                href="/register"
+                style={{
+                  flex: 1,
+                  padding: "16px 0",
+                  textAlign: "center",
+                  textDecoration: "none",
+                  color: mode === "register" ? "#00c853" : "rgba(232,245,233,0.35)",
+                  fontSize: 11,
+                  letterSpacing: "2.5px",
+                  textTransform: "uppercase",
+                  fontFamily: "var(--font-geist-mono, monospace)",
+                  borderBottom: `2px solid ${mode === "register" ? "#00c853" : "transparent"}`,
+                  marginBottom: -1,
+                  transition: "all .25s",
+                }}
+              >
+                নিবন্ধন
+              </Link>
+            </div>
+          )}
 
           <div style={{ padding: "32px 28px 28px" }}>
             <div style={{ textAlign: "center", marginBottom: 28 }}>
