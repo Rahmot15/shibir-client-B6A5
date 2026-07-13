@@ -90,10 +90,25 @@ export async function proxy(request: NextRequest) {
   }
 
   const meResult = await meResponse.json()
-  const role = meResult?.data?.role as Role | undefined
+  const user = meResult?.data
+  const role = user?.role as Role | undefined
 
   if (!role) {
     return NextResponse.redirect(new URL("/login", request.url))
+  }
+
+  // Enforce email verification
+  if (user?.emailVerified === false) {
+    const verifyEmailUrl = new URL("/verify-email", request.url)
+    verifyEmailUrl.searchParams.set("email", user.email)
+    return NextResponse.redirect(verifyEmailUrl)
+  }
+
+  // Enforce password change requirement
+  if (user?.needPasswordChange === true) {
+    const resetPasswordUrl = new URL("/reset-password", request.url)
+    resetPasswordUrl.searchParams.set("email", user.email)
+    return NextResponse.redirect(resetPasswordUrl)
   }
 
   if (isDashboardRoute && pathname === "/dashboard") {

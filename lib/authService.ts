@@ -31,6 +31,8 @@ export type UserData = {
   email: string;
   role: string;
   image?: string;
+  emailVerified?: boolean;
+  needPasswordChange?: boolean;
   createdAt?: string;
   updatedAt?: string;
 };
@@ -190,4 +192,60 @@ export async function resetPassword(payload: {
     }
   );
 }
+
+export async function verifyEmailOTP(
+  email: string,
+  otp: string
+): Promise<ApiResponse<UserData>> {
+  const res = await fetch(`${API_BASE}/auth/verify-email`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
+    body: JSON.stringify({ email, otp }),
+  });
+
+  const data = await parseJsonSafe<ApiResponse<UserData>>(res);
+
+  if (!res.ok) {
+    return {
+      success: false,
+      message: data?.message || "ইমেইল ওটিপি ভেরিফিকেশন ব্যর্থ হয়েছে",
+    };
+  }
+
+  return (
+    data || {
+      success: false,
+      message: "ইমেইল ওটিপি ভেরিফিকেশন ব্যর্থ হয়েছে",
+    }
+  );
+}
+
+export async function resendEmailVerificationOTP(
+  email: string
+): Promise<ApiResponse<null>> {
+  const res = await fetch(`${API_BASE}/auth/resend-verification-otp`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
+    body: JSON.stringify({ email }),
+  });
+
+  const data = await parseJsonSafe<ApiResponse<null>>(res);
+
+  if (!res.ok) {
+    return {
+      success: false,
+      message: data?.message || "নতুন ওটিপি পাঠানো ব্যর্থ হয়েছে",
+    };
+  }
+
+  return (
+    data || {
+      success: true,
+      message: "নতুন ওটিপি কোড পাঠানো হয়েছে",
+    }
+  );
+}
+
 
