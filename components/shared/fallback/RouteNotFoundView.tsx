@@ -134,7 +134,7 @@ export default function RouteNotFoundView({
             asChild
             className="h-[38px] rounded-xl bg-(--status-success) px-4 text-[#05250f] hover:bg-[oklch(0.82_0.17_147)]"
           >
-            <Link href="/reports">
+            <Link href="/report">
               Open Reports
               <ArrowRight className="h-3.5 w-3.5" />
             </Link>

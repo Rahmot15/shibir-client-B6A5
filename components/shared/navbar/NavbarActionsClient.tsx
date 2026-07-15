@@ -55,7 +55,7 @@ export default function NavbarActionsClient({ links }: Props) {
         {loading ? <Spinner /> : user ? (
           <>
             {/* Report link */}
-            <Link href="/reports"
+            <Link href="/report"
               className="flex items-center gap-1.5 rounded-lg border border-amber-500/28 bg-amber-500/8 px-3 py-1.5 text-[11px] font-semibold tracking-[1px] text-amber-300/90 transition-all duration-200 hover:border-amber-500/55 hover:bg-amber-500/15 hover:shadow-[0_0_14px_rgba(200,162,39,0.15)]">
               <FileText className="h-3.5 w-3.5" strokeWidth={2}/>
               রিপোর্ট
@@ -123,7 +123,7 @@ export default function NavbarActionsClient({ links }: Props) {
         {/* Mobile action button: Login or Report */}
         {!loading && (
           user ? (
-            <Link href="/reports"
+            <Link href="/report"
               className="flex items-center gap-1 rounded-lg border border-amber-500/28 bg-amber-500/8 px-2.5 py-1.5 text-[10px] font-semibold tracking-[1px] text-amber-300/85 transition-all hover:border-amber-500/50">
               <FileText className="h-3.5 w-3.5" strokeWidth={2}/>
               রিপোর্ট

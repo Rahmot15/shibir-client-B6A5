@@ -78,7 +78,7 @@ export default async function FooterInfoPage({
           </div>
           <div className="flex flex-wrap gap-2.5">
             <Link
-              href="/reports"
+              href="/report"
               className="inline-flex items-center gap-2 rounded-lg bg-[#00c853] px-4 py-2.5 text-sm font-semibold text-[#05250f] transition-all hover:-translate-y-0.5 hover:bg-[#00e676]"
             >
               রিপোর্ট

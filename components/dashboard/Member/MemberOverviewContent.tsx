@@ -297,7 +297,7 @@ export function MemberOverviewContent() {
             <Divider label="Quick Sections" icon={SparklesIcon} color="emerald" />
             <div className="mt-5 flex flex-col gap-2">
               <QuickLink
-                href="/reports"
+                href="/report"
                 icon={FileTextIcon}
                 label="Report Overview"
                 sub={loading ? "লোড হচ্ছে..." : `${history.length}টি রিপোর্ট জমা দেওয়া হয়েছে`}
@@ -325,7 +325,7 @@ export function MemberOverviewContent() {
             <div className="flex items-center justify-between">
               <Divider label="Report Pulse" icon={TrendingUpIcon} color="blue" />
               <Link
-                href="/reports"
+                href="/report"
                 className="ml-4 shrink-0 flex items-center gap-1 text-[11px] text-blue-400/60 transition-colors hover:text-blue-400"
               >
                 সব দেখুন

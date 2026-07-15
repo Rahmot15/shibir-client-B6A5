@@ -82,7 +82,7 @@ export default function Hero() {
 
 			<MotionReveal delay={0.85} duration={0.8} y={14} className="flex flex-wrap justify-center gap-3.5">
 				<a
-					href="/reports"
+					href="/report"
 					className="rounded-[4px] bg-[#00c853] px-9 py-[13px] font-mono text-xs font-bold uppercase tracking-[2px] text-[#050f08] no-underline shadow-[0_0_30px_rgba(0,200,83,0.3)] transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#00e676] hover:shadow-[0_0_45px_rgba(0,200,83,0.45)]"
 				>
 					রিপোর্ট রাখুন

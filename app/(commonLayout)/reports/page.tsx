@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation";
 import WorkerReportClient from "./_components/WorkerReportClient";
 import RouteLoadingView from "@/components/shared/fallback/RouteLoadingView";
 
-const ALLOWED_REPORT_ROLES = ["WORKER", "MEMBER", "ASSOCIATE"] as const;
+const ALLOWED_REPORT_ROLES = ["ADMIN", "WORKER", "MEMBER", "ASSOCIATE"] as const;
 
 export default function ReportPage() {
 	const { user, loading } = useAuth();

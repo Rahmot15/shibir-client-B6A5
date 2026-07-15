@@ -45,7 +45,9 @@ const allowedRoutesByRole: Record<Role, string[]> = {
   ],
 }
 
-const reportPageAllowedRoles: Role[] = ["WORKER", "MEMBER", "ASSOCIATE"]
+// The dashboard version of the report is supporter-only.  Every other role
+// uses the standalone report page instead.
+const reportPageAllowedRoles: Role[] = ["ADMIN", "WORKER", "MEMBER", "ASSOCIATE"]
 
 function matchesRoute(pathname: string, route: string) {
   return pathname === route || pathname.startsWith(`${route}/`)
@@ -63,7 +65,11 @@ export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl
 
   const isDashboardRoute = pathname.startsWith("/dashboard")
-  const isReportsRoute = pathname === "/reports" || pathname.startsWith("/reports/")
+  const isReportsRoute =
+    pathname === "/report" ||
+    pathname.startsWith("/report/") ||
+    pathname === "/reports" ||
+    pathname.startsWith("/reports/")
 
   if (!isDashboardRoute && !isReportsRoute) {
     return NextResponse.next()
@@ -131,5 +137,5 @@ export async function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/dashboard/:path*", "/reports/:path*"],
+  matcher: ["/dashboard/:path*", "/report/:path*", "/reports/:path*"],
 }

@@ -35,7 +35,7 @@ const WORKER_PRIORITIES = [
 
 const NOTICE_BOARD = [
 	{ id: 1, text: "এই সপ্তাহের কর্মী বৈঠক শুক্রবার মাগরিবের পরে।", time: "আপডেটেড" },
-	{ id: 2, text: "রিপোর্ট জমা দিন /reports পেইজ থেকে।", time: "আপডেটেড" },
+	{ id: 2, text: "রিপোর্ট জমা দিন /report পেইজ থেকে।", time: "আপডেটেড" },
 	{ id: 3, text: "পরীক্ষা মডিউলে MCQ ও ভাইভা চ্যাট প্রস্তুত আছে।", time: "আপডেটেড" },
 ]
 
@@ -217,7 +217,7 @@ export default function WorkerOverview() {
 
 	const quickLinks = [
 		{
-			href: "/reports",
+			href: "/report",
 			label: "রিপোর্ট",
 			desc: loading ? "লোড হচ্ছে..." : `${reportSubmitted} টি সাবমিটেড`,
 			icon: FileTextIcon,
@@ -342,7 +342,7 @@ export default function WorkerOverview() {
 										<ActivityIcon className="h-4 w-4 text-blue-300" strokeWidth={1.8} />
 										<span className="text-[13px] font-semibold text-emerald-50">রিপোর্ট সারসংক্ষেপ</span>
 									</div>
-									<Link href="/reports" className="flex items-center gap-1 font-mono text-[10px] text-blue-300/75 hover:text-blue-300">
+									<Link href="/report" className="flex items-center gap-1 font-mono text-[10px] text-blue-300/75 hover:text-blue-300">
 										বিস্তারিত <ChevronRightIcon className="h-3 w-3" />
 									</Link>
 								</div>

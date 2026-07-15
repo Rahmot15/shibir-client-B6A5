@@ -22,15 +22,26 @@ export default async function DashboardLayout({
   const cookieStore = await cookies()
   const headerStore = await headers()
   const host = headerStore.get("host")
-  const protocol = host?.includes("localhost") ? "http" : "https"
+  // `host` can be localhost, 127.0.0.1, or a LAN address in development.
+  // Using the forwarded protocol avoids requesting HTTPS from a local HTTP dev server.
+  const protocol =
+    headerStore.get("x-forwarded-proto")?.split(",")[0] ??
+    (process.env.NODE_ENV === "development" ? "http" : "https")
   const baseUrl = host ? `${protocol}://${host}` : "http://localhost:3000"
 
-  const res = await fetch(`${baseUrl}/api/v1/auth/me`, {
-    headers: { Cookie: cookieStore.toString() },
-    cache: "no-store",
-  })
+  let result: { data?: { role?: Role; name: string; email: string; image?: string } } | null = null
 
-  const result = await res.json()
+  try {
+    const res = await fetch(`${baseUrl}/api/v1/auth/me`, {
+      headers: { Cookie: cookieStore.toString() },
+      cache: "no-store",
+    })
+
+    if (res.ok) result = await res.json()
+  } catch {
+    result = null
+  }
+
   const role = result?.data?.role as Role
 
   if (!role) redirect("/login")
