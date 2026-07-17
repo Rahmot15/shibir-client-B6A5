@@ -113,7 +113,9 @@ export default function AdminSupportChatClient({ conversationId }: AdminSupportC
   const [isLoadingMessages, setIsLoadingMessages] = useState(true);
   const [isSending, setIsSending] = useState(false);
   const [draft, setDraft] = useState("");
+  const [isConversationHeaderVisible, setIsConversationHeaderVisible] = useState(true);
   const listRef = useRef<HTMLDivElement>(null);
+  const previousScrollTopRef = useRef(0);
 
   const sortedMessages = useMemo(
     () =>
@@ -189,16 +191,58 @@ export default function AdminSupportChatClient({ conversationId }: AdminSupportC
     };
   }, [conversationId]);
 
-  useEffect(() => {
-    if (!listRef.current) {
-      return;
-    }
+  const isNearBottomRef = useRef(true);
+  const isHeaderAnimatingRef = useRef(false);
+  const scrollTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-    listRef.current.scrollTo({
-      top: listRef.current.scrollHeight,
-      behavior: "smooth",
+  useEffect(() => {
+    const list = listRef.current;
+    if (!list) return;
+
+    const frame = requestAnimationFrame(() => {
+      if (isNearBottomRef.current) {
+        list.scrollTo({ top: list.scrollHeight, behavior: "auto" });
+      }
     });
+
+    return () => cancelAnimationFrame(frame);
   }, [sortedMessages]);
+
+  useEffect(() => {
+    return () => {
+      if (scrollTimerRef.current) clearTimeout(scrollTimerRef.current);
+    };
+  }, []);
+
+  const handleMessageListScroll = () => {
+    if (isHeaderAnimatingRef.current) return;
+
+    const list = listRef.current;
+    if (!list) return;
+
+    const currentScrollTop = list.scrollTop;
+    const maxScroll = list.scrollHeight - list.clientHeight;
+
+    isNearBottomRef.current = maxScroll - currentScrollTop < 100;
+
+    if (scrollTimerRef.current) clearTimeout(scrollTimerRef.current);
+    scrollTimerRef.current = setTimeout(() => {
+      const latestScrollTop = listRef.current?.scrollTop ?? 0;
+      const delta = latestScrollTop - previousScrollTopRef.current;
+
+      if (latestScrollTop <= 8) {
+        isHeaderAnimatingRef.current = true;
+        setIsConversationHeaderVisible(true);
+        setTimeout(() => { isHeaderAnimatingRef.current = false; }, 250);
+      } else if (Math.abs(delta) > 6) {
+        isHeaderAnimatingRef.current = true;
+        setIsConversationHeaderVisible(delta < 0);
+        setTimeout(() => { isHeaderAnimatingRef.current = false; }, 250);
+      }
+
+      previousScrollTopRef.current = latestScrollTop;
+    }, 200);
+  };
 
   const onSendMessage = async () => {
     const text = draft.trim();
@@ -219,6 +263,7 @@ export default function AdminSupportChatClient({ conversationId }: AdminSupportC
         return;
       }
 
+      setMessages((prev) => mergeUniqueMessage(prev, result.data!));
       setDraft("");
     } catch (error) {
       const message = error instanceof Error ? error.message : "Failed to send support message";
@@ -229,8 +274,14 @@ export default function AdminSupportChatClient({ conversationId }: AdminSupportC
   };
 
   return (
-    <div className="flex h-[100dvh] flex-col  text-slate-100">
-      <section className="shrink-0 border-b border-white/[0.06] px-3 py-3 sm:px-4 md:px-0">
+    <div className="flex min-h-0 flex-1 flex-col text-slate-100">
+      <section
+        className={`shrink-0 overflow-hidden border-b px-3 transition-[max-height,opacity,transform,padding] duration-200 sm:px-4 md:px-0 ${
+          isConversationHeaderVisible
+            ? "max-h-24 border-white/[0.06] py-3 opacity-100"
+            : "pointer-events-none max-h-0 -translate-y-2 border-transparent py-0 opacity-0"
+        }`}
+      >
         <div className="mx-auto flex max-w-3xl items-center justify-between gap-3">
           <div className="min-w-0">
             <p className="hidden font-mono text-[10px] uppercase tracking-[3px] text-slate-500 sm:block">
@@ -252,7 +303,11 @@ export default function AdminSupportChatClient({ conversationId }: AdminSupportC
       </section>
 
       <section className="mx-auto flex w-full max-w-3xl min-h-0 flex-1 flex-col px-2 py-3 sm:px-4 md:px-0">
-        <div ref={listRef} className="min-h-0 flex-1 space-y-0.5 overflow-y-auto px-1 sm:px-0">
+        <div
+          ref={listRef}
+          onScroll={handleMessageListScroll}
+          className="min-h-0 flex-1 space-y-0.5 overflow-y-auto px-1 sm:px-0"
+        >
           {isLoadingMessages && (
             <div className="space-y-4 py-4">
               {[1, 2, 3, 4].map((i) => {
@@ -362,7 +417,7 @@ export default function AdminSupportChatClient({ conversationId }: AdminSupportC
         </div>
 
         <form
-          className="mt-2 flex shrink-0 items-center gap-2 rounded-xl border border-white/10 bg-white/[0.03] p-1.5"
+          className="sticky bottom-0 mt-2 flex shrink-0 items-center gap-2 rounded-xl border border-white/10 bg-[#050f08] p-1.5"
           onSubmit={(event) => {
             event.preventDefault();
             void onSendMessage();

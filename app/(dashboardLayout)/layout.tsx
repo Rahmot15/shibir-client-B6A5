@@ -56,6 +56,7 @@ export default async function DashboardLayout({
 
   return (
     <SidebarProvider
+      className="h-svh overflow-hidden"
       style={{
         "--sidebar-width": "calc(var(--spacing) * 68)",
         "--header-height": "calc(var(--spacing) * 12)",
@@ -70,9 +71,9 @@ export default async function DashboardLayout({
           avatar: result.data.image || "",
         } : undefined}
       />
-      <SidebarInset className="bg-[#050f08]">
+      <SidebarInset className="min-h-0 bg-[#050f08]">
         <SiteHeader />
-        <div className="flex flex-1 flex-col p-4 lg:p-6">
+        <div className="flex min-h-0 flex-1 flex-col p-4 lg:p-6">
           {roleUI[role]}
         </div>
       </SidebarInset>
