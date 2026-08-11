@@ -41,6 +41,7 @@ const navByRole: Record<Role, { title: string; url: string; icon: React.ReactNod
     { title: "Note",          url: "/dashboard/note",          icon: <StickyNoteIcon /> },
     { title: "Manage Users",  url: "/dashboard/manage-users",  icon: <UsersIcon /> },
     { title: "Approve Viva",  url: "/dashboard/approve-viva",  icon: <CheckCircleIcon /> },
+    { title: "Kishorkontho",  url: "/dashboard/kishorkontho",  icon: <BookOpenIcon /> },
     { title: "Support",       url: "/dashboard/support",       icon: <MessageSquareIcon /> },
   ],
   ASSOCIATE: [

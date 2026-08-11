@@ -2,18 +2,16 @@
 
 import Image from "next/image"
 import Link from "next/link"
-import { useState, useMemo } from "react"
+import { useState, useEffect, useCallback } from "react"
 import {
   Search, X, ChevronLeft, ChevronRight,
-  Star, Package, Download, Sparkles,
+  Star, Package, Download, Sparkles, Loader2,
 } from "lucide-react"
 import {
-  KISORKONTHO_ISSUES,
+  fetchKishorkonthoIssues,
   CURRENCY_SYMBOL,
   type KisorkonthoIssue,
 } from "./data"
-
-const PER_PAGE = 10
 
 /* ── Stars ── */
 function Stars({ rating }: { rating: number }) {
@@ -38,6 +36,7 @@ function Stars({ rating }: { rating: number }) {
 function IssueCard({ issue }: { issue: KisorkonthoIssue }) {
   const hasDiscount = issue.discount > 0
   const lowStock    = issue.isAvailable && issue.stock > 0 && issue.stock <= 10
+  const pt = issue.purchaseType?.toLowerCase() || ""
 
   return (
     <article className="group relative flex flex-col overflow-hidden rounded-[14px] border border-white/[0.055] bg-[#071310] transition-all duration-200 hover:-translate-y-0.5 hover:border-emerald-500/20 hover:shadow-[0_12px_36px_rgba(0,200,83,0.1)]">
@@ -50,6 +49,7 @@ function IssueCard({ issue }: { issue: KisorkonthoIssue }) {
           fill
           sizes="(max-width:640px) 50vw,(max-width:1024px) 33vw,20vw"
           className="object-cover transition-transform duration-500 group-hover:scale-[1.04]"
+          unoptimized
         />
         <div className="absolute inset-0 bg-gradient-to-t from-[#050f08]/88 via-[#050f08]/20 to-transparent" />
 
@@ -80,32 +80,32 @@ function IssueCard({ issue }: { issue: KisorkonthoIssue }) {
 
         {/* Rating */}
         <div className="flex items-center gap-1.5">
-          <Stars rating={issue.rating.average} />
-          <span className="font-mono text-[9px] text-amber-400">{issue.rating.average}</span>
-          <span className="font-mono text-[8px] text-white/18">({issue.rating.count})</span>
+          <Stars rating={Number(issue.averageRating)} />
+          <span className="font-mono text-[9px] text-amber-400">{Number(issue.averageRating)}</span>
+          <span className="font-mono text-[8px] text-white/18">({issue.ratingCount})</span>
         </div>
 
         {/* Price */}
         <div className="flex items-baseline gap-1.5">
-          <span className="font-mono text-[9px] text-emerald-400/70">{CURRENCY_SYMBOL[issue.currency]}</span>
+          <span className="font-mono text-[9px] text-emerald-400/70">৳</span>
           <span className="font-mono text-[17px] font-bold leading-none text-emerald-300">
-            {issue.finalPrice}
+            {Number(issue.finalPrice)}
           </span>
           {hasDiscount && (
             <span className="font-mono text-[10px] text-white/22 line-through">
-              {issue.price}
+              {Number(issue.price)}
             </span>
           )}
         </div>
 
         {/* Type pills */}
         <div className="flex flex-wrap gap-1">
-          {issue.purchaseType.includes("physical") && (
+          {(pt === "physical" || pt === "both") && (
             <span className="flex items-center gap-0.5 rounded-[5px] border border-emerald-500/18 bg-emerald-500/7 px-1.5 py-0.5 font-mono text-[8px] text-emerald-400">
               <Package className="h-2 w-2" /> ফিজিক্যাল
             </span>
           )}
-          {issue.purchaseType.includes("digital") && (
+          {(pt === "digital" || pt === "both") && (
             <span className="flex items-center gap-0.5 rounded-[5px] border border-blue-500/18 bg-blue-500/7 px-1.5 py-0.5 font-mono text-[8px] text-blue-400">
               <Download className="h-2 w-2" /> ডিজিটাল
             </span>
@@ -173,41 +173,42 @@ export default function KisorkonthoPage() {
   const [search,     setSearch]     = useState("")
   const [yearFilter, setYearFilter] = useState<number | "all">("all")
   const [typeFilter, setTypeFilter] = useState<"all" | "physical" | "digital">("all")
-  const years = [...new Set(KISORKONTHO_ISSUES.map((i) => i.year))].sort((a, b) => b - a)
-
-  // Initialize page to 1
   const [page, setPage] = useState(1)
+  const [issues, setIssues] = useState<KisorkonthoIssue[]>([])
+  const [totalPages, setTotalPages] = useState(1)
+  const [total, setTotal] = useState(0)
+  const [loading, setLoading] = useState(true)
 
-  const filtered = useMemo(() => {
-    return KISORKONTHO_ISSUES.filter((issue) => {
-      if (
-        search &&
-        !issue.title.toLowerCase().includes(search.toLowerCase()) &&
-        !issue.month.toLowerCase().includes(search.toLowerCase())
-      ) return false
-      if (yearFilter !== "all" && issue.year !== yearFilter) return false
-      if (typeFilter !== "all" && !issue.purchaseType.includes(typeFilter)) return false
-      return true
-    })
-  }, [search, yearFilter, typeFilter])
+  const years = [...new Set(issues.map((i) => i.year))].sort((a, b) => b - a)
 
-  // Simple state reset logic when filters change
-  const currentSearch = search + yearFilter + typeFilter
-  const [prevSearch, setPrevSearch] = useState(currentSearch)
+  const fetchIssues = useCallback(async () => {
+    setLoading(true)
+    try {
+      const params: Record<string, string | number> = { page, limit: 12 }
+      if (search) params.search = search
+      if (yearFilter !== "all") params.year = String(yearFilter)
+      if (typeFilter !== "all") params.purchaseType = typeFilter.toUpperCase()
 
-  if (prevSearch !== currentSearch) {
-    setPrevSearch(currentSearch)
-    setPage(1)
-  }
+      const data = await fetchKishorkonthoIssues(params)
+      setIssues(data.issues)
+      setTotalPages(data.meta.totalPages)
+      setTotal(data.meta.total)
+    } catch {
+      setIssues([])
+    } finally {
+      setLoading(false)
+    }
+  }, [page, search, yearFilter, typeFilter])
 
-  const startIdx = (page - 1) * PER_PAGE
-  const endIdx   = startIdx + PER_PAGE
-  const paginated = filtered.slice(startIdx, endIdx)
+  useEffect(() => { fetchIssues() }, [fetchIssues])
 
-  const totalPages = Math.ceil(filtered.length / PER_PAGE)
+  // Reset page when filters change
+  useEffect(() => { setPage(1) }, [search, yearFilter, typeFilter])
 
-  const avgRating    = (KISORKONTHO_ISSUES.reduce((s, i) => s + i.rating.average, 0) / KISORKONTHO_ISSUES.length).toFixed(1)
-  const discountCount = KISORKONTHO_ISSUES.filter((i) => i.discount > 0).length
+  const avgRating = issues.length
+    ? (issues.reduce((s, i) => s + Number(i.averageRating), 0) / issues.length).toFixed(1)
+    : "0.0"
+  const discountCount = issues.filter((i) => i.discount > 0).length
 
   return (
     <main className="relative min-h-screen overflow-hidden bg-[#060d09] pb-20 pt-20">
@@ -246,7 +247,7 @@ export default function KisorkonthoPage() {
           {/* Stats */}
           <div className="flex items-center gap-5">
             {[
-              { val: KISORKONTHO_ISSUES.length + " টি", lbl: "সংখ্যা" },
+              { val: total + " টি", lbl: "সংখ্যা" },
               { val: avgRating, lbl: "গড় রেটিং" },
               { val: discountCount + " টি", lbl: "ছাড়যুক্ত" },
             ].map((s, i) => (
@@ -279,7 +280,6 @@ export default function KisorkonthoPage() {
             )}
           </div>
 
-          {/* Divider */}
           <div className="h-5 w-px bg-white/[0.06]" />
 
           {/* Year filter */}
@@ -299,7 +299,6 @@ export default function KisorkonthoPage() {
             ))}
           </div>
 
-          {/* Divider */}
           <div className="h-5 w-px bg-white/[0.06]" />
 
           {/* Type filter */}
@@ -319,12 +318,10 @@ export default function KisorkonthoPage() {
             ))}
           </div>
 
-          {/* Result count */}
           <span className="ml-auto font-mono text-[10px] text-white/20">
-            {filtered.length} টি পাওয়া গেছে
+            {total} টি পাওয়া গেছে
           </span>
 
-          {/* Clear */}
           {(search || yearFilter !== "all" || typeFilter !== "all") && (
             <button
               onClick={() => { setSearch(""); setYearFilter("all"); setTypeFilter("all") }}
@@ -337,9 +334,14 @@ export default function KisorkonthoPage() {
         </div>
 
         {/* ── Grid ── */}
-        {paginated.length > 0 ? (
+        {loading ? (
+          <div className="flex flex-col items-center justify-center gap-3 rounded-2xl border border-dashed border-white/6 py-20 text-center">
+            <Loader2 className="h-10 w-10 text-emerald-400/40 animate-spin" strokeWidth={1.5} />
+            <p className="text-[13px] text-white/22">লোড হচ্ছে...</p>
+          </div>
+        ) : issues.length > 0 ? (
           <div className="grid grid-cols-2 gap-3 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
-            {paginated.map((issue, idx) => (
+            {issues.map((issue, idx) => (
               <IssueCard key={`${issue.id}-${idx}`} issue={issue} />
             ))}
           </div>

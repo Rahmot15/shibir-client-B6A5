@@ -73,7 +73,7 @@ export default async function DashboardLayout({
       />
       <SidebarInset className="min-h-0 bg-[#050f08]">
         <SiteHeader />
-        <div className="flex min-h-0 flex-1 flex-col p-4 lg:p-6">
+        <div className="flex min-h-0 flex-1 flex-col overflow-y-auto p-4 lg:p-6">
           {roleUI[role]}
         </div>
       </SidebarInset>

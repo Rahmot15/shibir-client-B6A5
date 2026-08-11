@@ -60,7 +60,7 @@ export default function KisorkonthoDetailsClient({
   const [activeTab, setActiveTab] = useState<"contents"|"reviews"|"info">("contents")
   const [showPdf,   setShowPdf]   = useState(false)
 
-  const total = useMemo(()=>issue.finalPrice*qty,[issue.finalPrice,qty])
+  const total = useMemo(()=>Number(issue.finalPrice)*qty,[issue.finalPrice,qty])
 
   /* ── add to cart ── */
   function addToCart() {
@@ -70,7 +70,7 @@ export default function KisorkonthoDetailsClient({
     if (idx>=0) {
       cart[idx] = { ...cart[idx], qty: Math.min(cart[idx].qty+qty, issue.stock) }
     } else {
-      cart.push({ id:issue.id, slug:issue.slug, title:issue.title, image:issue.coverImage, unitPrice:issue.finalPrice, qty })
+      cart.push({ id:issue.id, slug:issue.slug, title:issue.title, image:issue.coverImage, unitPrice:Number(issue.finalPrice), qty })
     }
     saveCart(cart); setInCart(true)
     toast.success("কার্টে যোগ হয়েছে!", { description:`${issue.title} × ${qty}` })
@@ -81,7 +81,7 @@ export default function KisorkonthoDetailsClient({
     if (!issue.isAvailable) { toast.error("স্টক শেষ"); return }
     localStorage.setItem(BUYNOW_KEY, JSON.stringify({
       id:issue.id, slug:issue.slug, title:issue.title, image:issue.coverImage,
-      unitPrice:issue.finalPrice, qty, totalPrice:total, currency:issue.currency,
+      unitPrice:Number(issue.finalPrice), qty, totalPrice:total, currency:issue.currency,
       ts:Date.now(),
     }))
     toast.success("অর্ডার প্রস্তুত!", { description:"চেকআউট পেজে যাচ্ছে…" })
@@ -107,16 +107,15 @@ export default function KisorkonthoDetailsClient({
       try {
         await navigator.share({ title: issue.title, url })
         return
-      } catch {
-        // Fallback to clipboard copy if native share is dismissed/unsupported.
-      }
+      } catch {}
     }
-
     await navigator.clipboard.writeText(url)
     toast.success("লিংক কপি হয়েছে")
   }
 
   const hasDiscount = issue.discount > 0
+  const pt = issue.purchaseType?.toLowerCase() || ""
+  const avgRating = Number(issue.averageRating)
 
   return (
     <main className="relative min-h-screen overflow-hidden bg-[#050f08] pb-20 pt-24">
@@ -142,7 +141,7 @@ export default function KisorkonthoDetailsClient({
             <div className="relative overflow-hidden rounded-2xl border border-white/8 bg-[#071310] shadow-2xl">
               <div className="relative aspect-3/4">
                 <Image src={issue.coverImage} alt={issue.title} fill
-                  sizes="(max-width:1024px) 100vw,380px" className="object-cover"/>
+                  sizes="(max-width:1024px) 100vw,380px" className="object-cover" unoptimized/>
                 <div className="absolute inset-0 bg-linear-to-t from-[#050f08]/60 via-transparent to-transparent"/>
               </div>
 
@@ -158,9 +157,9 @@ export default function KisorkonthoDetailsClient({
             {/* Mini stat pills */}
             <div className="grid grid-cols-3 gap-2">
               {[
-                { label:"ভিউ",      value:issue.stats.views,     color:"#60a5fa", icon:EyeIcon       },
-                { label:"ডাউনলোড", value:issue.stats.downloads, color:"#a78bfa", icon:DownloadIcon  },
-                { label:"অর্ডার",  value:issue.stats.purchases, color:"#4ade80", icon:ShoppingCartIcon },
+                { label:"ভিউ",      value:issue.views,     color:"#60a5fa", icon:EyeIcon       },
+                { label:"ডাউনলোড", value:issue.downloads, color:"#a78bfa", icon:DownloadIcon  },
+                { label:"অর্ডার",  value:issue.purchases, color:"#4ade80", icon:ShoppingCartIcon },
               ].map(s=>(
                 <div key={s.label} className="flex flex-col items-center gap-1 rounded-xl border border-white/5 bg-white/2 py-3">
                   <s.icon className="h-4 w-4" style={{ color:s.color }} strokeWidth={1.8}/>
@@ -171,7 +170,7 @@ export default function KisorkonthoDetailsClient({
             </div>
 
             {/* PDF preview button */}
-            {issue.pdf.isFreePreview && (
+            {issue.isFreePreview && issue.pdfPreview && (
               <button onClick={()=>setShowPdf(p=>!p)}
                 className="flex w-full items-center justify-center gap-2 rounded-xl border border-purple-500/25 bg-purple-500/8 py-2.5 text-[12px] font-semibold text-purple-400 transition-all hover:border-purple-500/45 hover:bg-purple-500/14">
                 <BookOpenIcon className="h-4 w-4" strokeWidth={1.8}/>
@@ -179,11 +178,11 @@ export default function KisorkonthoDetailsClient({
                 {showPdf ? <ChevronUpIcon className="ml-auto h-3.5 w-3.5" strokeWidth={2}/> : <ChevronDownIcon className="ml-auto h-3.5 w-3.5" strokeWidth={2}/>}
               </button>
             )}
-            {showPdf && (
+            {showPdf && issue.pdfPreview && (
               <div className="overflow-hidden rounded-xl border border-purple-500/18 bg-purple-500/4">
-                <iframe src={issue.pdf.preview} className="h-64 w-full" title="PDF Preview"/>
+                <iframe src={issue.pdfPreview} className="h-64 w-full" title="PDF Preview"/>
                 <div className="border-t border-purple-500/12 p-3 text-center">
-                  <a href={issue.pdf.preview} target="_blank" rel="noopener noreferrer"
+                  <a href={issue.pdfPreview} target="_blank" rel="noopener noreferrer"
                     className="flex items-center justify-center gap-1.5 text-[11px] font-mono text-purple-400/70 hover:text-purple-400 transition-colors">
                     <ExternalLinkIcon className="h-3 w-3" strokeWidth={2}/> নতুন ট্যাবে খুলুন
                   </a>
@@ -209,9 +208,9 @@ export default function KisorkonthoDetailsClient({
               </div>
               <h1 className="text-[26px] font-extrabold leading-tight text-emerald-50 md:text-[32px]">{issue.title}</h1>
               <div className="mt-2 flex items-center gap-3">
-                <Stars rating={issue.rating.average}/>
-                <span className="font-mono text-[13px] font-bold text-amber-400">{issue.rating.average}</span>
-                <span className="font-mono text-[11px] text-white/28">({issue.rating.count} রিভিউ)</span>
+                <Stars rating={avgRating}/>
+                <span className="font-mono text-[13px] font-bold text-amber-400">{avgRating}</span>
+                <span className="font-mono text-[11px] text-white/28">({issue.ratingCount} রিভিউ)</span>
               </div>
             </div>
 
@@ -228,32 +227,32 @@ export default function KisorkonthoDetailsClient({
                   <div>
                     <p className="font-mono text-[10px] uppercase tracking-widest text-white/25">ফাইনাল মূল্য</p>
                     <p className="text-[36px] font-black leading-none text-emerald-300">
-                      {CURRENCY_SYMBOL[issue.currency]}{issue.finalPrice}
+                      ৳{Number(issue.finalPrice)}
                     </p>
                   </div>
                   {hasDiscount && (
                     <div>
                       <p className="font-mono text-[10px] uppercase tracking-widest text-white/22">নিয়মিত মূল্য</p>
                       <p className="text-[18px] font-semibold text-white/25 line-through">
-                        {CURRENCY_SYMBOL[issue.currency]}{issue.price}
+                        ৳{Number(issue.price)}
                       </p>
                     </div>
                   )}
                   {hasDiscount && (
                     <span className="rounded-xl border border-amber-500/30 bg-amber-500/12 px-3 py-1 font-mono text-[11px] font-bold text-amber-300">
-                      {CURRENCY_SYMBOL[issue.currency]}{issue.price - issue.finalPrice} সাশ্রয়
+                      ৳{Number(issue.price) - Number(issue.finalPrice)} সাশ্রয়
                     </span>
                   )}
                 </div>
 
                 {/* Purchase type */}
                 <div className="mt-4 flex flex-wrap gap-2">
-                  {issue.purchaseType.includes("physical") && (
+                  {(pt === "physical" || pt === "both") && (
                     <span className="flex items-center gap-1.5 rounded-full border border-emerald-500/22 bg-emerald-500/8 px-3 py-1 text-[11px] font-medium text-emerald-400">
                       <PackageIcon className="h-3 w-3" strokeWidth={2}/> ফিজিক্যাল কপি
                     </span>
                   )}
-                  {issue.purchaseType.includes("digital") && (
+                  {(pt === "digital" || pt === "both") && (
                     <span className="flex items-center gap-1.5 rounded-full border border-blue-500/22 bg-blue-500/8 px-3 py-1 text-[11px] font-medium text-blue-400">
                       <DownloadIcon className="h-3 w-3" strokeWidth={2}/> ডিজিটাল কপি
                     </span>
@@ -279,7 +278,7 @@ export default function KisorkonthoDetailsClient({
                   <div>
                     <p className="font-mono text-[10px] uppercase tracking-widest text-white/22">মোট</p>
                     <p className="font-mono text-[22px] font-black text-white/70">
-                      {CURRENCY_SYMBOL[issue.currency]}{total}
+                      ৳{total}
                     </p>
                   </div>
                   {/* Stock indicator */}
@@ -355,8 +354,8 @@ export default function KisorkonthoDetailsClient({
             {/* Publisher info */}
             <div className="flex flex-wrap gap-4 rounded-xl border border-white/5 bg-white/2 px-4 py-3">
               {[
-                { icon:BookOpenIcon, label:"প্রকাশক",   value:issue.publisher.name },
-                { icon:UserIcon,     label:"সম্পাদক",   value:issue.editor.name },
+                { icon:BookOpenIcon, label:"প্রকাশক",   value:issue.publisherName },
+                { icon:UserIcon,     label:"সম্পাদক",   value:issue.editorName },
                 { icon:ClockIcon,    label:"প্রকাশকাল", value:issue.createdAt },
               ].map(r=>(
                 <div key={r.label} className="flex items-center gap-2">
@@ -408,7 +407,7 @@ export default function KisorkonthoDetailsClient({
             {/* Contents */}
             {activeTab==="contents" && (
               <div className="space-y-2.5">
-                {issue.content.map((c,i)=>{
+                {issue.contents?.map((c,i)=>{
                   const clr = contentColor(c.type)
                   return (
                     <div key={i} className="flex items-center gap-4 rounded-xl border border-white/5 bg-white/2 px-4 py-3 transition-colors hover:border-white/10">
@@ -430,6 +429,9 @@ export default function KisorkonthoDetailsClient({
                     </div>
                   )
                 })}
+                {(!issue.contents || issue.contents.length === 0) && (
+                  <p className="text-center text-[13px] text-white/22 py-8">কোনো সূচিপত্র নেই</p>
+                )}
               </div>
             )}
 
@@ -439,14 +441,15 @@ export default function KisorkonthoDetailsClient({
                 {/* Summary */}
                 <div className="flex items-center gap-6 rounded-xl border border-amber-500/14 bg-amber-500/4 px-5 py-4">
                   <div className="text-center">
-                    <p className="text-[42px] font-black text-amber-300 leading-none">{issue.rating.average}</p>
-                    <Stars rating={issue.rating.average} size={16}/>
-                    <p className="mt-1 font-mono text-[10px] text-white/28">{issue.rating.count} রিভিউ</p>
+                    <p className="text-[42px] font-black text-amber-300 leading-none">{avgRating}</p>
+                    <Stars rating={avgRating} size={16}/>
+                    <p className="mt-1 font-mono text-[10px] text-white/28">{issue.ratingCount} রিভিউ</p>
                   </div>
                   <div className="flex-1 space-y-1.5">
                     {[5,4,3,2,1].map(n=>{
-                      const count = issue.reviews.filter(r=>r.rating===n).length
-                      const pct   = issue.reviews.length ? Math.round((count/issue.reviews.length)*100) : 0
+                      const count = issue.reviews?.filter(r=>r.rating===n).length || 0
+                      const total_ = issue.reviews?.length || 1
+                      const pct   = Math.round((count/total_)*100)
                       return (
                         <div key={n} className="flex items-center gap-2">
                           <span className="w-4 font-mono text-[10px] text-white/30">{n}</span>
@@ -461,20 +464,23 @@ export default function KisorkonthoDetailsClient({
                   </div>
                 </div>
 
-                {issue.reviews.map((r,i)=>(
+                {issue.reviews?.map((r,i)=>(
                   <div key={i} className="rounded-xl border border-white/5 bg-white/2 p-4">
                     <div className="mb-2 flex items-center gap-3">
                       <div className="flex h-8 w-8 items-center justify-center rounded-full border border-emerald-500/20 bg-emerald-500/8 font-mono text-[12px] font-bold text-emerald-400">
-                        {r.user[0].toUpperCase()}
+                        {r.user?.name?.[0]?.toUpperCase() || "U"}
                       </div>
                       <div>
-                        <p className="text-[13px] font-semibold text-white/70">{r.user}</p>
+                        <p className="text-[13px] font-semibold text-white/70">{r.user?.name || "ব্যবহারকারী"}</p>
                         <Stars rating={r.rating} size={11}/>
                       </div>
                     </div>
                     <p className="text-[13px] leading-relaxed text-white/50">{r.comment}</p>
                   </div>
                 ))}
+                {(!issue.reviews || issue.reviews.length === 0) && (
+                  <p className="text-center text-[13px] text-white/22 py-8">কোনো রিভিউ নেই</p>
+                )}
               </div>
             )}
 
@@ -483,13 +489,13 @@ export default function KisorkonthoDetailsClient({
               <div className="grid gap-3 sm:grid-cols-2">
                 {[
                   { label:"ভাষা",         value:issue.language },
-                  { label:"প্রকাশনী",     value:issue.publisher.name },
-                  { label:"সংগঠন",         value:issue.publisher.organization },
-                  { label:"সম্পাদক",      value:`${issue.editor.name} (${issue.editor.role})` },
+                  { label:"প্রকাশনী",     value:issue.publisherName },
+                  { label:"সংগঠন",         value:issue.publisherOrg },
+                  { label:"সম্পাদক",      value:`${issue.editorName} (${issue.editorRole})` },
                   { label:"প্রকাশকাল",   value:issue.createdAt },
                   { label:"সর্বশেষ আপডেট",value:issue.updatedAt },
                   { label:"পেমেন্ট",      value:issue.paymentMethods.map(paymentLabel).join(", ") },
-                  { label:"ধরন",           value:issue.purchaseType.join(", ") },
+                  { label:"ধরন",           value:issue.purchaseType },
                 ].map(row=>(
                   <div key={row.label} className="flex gap-3 rounded-xl border border-white/5 bg-white/2 px-4 py-3">
                     <p className="w-28 shrink-0 font-mono text-[10px] uppercase tracking-widest text-white/25 pt-0.5">{row.label}</p>
@@ -516,7 +522,7 @@ export default function KisorkonthoDetailsClient({
                   className="group overflow-hidden rounded-2xl border border-white/6 bg-[#071310] transition-all hover:-translate-y-0.5 hover:border-emerald-500/22">
                   <div className="relative aspect-3/4 overflow-hidden">
                     <Image src={item.coverImage} alt={item.title} fill
-                      sizes="(max-width:768px)50vw,25vw" className="object-cover transition-transform duration-400 group-hover:scale-[1.03]"/>
+                      sizes="(max-width:768px)50vw,25vw" className="object-cover transition-transform duration-400 group-hover:scale-[1.03]" unoptimized/>
                     <div className="absolute inset-0 bg-linear-to-t from-[#050f08]/70 via-transparent to-transparent"/>
                     <div className="absolute inset-x-0 bottom-0 p-3">
                       <p className="line-clamp-2 text-[11px] font-bold leading-tight text-white/85">{item.title}</p>
@@ -526,7 +532,7 @@ export default function KisorkonthoDetailsClient({
                     <div className="flex items-center justify-between">
                       <p className="font-mono text-[10px] text-white/28">{item.month} {item.year}</p>
                       <p className="font-mono text-[13px] font-bold text-emerald-400">
-                        {CURRENCY_SYMBOL[item.currency]}{item.finalPrice}
+                        ৳{Number(item.finalPrice)}
                       </p>
                     </div>
                   </div>

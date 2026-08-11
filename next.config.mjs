@@ -9,6 +9,8 @@ const nextConfig = {
 			"waflife-media.waflife.com",
 			"wafilife-media.wafilife.com",
 			"lh3.googleusercontent.com",
+			"www.xosuryn.mobi",
+			"localhost",
 		],
 		remotePatterns: [
 			{
@@ -46,6 +48,10 @@ const nextConfig = {
 			{
 				protocol: "https",
 				hostname: "i.ibb.co.com",
+			},
+			{
+				protocol: "https",
+				hostname: "www.xosuryn.mobi",
 			},
 		],
 	},
