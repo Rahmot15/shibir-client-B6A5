@@ -3,34 +3,21 @@
 import { useMemo, useState } from "react"
 import Image from "next/image"
 import Link  from "next/link"
+import { useRouter } from "next/navigation"
 import {
-  ArrowLeftIcon, ShoppingCartIcon, CreditCardIcon, HeartIcon,
+  ArrowLeftIcon, ShoppingCartIcon, CreditCardIcon,
   PlusIcon, MinusIcon, StarIcon, PackageIcon, DownloadIcon,
   CheckCircleIcon, EyeIcon, BookOpenIcon, UserIcon, TagIcon,
   TrendingUpIcon, WalletIcon, ClockIcon, ShareIcon,
   ChevronDownIcon, ChevronUpIcon, ExternalLinkIcon, SparklesIcon,
+  Loader2Icon,
 } from "lucide-react"
 import { toast } from "sonner"
 import {
-  type KisorkonthoIssue, CURRENCY_SYMBOL, paymentLabel,
+  type KisorkonthoIssue, paymentLabel,
   contentLabel, contentColor,
 } from "./data"
-
-/* ── localStorage helpers ── */
-const CART_KEY     = "shibir.kk.cart.v1"
-const FAV_KEY      = "shibir.kk.fav.v1"
-const BUYNOW_KEY   = "shibir.kk.buynow.v1"
-
-type CartItem = { id:string; slug:string; title:string; image:string; unitPrice:number; qty:number }
-
-function loadCart(): CartItem[] {
-  try { return JSON.parse(localStorage.getItem(CART_KEY)||"[]") } catch { return [] }
-}
-function saveCart(c: CartItem[]) { localStorage.setItem(CART_KEY, JSON.stringify(c)) }
-function loadFavs(): string[]    {
-  try { return JSON.parse(localStorage.getItem(FAV_KEY)||"[]") } catch { return [] }
-}
-function saveFavs(f: string[])   { localStorage.setItem(FAV_KEY, JSON.stringify(f)) }
+import { addToCart as apiAddToCart } from "@/lib/cartOrderService"
 
 /* ── Stars ── */
 function Stars({ rating, size=14 }: { rating:number; size?:number }) {
@@ -54,49 +41,42 @@ export default function KisorkonthoDetailsClient({
   issue: KisorkonthoIssue
   related: KisorkonthoIssue[]
 }) {
+  const router = useRouter()
   const [qty,       setQty]       = useState(1)
-  const [isFav,     setIsFav]     = useState(() => (typeof window !== "undefined" ? loadFavs().includes(issue.slug) : false))
-  const [inCart,    setInCart]    = useState(() => (typeof window !== "undefined" ? loadCart().some(c => c.id === issue.id) : false))
+  const [inCart,    setInCart]    = useState(false)
+  const [cartLoading, setCartLoading] = useState(false)
+  const [buyLoading, setBuyLoading] = useState(false)
   const [activeTab, setActiveTab] = useState<"contents"|"reviews"|"info">("contents")
   const [showPdf,   setShowPdf]   = useState(false)
 
   const total = useMemo(()=>Number(issue.finalPrice)*qty,[issue.finalPrice,qty])
 
   /* ── add to cart ── */
-  function addToCart() {
+  async function addToCart() {
     if (!issue.isAvailable) { toast.error("স্টক শেষ"); return }
-    const cart = loadCart()
-    const idx  = cart.findIndex(c=>c.id===issue.id)
-    if (idx>=0) {
-      cart[idx] = { ...cart[idx], qty: Math.min(cart[idx].qty+qty, issue.stock) }
-    } else {
-      cart.push({ id:issue.id, slug:issue.slug, title:issue.title, image:issue.coverImage, unitPrice:Number(issue.finalPrice), qty })
+    setCartLoading(true)
+    try {
+      await apiAddToCart(issue.id, qty)
+      setInCart(true)
+      toast.success("কার্টে যোগ হয়েছে!", { description:`${issue.title} × ${qty}` })
+    } catch (e: any) {
+      toast.error(e.message || "কার্টে যোগ করা যায়নি")
+    } finally {
+      setCartLoading(false)
     }
-    saveCart(cart); setInCart(true)
-    toast.success("কার্টে যোগ হয়েছে!", { description:`${issue.title} × ${qty}` })
   }
 
   /* ── buy now ── */
-  function buyNow() {
+  async function buyNow() {
     if (!issue.isAvailable) { toast.error("স্টক শেষ"); return }
-    localStorage.setItem(BUYNOW_KEY, JSON.stringify({
-      id:issue.id, slug:issue.slug, title:issue.title, image:issue.coverImage,
-      unitPrice:Number(issue.finalPrice), qty, totalPrice:total, currency:issue.currency,
-      ts:Date.now(),
-    }))
-    toast.success("অর্ডার প্রস্তুত!", { description:"চেকআউট পেজে যাচ্ছে…" })
-    // router.push("/checkout") — uncomment after wiring
-  }
-
-  /* ── favourite ── */
-  function toggleFav() {
-    const favs = loadFavs()
-    if (isFav) {
-      saveFavs(favs.filter(s=>s!==issue.slug)); setIsFav(false)
-      toast.message("ফেভারিট থেকে সরানো হয়েছে")
-    } else {
-      saveFavs([...favs, issue.slug]); setIsFav(true)
-      toast.success("ফেভারিটে যোগ হয়েছে ❤️")
+    setBuyLoading(true)
+    try {
+      await apiAddToCart(issue.id, qty)
+      router.push("/checkout")
+    } catch (e: any) {
+      toast.error(e.message || "কিছু ভুল হয়েছে")
+    } finally {
+      setBuyLoading(false)
     }
   }
 
@@ -297,46 +277,41 @@ export default function KisorkonthoDetailsClient({
                 </div>
 
                 {/* CTA buttons */}
-                <div className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-3">
-                  <button onClick={buyNow} type="button"
+                <div className="mt-5 grid grid-cols-1 gap-3 sm:grid-cols-2">
+                  <button onClick={buyNow} disabled={buyLoading || !issue.isAvailable}
                     className={`flex items-center justify-center gap-2 rounded-xl py-3 text-[13px] font-bold transition-all ${
-                      issue.isAvailable
-                        ? "border border-amber-500/35 bg-amber-500/12 text-amber-300 hover:border-amber-500/60 hover:bg-amber-500/22 hover:shadow-[0_0_20px_rgba(251,191,36,0.12)]"
-                        : "cursor-not-allowed border border-white/5 bg-white/2 text-white/20 opacity-50"
+                      buyLoading || !issue.isAvailable
+                        ? "cursor-not-allowed border border-white/5 bg-white/2 text-white/20 opacity-50"
+                        : "border border-amber-500/35 bg-amber-500/12 text-amber-300 hover:border-amber-500/60 hover:bg-amber-500/22 hover:shadow-[0_0_20px_rgba(251,191,36,0.12)]"
                     }`}>
-                    <CreditCardIcon className="h-4 w-4" strokeWidth={2}/>
-                    এখনই কিনুন
+                    {buyLoading
+                      ? <><Loader2Icon className="h-4 w-4 animate-spin"/> লোড হচ্ছে…</>
+                      : <><CreditCardIcon className="h-4 w-4" strokeWidth={2}/> এখনই কিনুন</>
+                    }
                   </button>
 
-                  <button onClick={addToCart} type="button"
+                  <button onClick={addToCart} disabled={cartLoading || !issue.isAvailable}
                     className={`flex items-center justify-center gap-2 rounded-xl py-3 text-[13px] font-bold transition-all ${
-                      inCart
+                      cartLoading || !issue.isAvailable
+                        ? "cursor-not-allowed border border-white/5 bg-white/2 text-white/20 opacity-50"
+                        : inCart
                         ? "border border-emerald-400/50 bg-emerald-500/18 text-emerald-300"
-                        : issue.isAvailable
-                        ? "border border-emerald-500/28 bg-emerald-500/8 text-emerald-400 hover:border-emerald-500/55 hover:bg-emerald-500/16 hover:shadow-[0_0_20px_rgba(0,200,83,0.1)]"
-                        : "cursor-not-allowed border border-white/5 bg-white/2 text-white/20 opacity-50"
+                        : "border border-emerald-500/28 bg-emerald-500/8 text-emerald-400 hover:border-emerald-500/55 hover:bg-emerald-500/16 hover:shadow-[0_0_20px_rgba(0,200,83,0.1)]"
                     }`}>
-                    {inCart
+                    {cartLoading
+                      ? <><Loader2Icon className="h-4 w-4 animate-spin"/> লোড হচ্ছে…</>
+                      : inCart
                       ? <><CheckCircleIcon className="h-4 w-4" strokeWidth={2}/> কার্টে আছে</>
                       : <><ShoppingCartIcon className="h-4 w-4" strokeWidth={2}/> কার্টে যোগ</>
                     }
                   </button>
+                </div>
 
-                  <div className="flex gap-2">
-                    <button onClick={toggleFav} type="button"
-                      className={`flex flex-1 items-center justify-center gap-2 rounded-xl py-3 text-[13px] font-bold border transition-all ${
-                        isFav
-                          ? "border-pink-500/45 bg-pink-500/18 text-pink-300"
-                          : "border-pink-500/22 bg-pink-500/7 text-pink-400 hover:border-pink-500/45 hover:bg-pink-500/15"
-                      }`}>
-                      <HeartIcon className="h-4 w-4" strokeWidth={isFav?0:2} fill={isFav?"currentColor":"none"}/>
-                      {isFav ? "সেভ করা" : "সেভ করুন"}
-                    </button>
-                    <button onClick={share} type="button"
-                      className="flex h-11.5 w-11.5 shrink-0 items-center justify-center rounded-xl border border-white/8 bg-white/3 text-white/30 transition-all hover:border-white/16 hover:text-white/60">
-                      <ShareIcon className="h-4 w-4" strokeWidth={2}/>
-                    </button>
-                  </div>
+                <div className="mt-3 flex justify-end">
+                  <button onClick={share} type="button"
+                    className="flex items-center gap-1.5 rounded-xl border border-white/8 bg-white/3 px-3 py-2 text-[11px] text-white/30 transition-all hover:border-white/16 hover:text-white/60">
+                    <ShareIcon className="h-3.5 w-3.5" strokeWidth={2}/> শেয়ার
+                  </button>
                 </div>
 
                 {/* Payment methods */}
