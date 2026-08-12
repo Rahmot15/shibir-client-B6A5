@@ -4,18 +4,20 @@ import { useMemo, useState } from "react"
 import Image from "next/image"
 import Link  from "next/link"
 import { useRouter } from "next/navigation"
+import { useAuth } from "@/components/auth/AuthContext"
 import {
   ArrowLeftIcon, ShoppingCartIcon, CreditCardIcon,
   PlusIcon, MinusIcon, StarIcon, PackageIcon, DownloadIcon,
   CheckCircleIcon, EyeIcon, BookOpenIcon, UserIcon, TagIcon,
   TrendingUpIcon, WalletIcon, ClockIcon, ShareIcon,
   ChevronDownIcon, ChevronUpIcon, ExternalLinkIcon, SparklesIcon,
-  Loader2Icon,
+  Loader2Icon, PencilIcon, Trash2Icon, XIcon, CheckIcon, FlagIcon,
 } from "lucide-react"
 import { toast } from "sonner"
 import {
   type KisorkonthoIssue, paymentLabel,
   contentLabel, contentColor, trackDownload,
+  updateReview, deleteReview, reportReview,
 } from "./data"
 import { addToCart as apiAddToCart } from "@/lib/cartOrderService"
 
@@ -42,12 +44,28 @@ export default function KisorkonthoDetailsClient({
   related: KisorkonthoIssue[]
 }) {
   const router = useRouter()
+  const { user } = useAuth()
   const [qty,       setQty]       = useState(1)
   const [inCart,    setInCart]    = useState(false)
   const [cartLoading, setCartLoading] = useState(false)
   const [buyLoading, setBuyLoading] = useState(false)
   const [activeTab, setActiveTab] = useState<"contents"|"reviews"|"info">("contents")
   const [showPdf,   setShowPdf]   = useState(false)
+
+  /* ── review edit/delete state ── */
+  const [editingReviewId, setEditingReviewId] = useState<string | null>(null)
+  const [editRating, setEditRating] = useState(0)
+  const [editComment, setEditComment] = useState("")
+  const [reviewLoading, setReviewLoading] = useState<string | null>(null)
+
+  /* ── write review state ── */
+  const [newRating, setNewRating] = useState(0)
+  const [newComment, setNewComment] = useState("")
+  const [submittingReview, setSubmittingReview] = useState(false)
+
+  /* ── report state ── */
+  const [reportingId, setReportingId] = useState<string | null>(null)
+  const [reportReason, setReportReason] = useState("")
 
   const total = useMemo(()=>Number(issue.finalPrice)*qty,[issue.finalPrice,qty])
 
@@ -91,6 +109,78 @@ export default function KisorkonthoDetailsClient({
     }
     await navigator.clipboard.writeText(url)
     toast.success("লিংক কপি হয়েছে")
+  }
+
+  /* ── review edit ── */
+  function startEditReview(review: any) {
+    setEditingReviewId(review.id)
+    setEditRating(review.rating)
+    setEditComment(review.comment)
+  }
+
+  async function saveEditReview(reviewId: string) {
+    setReviewLoading(reviewId)
+    try {
+      await updateReview(issue.id, reviewId, { rating: editRating, comment: editComment })
+      toast.success("রিভিউ আপডেট হয়েছে")
+      setEditingReviewId(null)
+      router.refresh()
+    } catch (e: any) {
+      toast.error(e.message || "আপডেট করা যায়নি")
+    } finally {
+      setReviewLoading(null)
+    }
+  }
+
+  async function handleDeleteReview(reviewId: string) {
+    if (!confirm("আপনি কি নিশ্চিত এই রিভিউ মুছে ফেলতে চান?")) return
+    setReviewLoading(reviewId)
+    try {
+      await deleteReview(issue.id, reviewId)
+      toast.success("রিভিউ মুছে ফেলা হয়েছে")
+      router.refresh()
+    } catch (e: any) {
+      toast.error(e.message || "মুছে ফেলা যায়নি")
+    } finally {
+      setReviewLoading(null)
+    }
+  }
+
+  /* ── write review ── */
+  async function submitReview() {
+    if (!newRating) { toast.error("Rating দিন"); return }
+    if (!newComment.trim()) { toast.error("Comment লিখুন"); return }
+    setSubmittingReview(true)
+    try {
+      await fetch(`${process.env.NEXT_PUBLIC_BACKEND_URL || "http://localhost:5000"}/api/v1/kishorkontho/${issue.id}/reviews`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
+        body: JSON.stringify({ rating: newRating, comment: newComment }),
+      }).then(async r => { const d = await r.json(); if (!d.success) throw new Error(d.message) })
+      toast.success("Review submitted!")
+      setNewRating(0); setNewComment("")
+      router.refresh()
+    } catch (e: any) {
+      toast.error(e.message || "Failed to submit")
+    } finally {
+      setSubmittingReview(false)
+    }
+  }
+
+  /* ── report review ── */
+  async function submitReport(reviewId: string) {
+    if (!reportReason.trim()) { toast.error("Reason দিন"); return }
+    setReviewLoading(reviewId)
+    try {
+      await reportReview(issue.id, reviewId, reportReason)
+      toast.success("Reported")
+      setReportingId(null); setReportReason("")
+    } catch (e: any) {
+      toast.error(e.message || "Failed")
+    } finally {
+      setReviewLoading(null)
+    }
   }
 
   const hasDiscount = issue.discount > 0
@@ -440,20 +530,122 @@ export default function KisorkonthoDetailsClient({
                   </div>
                 </div>
 
-                {issue.reviews?.map((r,i)=>(
-                  <div key={i} className="rounded-xl border border-white/5 bg-white/2 p-4">
-                    <div className="mb-2 flex items-center gap-3">
-                      <div className="flex h-8 w-8 items-center justify-center rounded-full border border-emerald-500/20 bg-emerald-500/8 font-mono text-[12px] font-bold text-emerald-400">
-                        {r.user?.name?.[0]?.toUpperCase() || "U"}
-                      </div>
-                      <div>
-                        <p className="text-[13px] font-semibold text-white/70">{r.user?.name || "ব্যবহারকারী"}</p>
-                        <Stars rating={r.rating} size={11}/>
-                      </div>
+                {/* Write Review Form */}
+                {user && (
+                  <div className="rounded-xl border border-emerald-500/15 bg-emerald-500/5 p-4">
+                    <p className="mb-3 text-sm font-semibold text-white/60">Write a Review</p>
+                    <div className="mb-3 flex items-center gap-1">
+                      {[1,2,3,4,5].map(s=>(
+                        <button key={s} type="button" onClick={()=>setNewRating(s)}
+                          className="transition-transform hover:scale-110">
+                          <StarIcon style={{ width:22, height:22 }} strokeWidth={1.5}
+                            className={s<=newRating?"text-amber-400 fill-amber-400":"text-white/15"}/>
+                        </button>
+                      ))}
+                      {newRating > 0 && <span className="ml-2 font-mono text-xs text-amber-400">{newRating}/5</span>}
                     </div>
-                    <p className="text-[13px] leading-relaxed text-white/50">{r.comment}</p>
+                    <textarea value={newComment} onChange={e=>setNewComment(e.target.value)}
+                      placeholder="আপনার মতামত লিখুন..."
+                      rows={3}
+                      className="w-full rounded-xl border border-white/10 bg-[#050f08] px-4 py-3 text-[13px] text-white/70 placeholder:text-white/20 focus:border-emerald-500/40 focus:outline-none"/>
+                    <button onClick={submitReview} disabled={submittingReview || !newRating || !newComment.trim()}
+                      className="mt-3 flex items-center gap-2 rounded-xl border border-emerald-500/30 bg-emerald-500/10 px-4 py-2 text-[12px] font-semibold text-emerald-400 transition-all hover:bg-emerald-500/20 disabled:opacity-40 disabled:cursor-not-allowed">
+                      {submittingReview ? <Loader2Icon className="h-3.5 w-3.5 animate-spin"/> : null}
+                      {submittingReview ? "Submitting..." : "Submit Review"}
+                    </button>
                   </div>
-                ))}
+                )}
+                {!user && (
+                  <p className="text-center text-[13px] text-white/25 py-4">Login করুন review দিতে</p>
+                )}
+
+                {issue.reviews?.map((r,i)=>{
+                  const isOwn = user && r.user?.id === user.id
+                  const isEditing = editingReviewId === r.id
+                  const isLoading = reviewLoading === r.id
+
+                  return (
+                    <div key={i} className={`rounded-xl border bg-white/2 p-4 ${isOwn ? "border-emerald-500/15" : "border-white/5"}`}>
+                      <div className="mb-2 flex items-center gap-3">
+                        <div className="flex h-8 w-8 items-center justify-center rounded-full border border-emerald-500/20 bg-emerald-500/8 font-mono text-[12px] font-bold text-emerald-400">
+                          {r.user?.name?.[0]?.toUpperCase() || "U"}
+                        </div>
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2">
+                            <p className="text-[13px] font-semibold text-white/70">{r.user?.name || "ব্যবহারকারী"}</p>
+                            {r.isEdited && <span className="text-[9px] text-white/20">(edited)</span>}
+                          </div>
+                          {!isEditing && <Stars rating={r.rating} size={11}/>}
+                        </div>
+                        {isOwn && !isEditing && (
+                          <div className="flex gap-1.5">
+                            <button onClick={() => startEditReview(r)} disabled={isLoading}
+                              className="flex h-7 w-7 items-center justify-center rounded-lg border border-white/10 text-white/30 transition-all hover:border-emerald-500/30 hover:text-emerald-400">
+                              <PencilIcon className="h-3 w-3" strokeWidth={2}/>
+                            </button>
+                            <button onClick={() => handleDeleteReview(r.id)} disabled={isLoading}
+                              className="flex h-7 w-7 items-center justify-center rounded-lg border border-white/10 text-white/30 transition-all hover:border-red-500/30 hover:text-red-400">
+                              {isLoading ? <Loader2Icon className="h-3 w-3 animate-spin"/> : <Trash2Icon className="h-3 w-3" strokeWidth={2}/>}
+                            </button>
+                          </div>
+                        )}
+                        {!isOwn && user && !isEditing && (
+                          <div>
+                            {reportingId === r.id ? (
+                              <div className="flex gap-1.5">
+                                <input type="text" value={reportReason} onChange={e=>setReportReason(e.target.value)}
+                                  placeholder="Reason..."
+                                  className="w-28 rounded-lg border border-white/10 bg-[#050f08] px-2 py-1 text-[10px] text-white/60 focus:outline-none"/>
+                                <button onClick={()=>submitReport(r.id)} disabled={isLoading}
+                                  className="rounded-lg border border-red-500/30 bg-red-500/10 px-2 py-1 text-[10px] text-red-400 hover:bg-red-500/20">
+                                  {isLoading ? <Loader2Icon className="h-3 w-3 animate-spin"/> : "Send"}
+                                </button>
+                                <button onClick={()=>{setReportingId(null);setReportReason("")}}
+                                  className="rounded-lg border border-white/10 px-2 py-1 text-[10px] text-white/30">
+                                  X
+                                </button>
+                              </div>
+                            ) : (
+                              <button onClick={()=>setReportingId(r.id)}
+                                className="flex h-7 w-7 items-center justify-center rounded-lg border border-white/10 text-white/20 transition-all hover:border-amber-500/30 hover:text-amber-400">
+                                <FlagIcon className="h-3 w-3" strokeWidth={2}/>
+                              </button>
+                            )}
+                          </div>
+                        )}
+                      </div>
+
+                      {isEditing ? (
+                        <div className="space-y-3">
+                          <div className="flex items-center gap-1">
+                            {[1,2,3,4,5].map(s=>(
+                              <button key={s} type="button" onClick={()=>setEditRating(s)}
+                                className="transition-transform hover:scale-110">
+                                <StarIcon style={{ width:20, height:20 }} strokeWidth={1.5}
+                                  className={s<=editRating?"text-amber-400 fill-amber-400":"text-white/15"}/>
+                              </button>
+                            ))}
+                          </div>
+                          <textarea value={editComment} onChange={e=>setEditComment(e.target.value)}
+                            rows={3}
+                            className="w-full rounded-xl border border-white/10 bg-[#050f08] px-4 py-3 text-[13px] text-white/70 focus:border-emerald-500/40 focus:outline-none"/>
+                          <div className="flex gap-2">
+                            <button onClick={()=>saveEditReview(r.id)} disabled={isLoading || !editRating || !editComment.trim()}
+                              className="flex items-center gap-1.5 rounded-lg border border-emerald-500/30 bg-emerald-500/10 px-3 py-1.5 text-[11px] font-semibold text-emerald-400 transition-all hover:bg-emerald-500/20 disabled:opacity-40">
+                              <CheckIcon className="h-3 w-3" strokeWidth={2.5}/> সেভ
+                            </button>
+                            <button onClick={()=>setEditingReviewId(null)}
+                              className="flex items-center gap-1.5 rounded-lg border border-white/10 px-3 py-1.5 text-[11px] font-semibold text-white/40 transition-all hover:text-white/60">
+                              <XIcon className="h-3 w-3" strokeWidth={2.5}/> বাতিল
+                            </button>
+                          </div>
+                        </div>
+                      ) : (
+                        <p className="text-[13px] leading-relaxed text-white/50">{r.comment}</p>
+                      )}
+                    </div>
+                  )
+                })}
                 {(!issue.reviews || issue.reviews.length === 0) && (
                   <p className="text-center text-[13px] text-white/22 py-8">কোনো রিভিউ নেই</p>
                 )}

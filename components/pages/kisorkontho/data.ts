@@ -19,7 +19,11 @@ export interface Review {
   user:    { id: string; name: string; image?: string }
   rating:  number
   comment: string
+  isEdited:   boolean
+  isApproved: boolean
+  isReported: boolean
   createdAt: string
+  updatedAt: string
 }
 
 export interface KisorkonthoIssue {
@@ -151,4 +155,38 @@ export async function trackDownload(issueId: string) {
     method: "POST",
     credentials: "include",
   })
+}
+
+export async function updateReview(issueId: string, reviewId: string, data: { rating?: number; comment?: string }) {
+  const res = await fetch(`${API_BASE_SERVER}/${issueId}/reviews/${reviewId}`, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
+    body: JSON.stringify(data),
+  })
+  const result = await res.json()
+  if (!result.success) throw new Error(result.message)
+  return result.data
+}
+
+export async function deleteReview(issueId: string, reviewId: string) {
+  const res = await fetch(`${API_BASE_SERVER}/${issueId}/reviews/${reviewId}`, {
+    method: "DELETE",
+    credentials: "include",
+  })
+  const result = await res.json()
+  if (!result.success) throw new Error(result.message)
+  return result
+}
+
+export async function reportReview(issueId: string, reviewId: string, reason: string) {
+  const res = await fetch(`${API_BASE_SERVER}/${issueId}/reviews/${reviewId}/report`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    credentials: "include",
+    body: JSON.stringify({ reason }),
+  })
+  const result = await res.json()
+  if (!result.success) throw new Error(result.message)
+  return result
 }

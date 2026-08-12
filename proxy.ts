@@ -10,6 +10,7 @@ const allowedRoutesByRole: Record<Role, string[]> = {
     "/dashboard/manage-users",
     "/dashboard/approve-viva",
     "/dashboard/kishorkontho",
+    "/dashboard/reviews",
     "/dashboard/support",
   ],
   ASSOCIATE: [

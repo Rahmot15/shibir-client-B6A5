@@ -20,6 +20,7 @@ import {
   FileTextIcon,
   LayoutDashboardIcon,
   MessageSquareIcon,
+  StarIcon,
   StickyNoteIcon,
   UsersIcon,
   MoonIcon,
@@ -42,6 +43,7 @@ const navByRole: Record<Role, { title: string; url: string; icon: React.ReactNod
     { title: "Manage Users",  url: "/dashboard/manage-users",  icon: <UsersIcon /> },
     { title: "Approve Viva",  url: "/dashboard/approve-viva",  icon: <CheckCircleIcon /> },
     { title: "Kishorkontho",  url: "/dashboard/kishorkontho",  icon: <BookOpenIcon /> },
+    { title: "Reviews",       url: "/dashboard/reviews",       icon: <StarIcon /> },
     { title: "Support",       url: "/dashboard/support",       icon: <MessageSquareIcon /> },
   ],
   ASSOCIATE: [
