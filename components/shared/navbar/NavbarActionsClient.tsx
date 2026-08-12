@@ -1,12 +1,14 @@
 "use client"
 
+import { useEffect, useState } from "react"
 import Link       from "next/link"
 import Image      from "next/image"
 import { useAuth } from "@/components/auth/AuthContext"
+import { fetchCart } from "@/lib/cartOrderService"
 import {
   LogOut, LayoutDashboard, Menu,
   FileText, ChevronRightIcon, XIcon,
-  MoonStar,
+  MoonStar, ShoppingCartIcon,
 } from "lucide-react"
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem,
@@ -45,6 +47,14 @@ function AvatarBtn({ user }: { user: { name?: string; email?: string; image?: st
 
 export default function NavbarActionsClient({ links }: Props) {
   const { user, logout, loading } = useAuth()
+  const [cartCount, setCartCount] = useState(0)
+
+  useEffect(() => {
+    if (!user) return
+    fetchCart().then(c => {
+      setCartCount(c ? c.items.reduce((sum, i) => sum + i.quantity, 0) : 0)
+    }).catch(() => {})
+  }, [user])
 
   return (
     <>
@@ -54,6 +64,18 @@ export default function NavbarActionsClient({ links }: Props) {
       <div className="hidden xl:flex xl:items-center xl:gap-2.5">
         {loading ? <Spinner /> : user ? (
           <>
+            {/* Cart link */}
+            <Link href="/cart"
+              className="relative flex items-center gap-1.5 rounded-lg border border-emerald-500/28 bg-emerald-500/8 px-3 py-1.5 text-[11px] font-semibold tracking-[1px] text-emerald-300/90 transition-all duration-200 hover:border-emerald-500/55 hover:bg-emerald-500/15 hover:shadow-[0_0_14px_rgba(0,200,83,0.15)]">
+              <ShoppingCartIcon className="h-3.5 w-3.5" strokeWidth={2}/>
+              কার্ট
+              {cartCount > 0 && (
+                <span className="absolute -right-1.5 -top-1.5 flex h-4 min-w-4 items-center justify-center rounded-full border border-[#050f08] bg-amber-400 px-1 font-mono text-[9px] font-black text-[#050f08]">
+                  {cartCount > 99 ? "99+" : cartCount}
+                </span>
+              )}
+            </Link>
+
             {/* Report link */}
             <Link href="/report"
               className="flex items-center gap-1.5 rounded-lg border border-amber-500/28 bg-amber-500/8 px-3 py-1.5 text-[11px] font-semibold tracking-[1px] text-amber-300/90 transition-all duration-200 hover:border-amber-500/55 hover:bg-amber-500/15 hover:shadow-[0_0_14px_rgba(200,162,39,0.15)]">
@@ -123,11 +145,22 @@ export default function NavbarActionsClient({ links }: Props) {
         {/* Mobile action button: Login or Report */}
         {!loading && (
           user ? (
-            <Link href="/report"
-              className="flex items-center gap-1 rounded-lg border border-amber-500/28 bg-amber-500/8 px-2.5 py-1.5 text-[10px] font-semibold tracking-[1px] text-amber-300/85 transition-all hover:border-amber-500/50">
-              <FileText className="h-3.5 w-3.5" strokeWidth={2}/>
-              রিপোর্ট
-            </Link>
+            <>
+              <Link href="/cart"
+                className="relative flex items-center gap-1 rounded-lg border border-emerald-500/28 bg-emerald-500/8 px-2.5 py-1.5 text-[10px] font-semibold tracking-[1px] text-emerald-400 transition-all hover:border-emerald-500/50">
+                <ShoppingCartIcon className="h-3.5 w-3.5" strokeWidth={2}/>
+                {cartCount > 0 && (
+                  <span className="absolute -right-1 -top-1 flex h-4 min-w-4 items-center justify-center rounded-full border border-[#050f08] bg-amber-400 px-1 font-mono text-[9px] font-black text-[#050f08]">
+                    {cartCount > 99 ? "99+" : cartCount}
+                  </span>
+                )}
+              </Link>
+              <Link href="/report"
+                className="flex items-center gap-1 rounded-lg border border-amber-500/28 bg-amber-500/8 px-2.5 py-1.5 text-[10px] font-semibold tracking-[1px] text-amber-300/85 transition-all hover:border-amber-500/50">
+                <FileText className="h-3.5 w-3.5" strokeWidth={2}/>
+                রিপোর্ট
+              </Link>
+            </>
           ) : (
             <Link href="/login"
               className="flex items-center gap-1 rounded-lg border border-emerald-500/28 bg-emerald-500/8 px-2.5 py-1.5 text-[10px] font-semibold tracking-[1px] text-emerald-400 transition-all hover:border-emerald-500/50 shadow-[0_0_10px_rgba(0,200,83,0.1)]">
