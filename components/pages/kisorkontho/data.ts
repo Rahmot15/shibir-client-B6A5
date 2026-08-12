@@ -145,3 +145,10 @@ export async function fetchRelatedIssues(currentSlug: string, limit = 4) {
   if (!data.success) return []
   return (data.data as KisorkonthoIssue[]).filter(i => i.slug !== currentSlug).slice(0, limit)
 }
+
+export async function trackDownload(issueId: string) {
+  await fetch(`${API_BASE_SERVER}/${issueId}/download`, {
+    method: "POST",
+    credentials: "include",
+  })
+}

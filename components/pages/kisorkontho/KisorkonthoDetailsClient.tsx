@@ -15,7 +15,7 @@ import {
 import { toast } from "sonner"
 import {
   type KisorkonthoIssue, paymentLabel,
-  contentLabel, contentColor,
+  contentLabel, contentColor, trackDownload,
 } from "./data"
 import { addToCart as apiAddToCart } from "@/lib/cartOrderService"
 
@@ -163,6 +163,7 @@ export default function KisorkonthoDetailsClient({
                 <iframe src={issue.pdfPreview} className="h-64 w-full" title="PDF Preview"/>
                 <div className="border-t border-purple-500/12 p-3 text-center">
                   <a href={issue.pdfPreview} target="_blank" rel="noopener noreferrer"
+                    onClick={() => trackDownload(issue.id)}
                     className="flex items-center justify-center gap-1.5 text-[11px] font-mono text-purple-400/70 hover:text-purple-400 transition-colors">
                     <ExternalLinkIcon className="h-3 w-3" strokeWidth={2}/> নতুন ট্যাবে খুলুন
                   </a>
